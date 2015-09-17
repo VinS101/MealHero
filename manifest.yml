@@ -1,0 +1,14 @@
+applications:
+- services:
+  - MealsOnWheels-MAS
+  - MealsOnWheels-Push
+  - MealsOnWheels-MobileData
+  - MealsOnWheels-Mobile Quality Assurance
+  disk_quota: 1024M
+  host: mealsonwheels
+  name: MealsOnWheels
+  command: node app.js
+  path: .
+  domain: mybluemix.net
+  instances: 1
+  memory: 128M
