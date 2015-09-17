@@ -1,17 +1,12 @@
-This README.md file is displayed on your project page. You should edit this 
-file to describe your project, including instructions for building and 
-running the project, pointers to the license under which you are making the 
-project available, and anything else you think would be useful for others to
-know.
+Meal Hero puts the control in the volunteers’ hands. 
 
-We have created an empty license.txt file for you. Well, actually, it says,
-"<Replace this text with the license you've chosen for your project.>" We 
-recommend you edit this and include text for license terms under which you're
-making your code available. A good resource for open source licenses is the 
-[Open Source Initiative](http://opensource.org/).
+Each volunteer can choose the route they want. The application tracks previous routes for each volunteer and makes smart suggestions for future routes based on this information. 
 
-Be sure to update your project's profile with a short description and 
-eye-catching graphic.
+Meal Hero outshines its competitors by not only offering GPS directions to each route, but optimizing the routes so each delivery can be more efficient and cost effective, saving both time and money. 
 
-Finally, consider defining some sprints and work items in Track & Plan to give 
-interested developers a sense of your cadence and upcoming enhancements.
+Meal Hero allows volunteers to document any medical issues with each client and also notifies volunteers about important client information such as medical issues. 
+This allows volunteers to always be prepared to assist. In case of medical emergency, Meal Hero offers information such as address and contact info, for local transportation and medical service locations.
+
+
+These are only a few of the reasons Meal Hero is the best choice for your senior service needs. 
+
