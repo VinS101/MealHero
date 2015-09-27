@@ -1,0 +1,15 @@
+﻿<Properties StartupItem="MealHero\MealHero.Droid\MealHero.Droid.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Android.54d751c3" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="MealHero\MealHero.Droid\MainActivity.cs">
+    <Files>
+      <File FileName="MealHero\MealHero.Droid\MainActivity.cs" Line="17" Column="23" />
+      <File FileName="MealHero\MealHero.Droid\Properties\AndroidManifest.xml" Line="25" Column="21" />
+      <File FileName="MealHero\MealHero.Droid\Resources\Resource.designer.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.MealHero.Droid AndroidDesignerPreferredDevice="Nexus 4" />
+</Properties>

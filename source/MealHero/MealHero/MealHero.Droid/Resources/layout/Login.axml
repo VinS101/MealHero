@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:background="@android:drawable/editbox_dropdown_dark_frame">
+    <ImageView
+        android:src="@drawable/dlt"
+        android:layout_width="match_parent"
+        android:layout_height="121.1dp"
+        android:id="@+id/imageView1"
+        android:layout_marginTop="40dp" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/_txtUser"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="10dp" />
+    <EditText
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText1"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
+    <Button
+        android:text="@string/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="73.3dp"
+        android:id="@+id/_btnLogin"
+        android:background="@android:color/holo_blue_light"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
+    <Button
+        android:text="@string/btnRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/_btnRegister"
+        android:background="@android:color/holo_blue_light"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
+</LinearLayout>
