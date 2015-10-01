@@ -103,7 +103,7 @@ public final class MealHeroApplication extends Application
         // initialize IBM Data Service
         IBMData.initializeService();
         // register the Item Specialization
-
+        Volunteer.registerSpecialization(Volunteer.class);
 
     }
 
