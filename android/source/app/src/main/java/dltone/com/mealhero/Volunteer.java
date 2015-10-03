@@ -14,7 +14,15 @@ public class Volunteer  extends IBMDataObject
     String Username = "";
     String Password = "";
     Boolean IsOnline = false;
-
+    String Email = "";
+    public Volunteer() {}
+    public Volunteer(String vName, String vUsername, String vPassword, String vEmail)
+    {
+        Name = vName;
+        Username = vUsername;
+        Password = vPassword;
+        Email = vEmail;
+    }
     public String getName()
     {
         return (String) getObject(Name);
@@ -23,5 +31,6 @@ public class Volunteer  extends IBMDataObject
     {
         setObject(Name, (volunteerName != null) ? volunteerName : "" );
     }
+
 
 }

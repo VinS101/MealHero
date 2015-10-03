@@ -17,9 +17,16 @@ import bolts.Task;
  */
 public class VolunteerProvider
 {
-    private String CLASS_NAME = MealHeroApplication.class.getSimpleName();
+    private static String CLASS_NAME = MealHeroApplication.class.getSimpleName();
+    private static VolunteerProvider volunteerProvider = new VolunteerProvider();
 
-    public List<Volunteer> GetVolunteers()
+    private VolunteerProvider(){ }
+
+    public static VolunteerProvider getInstance()
+    {
+        return volunteerProvider;
+    }
+    public static List<Volunteer> GetVolunteers()
     {
         final List<Volunteer> volunteerList = new ArrayList<Volunteer>();
         try
@@ -65,5 +72,56 @@ public class VolunteerProvider
         }
 
         return volunteerList;
+    }
+
+    public static void RegisterVolunteer(Volunteer volunteerToBeRegistered)
+    {
+        if (volunteerToBeRegistered == null) return;
+        volunteerToBeRegistered.save().continueWith(new Continuation<IBMDataObject, Void>()
+        {
+            @Override
+            public Void then(Task<IBMDataObject> task) throws Exception
+            {
+                if (task.isCancelled())
+                {
+                    Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
+                }
+                else if (task.isFaulted())
+                {
+                    Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
+                }
+                else
+                {
+                    // Produce some callback of Registration success
+                }
+                return null;
+            }
+        });
+    }
+
+    public static void DeleteVolunteer(Volunteer volunteerToBeDeleted)
+    {
+        if (volunteerToBeDeleted == null) return;
+        volunteerToBeDeleted.delete().continueWith(new Continuation<IBMDataObject, Void>()
+        {
+            @Override
+            public Void then(Task<IBMDataObject> task) throws Exception
+            {
+                if (task.isCancelled())
+                {
+                    Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
+                }
+                else if (task.isFaulted())
+                {
+                    Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
+                }
+                else
+                {
+                    // Produce some callback of delete success
+
+                }
+                return null;
+            }
+        }, Task.UI_THREAD_EXECUTOR);
     }
 }
