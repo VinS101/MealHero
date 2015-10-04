@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -46,6 +47,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Volunteer mVolunteer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -271,7 +273,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
                 if (email.equals(mEmail))
                 {
                     // Account exists, return true if the password matches.
-                    return password.equals(mPassword);
+                    if (password.equals(mPassword))
+                    {
+                        mVolunteer = volunteer;
+                        return true;
+                    }
+
                 }
             }
             // TODO: register the new account here.
@@ -279,16 +286,22 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
+
             return true;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final Boolean success)
+        {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
+            if (success)
+            {
                 //finish();
+                //Intent intent = new Intent(this, MapPreviewActivity.class);
+                //intent.putExtra(mVolunteerToDisplay, mVolunteer);
+
             }
             else
             {
@@ -298,7 +311,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
         }
 
         @Override
-        protected void onCancelled() {
+        protected void onCancelled()
+        {
             mAuthTask = null;
             showProgress(false);
         }

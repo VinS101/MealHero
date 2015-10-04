@@ -6,6 +6,8 @@ import com.ibm.mobile.services.data.IBMDataException;
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMQuery;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,7 @@ public class VolunteerProvider
     public static void RegisterVolunteer(Volunteer volunteerToBeRegistered)
     {
         if (volunteerToBeRegistered == null) return;
+
         volunteerToBeRegistered.save().continueWith(new Continuation<IBMDataObject, Void>()
         {
             @Override
@@ -97,6 +100,7 @@ public class VolunteerProvider
                 return null;
             }
         });
+
     }
 
     public static void DeleteVolunteer(Volunteer volunteerToBeDeleted)
