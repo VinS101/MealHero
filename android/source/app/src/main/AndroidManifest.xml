@@ -34,7 +34,7 @@
         </activity>
         <activity
             android:name=".MapPreviewActivity"
-            android:label="@string/title_activity_map_preview" >
+            android:label="@string/title_activity_map_preview">
         </activity>
     </application>
 

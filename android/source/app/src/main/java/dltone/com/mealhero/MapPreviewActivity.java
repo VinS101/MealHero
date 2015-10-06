@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MapPreviewActivity extends Activity
 {
@@ -20,6 +21,7 @@ public class MapPreviewActivity extends Activity
         {
             mVolunteerToDisplay = (Volunteer)incoming.getSerializable(VOLUNTEER);
         }
+
     }
 
     @Override
@@ -45,5 +47,10 @@ public class MapPreviewActivity extends Activity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void OnClickMenuOverflow(View view)
+    {
+        openOptionsMenu();
     }
 }
