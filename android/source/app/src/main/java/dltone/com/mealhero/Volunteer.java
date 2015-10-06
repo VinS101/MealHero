@@ -12,22 +12,24 @@ public class Volunteer  extends IBMDataObject
 {
     //region variables
     public static final String CLASS_NAME = "Volunteer";
-    private String Name = "";
-    private String Username = "";
-    private String Password = "";
-    private Boolean IsOnline = false;
-    private String Email = "";
+
+    private static final String NAME = "Name";
+    private static final String USERNAME = "Username";
+    private static final String PASSWORD = "Password";
+    private static final String EMAIL = "Email";
+
     //endregion
 
     public Volunteer() {}
 
     public Volunteer(String vName, String vUsername, String vPassword, String vEmail)
     {
-        Name = vName;
-        Username = vUsername;
-        Password = vPassword;
-        Email = vEmail;
+        setObject(NAME, (vName != null) ? vName : "");
+        setObject(USERNAME, (vUsername != null) ? vUsername : "");
+        setObject(PASSWORD, (vPassword != null) ? vPassword : "");
+        setObject(EMAIL, (vEmail != null) ? vEmail : "");
     }
+
 
     //region Accessors
 
@@ -37,7 +39,7 @@ public class Volunteer  extends IBMDataObject
      */
     public String getName()
     {
-        return (String) getObject(Name);
+        return (String) getObject(NAME);
     }
 
     /**
@@ -46,7 +48,7 @@ public class Volunteer  extends IBMDataObject
      */
     public String getUserName()
     {
-        return this.Name;
+        return (String) getObject(USERNAME);
     }
 
     /**
@@ -55,7 +57,7 @@ public class Volunteer  extends IBMDataObject
      */
     public String getPassword()
     {
-        return this.Password;
+        return (String) getObject(PASSWORD);
     }
 
     /**
@@ -64,17 +66,9 @@ public class Volunteer  extends IBMDataObject
      */
     public String getEmail()
     {
-        return this.Email;
+        return (String) getObject(EMAIL);
     }
 
-    /**
-     * returns if the volunteer is online or not
-     * @return isOnline
-     */
-    public boolean isOnline()
-    {
-        return this.isOnline();
-    }
     //endregion
 
     //region Mutators
@@ -83,10 +77,13 @@ public class Volunteer  extends IBMDataObject
      * Sets the volunteer's name
      * @param volunteerName
      */
+
     public void setName(String volunteerName)
     {
-        setObject(Name, (volunteerName != null) ? volunteerName : "" );
+        setObject(NAME, (volunteerName != null) ? volunteerName : "" );
     }
+
+
     //endregion
 
 
