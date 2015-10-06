@@ -1,12 +1,12 @@
 package dltone.com.mealhero;
 
-import android.app.Activity;
+
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-public class MapPreviewActivity extends Activity
+public class MapPreviewActivity extends AppCompatActivity
 {
     Volunteer mVolunteerToDisplay;
     public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
@@ -47,10 +47,5 @@ public class MapPreviewActivity extends Activity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void OnClickMenuOverflow(View view)
-    {
-        openOptionsMenu();
     }
 }
