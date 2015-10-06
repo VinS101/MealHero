@@ -267,8 +267,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             for (Volunteer volunteer : query)
             {
-                String email = volunteer.Email;
-                String password = volunteer.Password;
+                String email = volunteer.getEmail();
+                String password = volunteer.getPassword();
                 //String[] pieces = credential.split(":");
                 if (email.equals(mEmail))
                 {
