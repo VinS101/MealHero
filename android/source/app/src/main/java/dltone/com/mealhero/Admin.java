@@ -5,28 +5,26 @@ import java.lang.UnsupportedOperationException;
 /**
  * Created by Shervin.S on 10/6/2015.
  */
-public class Admin
+public class Admin extends Volunteer
 {
-    private String name; //Admin has a name?
-    private String username;
-    private String password;
-    private Boolean IsOnline = false;
-    private String email = "";
-    private boolean isOnline = false;
+    private static final String NAME = "Name";
+    private static final String USERNAME = "Username";
+    private static final String PASSWORD = "Password";
+    private static final String EMAIL = "Email";
 
     /**
      * Default constructor to construct the Admin object
-     * @param Name  Admin name
-     * @param Username Admin username
-     * @param Password Admin Password
-     * @param Email Admin Email
+     * @param vName  Admin name
+     * @param vUsername Admin username
+     * @param vPassword Admin Password
+     * @param vEmail Admin Email
      */
-    public Admin(String Name, String Username, String Password, String Email)
+    public Admin(String vName, String vUsername, String vPassword, String vEmail)
     {
-        this.name = Name;
-        this.username = Username;
-        this.password = Password;
-        this.email = Email;
+        setObject(NAME, (vName != null) ? vName : "");
+        setObject(USERNAME, (vUsername != null) ? vUsername : "");
+        setObject(PASSWORD, (vPassword != null) ? vPassword : "");
+        setObject(EMAIL, (vEmail != null) ? vEmail : "");
     }
 
     //region Accessors
@@ -36,7 +34,7 @@ public class Admin
     */
     public String getName()
     {
-        return this.name;
+        return (String) getObject(NAME);
     }
 
     /**
@@ -45,7 +43,7 @@ public class Admin
      */
     public String getUserName()
     {
-        return this.username;
+        return (String) getObject(USERNAME);
     }
 
     /**
@@ -54,7 +52,7 @@ public class Admin
      */
     public String getPassword()
     {
-        return this.password;
+        return (String) getObject(PASSWORD);
     }
 
     /**
@@ -63,17 +61,9 @@ public class Admin
      */
     public String getEmail()
     {
-        return this.email;
+        return (String) getObject(EMAIL);
     }
 
-    /**
-     * returns if the Admin is online or not
-     * @return isOnline
-     */
-    public boolean isOnline()
-    {
-        return this.isOnline;
-    }
     //endregion
 
     //region Mutators

@@ -1,19 +1,25 @@
 package dltone.com.mealhero;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MapPreviewActivity extends AppCompatActivity
+public class MapPreviewActivity extends Activity
 {
     Volunteer mVolunteerToDisplay;
+    public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
+        Bundle incoming = getIntent().getExtras();
+        if (incoming != null)
+        {
+            mVolunteerToDisplay = (Volunteer)incoming.getSerializable(VOLUNTEER);
+        }
     }
 
     @Override

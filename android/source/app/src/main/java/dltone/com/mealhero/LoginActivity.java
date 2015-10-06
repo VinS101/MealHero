@@ -49,6 +49,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
     private View mLoginFormView;
     private Volunteer mVolunteer;
 
+    public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -278,11 +280,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
                         mVolunteer = volunteer;
                         return true;
                     }
-
+                    return false;
                 }
             }
             // TODO: register the new account here.
-            Volunteer volunteerToBeAdded = new Volunteer("", "", mPassword, mEmail);
+            Volunteer volunteerToBeAdded = new Volunteer("", "", mPassword, mEmail, "Admin");
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
@@ -298,10 +300,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             if (success)
             {
-                //finish();
-                //Intent intent = new Intent(this, MapPreviewActivity.class);
-                //intent.putExtra(mVolunteerToDisplay, mVolunteer);
-
+                Intent intent = new Intent(LoginActivity.this, MapPreviewActivity.class);
+                Bundle b = new Bundle();
+                b.putSerializable(VOLUNTEER, mVolunteer);
+                intent.putExtras(b);
+                startActivity(intent);
+                finish();
             }
             else
             {
