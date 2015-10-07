@@ -71,6 +71,15 @@ public class Volunteer  extends IBMDataObject implements Serializable
         return (String) getObject(EMAIL);
     }
 
+    /**
+     * Gets volunteer's permission setting
+     * @return Permission
+     */
+    public String getPermission()
+    {
+        return (String) getObject(PERMISSION);
+    }
+
     //endregion
 
     //region Mutators

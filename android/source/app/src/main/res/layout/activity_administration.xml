@@ -6,13 +6,15 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context="dltone.com.mealhero.MapPreviewActivity">
+                tools:context="dltone.com.mealhero.AdministrationActivity">
 
-    <Button
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/navigate_button"
-        android:id="@+id/_btnNavigate"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:id="@+id/_lvwAdminOptions"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:headerDividersEnabled="false"
+        android:entries="@array/sections"/>
 </RelativeLayout>
