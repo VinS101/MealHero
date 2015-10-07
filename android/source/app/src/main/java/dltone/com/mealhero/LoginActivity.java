@@ -12,7 +12,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -26,8 +25,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.ibm.mobile.services.core.IBMBluemix;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.util.text.BasicTextEncryptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -285,12 +285,24 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
                 }
             }
             // TODO: register the new account here.
-            Volunteer volunteerToBeAdded = new Volunteer("", "", mPassword, mEmail, "Admin");
+
+            Volunteer volunteerToBeAdded = new Volunteer("", "", encryptPassword(mPassword), mEmail, "Admin");
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
 
             return true;
+        }
+
+        /**
+         * Encrypts a given password
+         * @return Encrypted password
+         */
+        private String encryptPassword(String pass)
+        {
+            BasicTextEncryptor textEncrypt = new BasicTextEncryptor();
+            textEncrypt.setPassword(pass);
+            return textEncrypt.encrypt(pass);
         }
 
         @Override
