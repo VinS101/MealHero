@@ -87,7 +87,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void populateAutoComplete() {
+    private void populateAutoComplete()
+    {
         getLoaderManager().initLoader(0, null, this);
     }
 

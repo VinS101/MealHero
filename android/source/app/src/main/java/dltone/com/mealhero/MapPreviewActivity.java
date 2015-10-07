@@ -74,6 +74,7 @@ public class MapPreviewActivity extends AppCompatActivity
         switch(id)
         {
             case MENU_ADMIN:
+                openAdministration();
                 break;
             case MENU_SETTINGS:
                 break;
@@ -88,6 +89,12 @@ public class MapPreviewActivity extends AppCompatActivity
         //}
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void openAdministration()
+    {
+        Intent intent = new Intent(MapPreviewActivity.this, AdministrationActivity.class);
+        startActivity(intent);
     }
 
     void logout()

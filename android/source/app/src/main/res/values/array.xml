@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sections">
+        <item >Add Volunteer</item>
+        <item >Edit Volunteer</item>
+        <item >Add Client</item>
+        <item >Edit Client</item>
+        <item >Assign Clients</item>
+    </string-array>
+</resources>

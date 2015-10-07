@@ -8,8 +8,8 @@
 
     <!-- Login progress -->
     <ImageView
-        android:layout_width="405dp"
-        android:layout_height="126dp"
+        android:layout_width="292dp"
+        android:layout_height="wrap_content"
         android:id="@+id/_imgLogo"
         android:layout_gravity="center_horizontal"
         android:src="@mipmap/dlt" />
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content" android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress" android:maxLines="1"
                 android:singleLine="true"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="0.35"
                                   android:typeface="normal"/>
@@ -44,7 +44,7 @@
                       android:typeface="normal"/>
 
             <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
-                android:layout_width="match_parent" android:layout_height="95dp"
+                android:layout_width="match_parent" android:layout_height="56dp"
                 android:layout_marginTop="16dp" android:text="@string/action_sign_in"
                 android:textStyle="bold"
                 android:background="#2bb5c5" />

@@ -6,4 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
     <string name="action_admin">Administration</string>
+    <string name="title_activity_administration">Administration</string>
+    <string name="title_activity_edit_volunteer">Edit Volunteer</string>
 </resources>

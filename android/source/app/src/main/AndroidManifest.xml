@@ -21,11 +21,11 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-       android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustResize|stateVisible">
+            android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,7 +34,23 @@
         </activity>
         <activity
             android:name=".MapPreviewActivity"
-            android:label="@string/title_activity_map_preview">
+            android:label="@string/title_activity_map_preview" >
+        </activity>
+        <activity
+            android:name=".AdministrationActivity"
+            android:label="@string/title_activity_administration"
+            android:parentActivityName=".MapPreviewActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dltone.com.mealhero.MapPreviewActivity" />
+        </activity>
+        <activity
+            android:name=".EditVolunteerActivity"
+            android:label="@string/title_activity_edit_volunteer"
+            android:parentActivityName=".AdministrationActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dltone.com.mealhero.AdministrationActivity" />
         </activity>
     </application>
 
