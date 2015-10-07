@@ -2,4 +2,9 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="dltone.com.mealhero.MapPreviewActivity">
+
+    <item android:id="@+id/action_refresh"
+          android:title="@string/action_refresh"
+          android:icon="@drawable/ic_cast_dark"
+          app:showAsAction="always" />
 </menu>

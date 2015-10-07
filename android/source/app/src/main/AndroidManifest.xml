@@ -50,6 +50,22 @@
             android:parentActivityName=".AdministrationActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
+                android:value="dltone.com.mealhero.DisplayVolunteerViewActivity" />
+        </activity>
+        <activity
+            android:name=".DisplayVolunteerViewActivity"
+            android:label="@string/title_activity_display_volunteer_view"
+            android:parentActivityName=".AdministrationActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dltone.com.mealhero.AdministrationActivity" />
+        </activity>
+        <activity
+            android:name=".AddClientActivity"
+            android:label="@string/title_activity_add_client"
+            android:parentActivityName=".AdministrationActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
                 android:value="dltone.com.mealhero.AdministrationActivity" />
         </activity>
     </application>

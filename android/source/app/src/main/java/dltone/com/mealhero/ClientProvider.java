@@ -6,8 +6,6 @@ import com.ibm.mobile.services.data.IBMDataException;
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMQuery;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,35 +13,35 @@ import bolts.Continuation;
 import bolts.Task;
 
 /**
- * w-garcia 10/1/2015.
+ * Created by Owner on 10/7/2015.
  */
-public class VolunteerProvider
+public class ClientProvider
 {
     private static String CLASS_NAME = MealHeroApplication.class.getSimpleName();
-    private static VolunteerProvider volunteerProvider = new VolunteerProvider();
+    private static ClientProvider clientProvider = new ClientProvider();
 
-    private VolunteerProvider(){ }
+    private ClientProvider(){ }
 
-    public static VolunteerProvider getInstance()
+    public static ClientProvider getInstance()
     {
-        return volunteerProvider;
+        return clientProvider;
     }
 
-    public static List<Volunteer> GetVolunteers()
+    public static List<Client> GetClients()
     {
-        final List<Volunteer> volunteerList = new ArrayList<Volunteer>();
+        final List<Client> clientList = new ArrayList<>();
         try
         {
-            IBMQuery<Volunteer> query = IBMQuery.queryForClass(Volunteer.class);
+            IBMQuery<Client> query = IBMQuery.queryForClass(Client.class);
 
             // Query all the Volunteer objects from the server
             // create continuation to resume the process of querying server from where we left off previously
-            query.find().continueWith(new Continuation<List<Volunteer>, Void>()
+            query.find().continueWith(new Continuation<List<Client>, Void>()
             {
                 @Override
-                public Void then(Task<List<Volunteer>> task) throws Exception
+                public Void then(Task<List<Client>> task) throws Exception
                 {
-                    final List<Volunteer> objects = task.getResult();
+                    final List<Client> objects = task.getResult();
                     // Log if the find was cancelled.
                     if (task.isCancelled())
                     {
@@ -57,10 +55,10 @@ public class VolunteerProvider
                     {
                         // result success, load that list!
                         // Clear local itemList
-                        volunteerList.clear();
+                        clientList.clear();
                         for (IBMDataObject item : objects)
                         {
-                            volunteerList.add((Volunteer)item);
+                            clientList.add((Client)item);
                         }
                         // sortItems(volunteerList);
                         // List view thing -> lvArrayAdapter.notifyDataSetChanged();
@@ -75,26 +73,14 @@ public class VolunteerProvider
             Log.e(CLASS_NAME, "Exception: " + e.getMessage());
         }
 
-        if (volunteerList.size() == 0)
-        {
-            try
-            {
-                Thread.sleep(3000);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        return volunteerList;
+        return clientList;
     }
 
-    public static void RegisterVolunteer(Volunteer volunteerToBeRegistered)
+    public static void RegisterClient(Client clientToBeRegistered)
     {
-        if (volunteerToBeRegistered == null) return;
+        if (clientToBeRegistered == null) return;
 
-        volunteerToBeRegistered.save().continueWith(new Continuation<IBMDataObject, Void>()
+        clientToBeRegistered.save().continueWith(new Continuation<IBMDataObject, Void>()
         {
             @Override
             public Void then(Task<IBMDataObject> task) throws Exception
@@ -117,10 +103,10 @@ public class VolunteerProvider
 
     }
 
-    public static void DeleteVolunteer(Volunteer volunteerToBeDeleted)
+    public static void DeleteClient(Client clientToBeDeleted)
     {
-        if (volunteerToBeDeleted == null) return;
-        volunteerToBeDeleted.delete().continueWith(new Continuation<IBMDataObject, Void>()
+        if (clientToBeDeleted == null) return;
+        clientToBeDeleted.delete().continueWith(new Continuation<IBMDataObject, Void>()
         {
             @Override
             public Void then(Task<IBMDataObject> task) throws Exception

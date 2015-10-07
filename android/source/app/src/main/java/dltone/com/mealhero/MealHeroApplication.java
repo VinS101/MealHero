@@ -17,6 +17,8 @@ import com.ibm.mobile.services.data.IBMData;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public final class MealHeroApplication extends Application
@@ -28,6 +30,9 @@ public final class MealHeroApplication extends Application
 
     public static final int EDIT_ACTIVITY_RC = 1;
     private static final String CLASS_NAME = MealHeroApplication.class.getSimpleName();
+
+    public List<Volunteer> volunteerList = new ArrayList<>();
+    public List<Client> clientList = new ArrayList<>();
 
     public MealHeroApplication() {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
@@ -104,7 +109,25 @@ public final class MealHeroApplication extends Application
         IBMData.initializeService();
         // register the Item Specialization
         Volunteer.registerSpecialization(Volunteer.class);
+        Client.registerSpecialization(Client.class);
 
     }
 
+    public List<Volunteer> getVolunteerList()
+    {
+        return volunteerList;
+    }
+    public void setVolunteerList(List<Volunteer> list)
+    {
+        volunteerList = list;
+    }
+
+    public List<Client> getClientList()
+    {
+        return clientList;
+    }
+    public void setClientList(List<Client> list)
+    {
+        clientList = list;
+    }
 }

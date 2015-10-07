@@ -4,6 +4,7 @@ import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * w-garcia 10/1/2015.
@@ -20,6 +21,9 @@ public class Volunteer  extends IBMDataObject implements Serializable
     private static final String PASSWORD = "Password";
     private static final String EMAIL = "Email";
     private static final String PERMISSION = "Permission";
+
+    private static final String LISTCLIENTS = "ListClients";
+
     //endregion
 
     public Volunteer() {}
@@ -34,7 +38,11 @@ public class Volunteer  extends IBMDataObject implements Serializable
     }
 
     //region Accessors
-
+    @Override
+    public String toString()
+    {
+        return (String) getObject(EMAIL);
+    }
     /**
      * Gets volunteer's name
      * @return Name
@@ -80,6 +88,12 @@ public class Volunteer  extends IBMDataObject implements Serializable
         return (String) getObject(PERMISSION);
     }
 
+    /**
+     * Gets volunteer's permission setting. Make sure to cast each iterated object.
+     * @return List of Clients
+     */
+    public List<?> getClientList() { return (List<?>) getObject(LISTCLIENTS); }
+
     //endregion
 
     //region Mutators
@@ -92,6 +106,11 @@ public class Volunteer  extends IBMDataObject implements Serializable
     public void setName(String volunteerName)
     {
         setObject(NAME, (volunteerName != null) ? volunteerName : "" );
+    }
+
+    public void setClientList(List<Client> list)
+    {
+        setObject(LISTCLIENTS, list);
     }
 
 

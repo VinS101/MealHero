@@ -55,10 +55,12 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
             case 0:
                 break;
             case 1:
-                intent = new Intent(AdministrationActivity.this, EditVolunteerActivity.class);
+                intent = new Intent(AdministrationActivity.this, DisplayVolunteerViewActivity.class);
                 startActivity(intent);
                 break;
             case 2:
+                intent = new Intent(AdministrationActivity.this, AddClientActivity.class);
+                startActivity(intent);
                 break;
             case 3:
                 break;

@@ -8,4 +8,7 @@
     <string name="action_admin">Administration</string>
     <string name="title_activity_administration">Administration</string>
     <string name="title_activity_edit_volunteer">Edit Volunteer</string>
+    <string name="title_activity_display_volunteer_view">Choose Volunteer</string>
+    <string name="title_activity_add_client">Add Client</string>
+    <string name="action_refresh">Refresh</string>
 </resources>

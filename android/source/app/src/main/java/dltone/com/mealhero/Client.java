@@ -1,33 +1,51 @@
 package dltone.com.mealhero;
 
+import com.ibm.mobile.services.data.IBMDataObject;
+import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
+
+import java.io.Serializable;
+
 /**
  * Created by costin on 10/6/2015.
  */
-public class Client
+@IBMDataObjectSpecialization("Client")
+public class Client extends IBMDataObject implements Serializable
 {
-    private String FirstName;
-    private String LastName;
-    private String Address;
-    private String BirthDate;
+    private static final String NAME = "Name";
+    private static final String ADDRESS = "Address";
+    private static final String DIET_PREFERENCE = "Diet Preference";
+    private static final String AGE = "Age";
 
-    public Client(String pFirstName, String pLastName, String pBirthDate, String pAddress)
+    public Client() { }
+
+    public Client(String pName, String pAddress, String pDiet, String pAge)
     {
-        FirstName = (pFirstName != null) ? pFirstName : "";
-        LastName = (pLastName != null) ? pLastName : "";
-        BirthDate = (pBirthDate != null) ? pBirthDate : "";
-        Address = (pAddress != null) ? pAddress : "";
+        setObject(NAME, (pName != null) ? pName : "");
+        setObject(ADDRESS, (pAddress != null) ? pAddress : "");
+        setObject(DIET_PREFERENCE, (pDiet != null) ? pDiet : "");
+        setObject(AGE, (pAge != null) ? pAge : "");
     }
 
-    public String getFirstName() {
-        return FirstName;
+    @Override
+    public String toString()
+    {
+        return (String) getObject(NAME);
     }
-    public String getLastName() {
-        return LastName;
+
+    public String getName()
+    {
+        return (String) getObject(NAME);
     }
-    public String getAddress() {
-        return Address;
+    public String getAddress()
+    {
+        return (String) getObject(NAME);
     }
-    public String getBirthDate() {
-        return BirthDate;
+    public String getDietPreference()
+    {
+        return (String) getObject(DIET_PREFERENCE);
+    }
+    public String getAge()
+    {
+        return (String) getObject(AGE);
     }
 }

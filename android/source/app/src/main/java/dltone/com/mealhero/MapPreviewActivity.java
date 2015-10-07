@@ -6,10 +6,18 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapPreviewActivity extends AppCompatActivity
 {
     Volunteer mVolunteerToDisplay;
+    ArrayAdapter<Client> lvArrayAdapter;
+    List<Client> query = new ArrayList<>();
+    MealHeroApplication MHApp;
 
     private static final int MENU_ADMIN = Menu.FIRST;
     private static final int MENU_SETTINGS = Menu.FIRST + 1;
@@ -29,20 +37,29 @@ public class MapPreviewActivity extends AppCompatActivity
             mVolunteerToDisplay = (Volunteer)incoming.getSerializable(VOLUNTEER);
         }
 
+        /* Use application class to maintain global state. */
+        MHApp = (MealHeroApplication) getApplication();
+        query = MHApp.getClientList();
+
+        /* Set up the array adapter for items list view. */
+        ListView volunteerListView = (ListView) findViewById(R.id._lvwClients);
+        lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, query);
+        volunteerListView.setAdapter(lvArrayAdapter);
+
+        //query = ClientProvider.GetClients();
+
+        lvArrayAdapter.notifyDataSetChanged();
+
     }
 
-    /* static menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_map_preview, menu);
-        if (mVolunteerToDisplay.getPermission().equalsIgnoreCase("Admin"))
-        {
-            menu.add(0, MENU_ADMIN, Menu.NONE, R.string.action_admin);
-        }
+
         return true;
-    } */
+    }
 
 
     /**
@@ -58,6 +75,8 @@ public class MapPreviewActivity extends AppCompatActivity
 
         menu.add(0, MENU_SETTINGS, Menu.NONE, R.string.action_settings);
         menu.add(0, MENU_LOGOUT, Menu.NONE, R.string.action_logout);
+
+        getMenuInflater().inflate(R.menu.menu_map_preview, menu);
 
         return super.onPrepareOptionsMenu(menu);
 
@@ -81,6 +100,9 @@ public class MapPreviewActivity extends AppCompatActivity
             case MENU_LOGOUT:
                 logout();
                 break;
+            case R.id.action_refresh:
+                refresh();
+                break;
         }
         //noinspection SimplifiableIfStatement
         //if (id == R.id.action_settings)
@@ -102,5 +124,12 @@ public class MapPreviewActivity extends AppCompatActivity
         Intent intent = new Intent(MapPreviewActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    void refresh()
+    {
+        finish();
+        Intent intent = new Intent(MapPreviewActivity.this, MapPreviewActivity.class);
+        startActivity(intent);
     }
 }

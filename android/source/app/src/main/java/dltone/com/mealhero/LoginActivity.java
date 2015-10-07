@@ -12,7 +12,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -26,8 +25,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.ibm.mobile.services.core.IBMBluemix;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.util.password.BasicPasswordEncryptor;
+import org.jasypt.util.text.BasicTextEncryptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +50,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
     private Volunteer mVolunteer;
 
     public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
+    MealHeroApplication MHA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -85,6 +86,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        MHA = (MealHeroApplication) getApplication();
+        MHA.setClientList(ClientProvider.GetClients());
     }
 
     private void populateAutoComplete()
@@ -265,18 +269,21 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
         @Override
         protected Boolean doInBackground(Void... params)
         {
+            BasicPasswordEncryptor bpe = new BasicPasswordEncryptor();
+
             // TODO: attempt authentication against a network service.
             List<Volunteer> query = VolunteerProvider.GetVolunteers();
+
+            MHA.setVolunteerList(query);
 
             for (Volunteer volunteer : query)
             {
                 String email = volunteer.getEmail();
-                String password = volunteer.getPassword();
                 //String[] pieces = credential.split(":");
                 if (email.equals(mEmail))
                 {
                     // Account exists, return true if the password matches.
-                    if (password.equals(mPassword))
+                    if (bpe.checkPassword(mPassword, volunteer.getPassword()))
                     {
                         mVolunteer = volunteer;
                         return true;
@@ -285,10 +292,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
                 }
             }
             // TODO: register the new account here.
-            Volunteer volunteerToBeAdded = new Volunteer("", "", mPassword, mEmail, "Admin");
+
+            String encryptedPassword = bpe.encryptPassword(mPassword);
+
+            Volunteer volunteerToBeAdded = new Volunteer("", "", encryptedPassword, mEmail, "Admin");
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
+            MHA.setVolunteerList(query);
 
             return true;
         }
