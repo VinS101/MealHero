@@ -75,18 +75,6 @@ public class VolunteerProvider
             Log.e(CLASS_NAME, "Exception: " + e.getMessage());
         }
 
-        if (volunteerList.size() == 0)
-        {
-            try
-            {
-                Thread.sleep(3000);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
         return volunteerList;
     }
 

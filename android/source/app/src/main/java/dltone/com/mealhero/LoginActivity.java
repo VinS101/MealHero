@@ -296,7 +296,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
             String encryptedPassword = bpe.encryptPassword(mPassword);
 
             Volunteer volunteerToBeAdded = new Volunteer("", "", encryptedPassword, mEmail, "Admin");
-
+            mVolunteer = volunteerToBeAdded;
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
             MHA.setVolunteerList(query);
@@ -312,8 +312,19 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             if (success)
             {
-                Intent intent = new Intent(LoginActivity.this, MapPreviewActivity.class);
-                Bundle b = new Bundle();
+                Intent intent = null;
+                Bundle b = null;
+                if(mVolunteer.getPermission().equalsIgnoreCase("Admin"))
+                {
+                    intent = new Intent(LoginActivity.this, AdministrationActivity.class);
+                    b = new Bundle();
+
+                }
+                else
+                {
+                    intent = new Intent(LoginActivity.this, MapPreviewActivity.class);
+                    b = new Bundle();
+                }
                 b.putSerializable(VOLUNTEER, mVolunteer);
                 intent.putExtras(b);
                 startActivity(intent);
