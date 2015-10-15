@@ -14,7 +14,8 @@
         android:text="@string/navigate_button"
         android:id="@+id/_btnNavigate"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickNavigate"/>
 
     <ListView
         android:layout_width="wrap_content"

@@ -1,12 +1,15 @@
 package dltone.com.mealhero;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ public class MapPreviewActivity extends AppCompatActivity
     private static final int MENU_ADMIN = Menu.FIRST;
     private static final int MENU_SETTINGS = Menu.FIRST + 1;
     private static final int MENU_LOGOUT = Menu.FIRST + 2;
+    private Button _btnNavigate;
 
     public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
 
@@ -49,6 +53,15 @@ public class MapPreviewActivity extends AppCompatActivity
         //query = ClientProvider.GetClients();
 
         lvArrayAdapter.notifyDataSetChanged();
+
+        _btnNavigate = (Button) findViewById(R.id._btnNavigate);
+        _btnNavigate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                openNavigation();
+            }
+        });
 
     }
 
@@ -113,20 +126,26 @@ public class MapPreviewActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    void openAdministration()
+    private void openNavigation()
+    {
+        Intent intent = new Intent(MapPreviewActivity.this, NavigationActivity.class);
+        startActivity(intent);
+    }
+
+    private void openAdministration()
     {
         Intent intent = new Intent(MapPreviewActivity.this, AdministrationActivity.class);
         startActivity(intent);
     }
 
-    void logout()
+    private void logout()
     {
         Intent intent = new Intent(MapPreviewActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
 
-    void refresh()
+    private void refresh()
     {
         finish();
         Intent intent = new Intent(MapPreviewActivity.this, MapPreviewActivity.class);

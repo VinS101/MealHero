@@ -11,4 +11,5 @@
     <string name="title_activity_display_volunteer_view">Choose Volunteer</string>
     <string name="title_activity_add_client">Add Client</string>
     <string name="action_refresh">Refresh</string>
+    <string name="title_activity_navigation">Navigation</string>
 </resources>
