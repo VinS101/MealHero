@@ -63,6 +63,8 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
                 startActivity(intent);
                 break;
             case 3:
+                intent = new Intent(AdministrationActivity.this, ClientListActivity.class);
+                startActivity(intent);
                 break;
             case 4:
                 break;

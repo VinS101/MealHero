@@ -78,6 +78,15 @@
                 android:value="dltone.com.mealhero.AdministrationActivity" />
         </activity>
 
+        <activity
+            android:name=".ClientListActivity"
+            android:label="Clients"
+            android:parentActivityName=".AdministrationActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dltone.com.mealhero.AdministrationActivity" />
+        </activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

@@ -38,7 +38,7 @@ public class Client extends IBMDataObject implements Serializable
     }
     public String getAddress()
     {
-        return (String) getObject(NAME);
+        return (String) getObject(ADDRESS);
     }
     public String getDietPreference()
     {
