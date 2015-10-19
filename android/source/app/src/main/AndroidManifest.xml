@@ -43,15 +43,16 @@
         </activity>
         <activity
             android:name=".MapPreviewActivity"
-            android:label="@string/title_activity_map_preview" >
+            android:label="@string/title_activity_map_preview"
+            android:parentActivityName=".AdministrationActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dltone.com.mealhero.AdministrationActivity" />
         </activity>
         <activity
             android:name=".AdministrationActivity"
-            android:label="@string/title_activity_administration"
-            android:parentActivityName=".MapPreviewActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="dltone.com.mealhero.MapPreviewActivity" />
+            android:label="@string/title_activity_administration">
+
         </activity>
         <activity
             android:name=".EditVolunteerActivity"
