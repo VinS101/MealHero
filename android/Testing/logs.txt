@@ -1,0 +1,118 @@
+Shervin@SHERVIN-PC ~/documents/MealsOnWheels ((84bf70a...))
+$ cf push
+Using manifest file c:\Users\Shervin\documents\MealsOnWheels\manifest.yml
+
+Updating app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+OK
+
+Using route mealsonwheels.mybluemix.net
+Uploading MealsOnWheels...
+Uploading app files from: c:\Users\Shervin\documents\MealsOnWheels
+Uploading 29.1M, 2934 files
+Done uploading
+OK
+Binding service MealsOnWheels-MAS to app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+OK
+Binding service MealsOnWheels-Push to app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+OK
+Binding service MealsOnWheels-MobileData to app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+OK
+Binding service MealsOnWheels-Mobile Quality Assurance to app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+OK
+
+Stopping app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+OK
+
+Starting app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+-----> Downloaded app package (25M)
+-----> Downloaded app buildpack cache (3.8M)
+
+-----> IBM SDK for Node.js Buildpack v2.6-20151006-1309
+       Based on Cloud Foundry Node.js Buildpack v1.5.0
+-----> Creating runtime environment
+       NPM_CONFIG_LOGLEVEL=error
+       NPM_CONFIG_PRODUCTION=true
+       NODE_MODULES_CACHE=true
+-----> Installing binaries
+       engines.node (package.json):  0.10.28
+       engines.npm (package.json):   unspecified (use default)
+       Installing IBM SDK for Node.js (0.10.28) from cache
+       Using default npm version: 1.4.9
+-----> Restoring cache
+       Loading 1 from cacheDirectories (default):
+       - node_modules
+-----> Checking and configuring service extensions before installing dependencies
+    jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+-----> Building dependencies
+       Pruning any extraneous modules
+       unbuild bluemix-management-client@1.0.4
+       Installing node modules (package.json)
+-----> Checking and configuring service extensions after installing dependencies
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+jq: error: Cannot iterate over null
+-----> Installing App Management
+       bluemix-management-client@1.0.4 node_modules/bluemix-management-client
+       Add header to app.js.enhanced: require("bluemix-management-client");
+-----> Caching build
+       Clearing previous node cache
+       Saving 1 cacheDirectories (default):
+       - node_modules
+-----> Build succeeded!
+       +-- bluemix-management-client@1.0.4
+       +-- body-parser@1.14.0
+       +-- express@4.13.3
+       +-- ibmbluemix@1.0.0-20150720-1718
+       +-- ibmdata@1.0.0-20150720-1718
+       +-- ibmsecurity@1.0.0-20150720-1718
+       +-- twilio@2.3.0
+-----> Uploading droplet (36M)
+
+0 of 1 instances running, 1 starting
+1 of 1 instances running
+
+App started
+
+
+OK
+
+App MealsOnWheels was started using this command `node app.js`
+
+Showing health and status for app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+OK
+
+requested state: started
+instances: 1/1
+usage: 128M x 1 instances
+urls: mealsonwheels.mybluemix.net
+last uploaded: Mon Oct 19 01:04:52 UTC 2015
+stack: lucid64
+buildpack: SDK for Node.js(TM) (ibm-node.js-0.10.28)
+
+     state     since                    cpu    memory          disk          details
+#0   running   2015-10-18 09:06:00 PM   0.0%   61.3M of 128M   99.6M of 1G
+
+Shervin@SHERVIN-PC ~/documents/MealsOnWheels ((84bf70a...))
+$ cf logs mealsonwheels
+Connected, tailing logs for app MealsOnWheels in org wgarcia2013@fau.edu / space dev as sshahrda@fau.edu...
+
+
