@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="client_age_label">Age: </string>
+    <string name="client_address_label">Address: </string>
+    <string name="client_diet_label">Diet: </string>
+</resources>

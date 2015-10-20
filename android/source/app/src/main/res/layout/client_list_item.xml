@@ -6,8 +6,8 @@
     >
 
     <ImageView
-        android:layout_width="@dimen/image_width"
-        android:layout_height="@dimen/image_height"
+        android:layout_width="@dimen/client_list_item_image_width"
+        android:layout_height="@dimen/client_list_item_image_height"
         android:paddingTop="@dimen/padding_top"
         android:paddingLeft="@dimen/padding_left"
         android:paddingBottom="@dimen/padding_bottom"
@@ -19,7 +19,7 @@
         android:layout_toRightOf="@id/client_list_item_image"
         android:paddingTop="@dimen/padding_top"
         android:paddingLeft="@dimen/padding_left"
-        android:textSize="@dimen/name_font_size"
+        android:textSize="@dimen/client_name_font_size"
         android:id="@+id/client_list_item_name" />
 
     <TextView
@@ -29,7 +29,7 @@
         android:layout_below="@id/client_list_item_name"
         android:paddingBottom="@dimen/padding_bottom"
         android:paddingLeft="@dimen/padding_left"
-        android:textSize="@dimen/address_font_size"
+        android:textSize="@dimen/client_address_font_size"
         android:id="@+id/client_list_item_address" />
 
 </RelativeLayout>
