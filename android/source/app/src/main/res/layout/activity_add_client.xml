@@ -12,8 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
+        android:hint="Name"
         android:id="@+id/_txtName"
         android:layout_marginTop="20dp"
         android:layout_alignParentTop="true"
@@ -30,7 +30,7 @@
         android:inputType="textPostalAddress"
         android:ems="10"
         android:id="@+id/_txtAddress"
-        android:text="Address"
+        android:hint="Adress"
         android:layout_below="@+id/_txtName"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -44,7 +44,7 @@
         android:inputType="number"
         android:ems="10"
         android:id="@+id/_txtAge"
-        android:text="Age"
+        android:hint="Age"
         android:layout_marginTop="33dp"
         android:layout_below="@+id/_txtAddress"
         android:layout_alignParentRight="true"
@@ -65,7 +65,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_margin="15dp"
-        android:text="Diet Preference"/>
+        android:hint="Diet Preference"/>
 
     <Button
         android:layout_width="wrap_content"

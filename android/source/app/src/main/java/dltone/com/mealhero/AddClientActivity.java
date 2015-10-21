@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class AddClientActivity extends AppCompatActivity
 {
@@ -23,13 +24,40 @@ public class AddClientActivity extends AppCompatActivity
         EditText cAge = (EditText)findViewById(R.id._txtAge);
         String Age = cAge.getText().toString();
 
-        Client clientToSubmit = new Client(Name, Address, Diet, Age);
-        ClientProvider.RegisterClient(clientToSubmit);
+        boolean addClientKey = true;
+        if(Name.isEmpty())
+        {
+            cName.setError("Name cannot be blank!");
+            addClientKey = false;
+        }
+        if(Address.isEmpty())
+        {
+            cAddress.setError("Address cannot be blank!");
+            addClientKey = false;
+        }
+        if(Diet.isEmpty())
+        {
+            cDiet.setError("Diet cannot be null");
+            addClientKey = false;
+        }
+        if(Age.isEmpty())
+        {
+            cAge.setError("Age cannot be empty");
+            addClientKey = false;
+        }
 
-        _MHA = (MealHeroApplication) getApplication();
-        _MHA.setClientList(ClientProvider.GetClients());
+        //Ready to add
+        if(addClientKey)
+        {
+            Client clientToSubmit = new Client(Name, Address, Diet, Age);
+            ClientProvider.RegisterClient(clientToSubmit);
+            Toast.makeText(this, "Client Sucessfully Added", Toast.LENGTH_LONG).show();
+            _MHA = (MealHeroApplication) getApplication();
+            _MHA.setClientList(ClientProvider.GetClients());
+            finish();
 
-        finish();
+        }
+
     }
 
     @Override
