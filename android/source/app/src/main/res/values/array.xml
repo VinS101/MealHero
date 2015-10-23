@@ -6,5 +6,6 @@
         <item >Add Client</item>
         <item >Edit Client</item>
         <item >Assign Clients</item>
+        <item >Deliver To Clients</item>
     </string-array>
 </resources>

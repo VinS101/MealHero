@@ -1,12 +1,19 @@
 package dltone.com.mealhero;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+
 /**
  * Created by costin on 10/6/2015.
  */
@@ -43,6 +50,18 @@ public class ClientListActivity extends AppCompatActivity
 
         //Notify adapter of data change
         clientAdapter.notifyDataSetChanged();
+
+        final Context context = this;
+        //Set item click listener
+        mClientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(context, ClientEditActivity.class);
+                Client client = clients.get((int) id);
+                intent.putExtra("CLIENT", client.toHashMap());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

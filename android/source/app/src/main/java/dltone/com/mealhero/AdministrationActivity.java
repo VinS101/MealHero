@@ -68,6 +68,10 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
                 break;
             case 4:
                 break;
+            case 5:
+                intent = new Intent(AdministrationActivity.this, MapPreviewActivity.class);
+                startActivity(intent);
+                break;
         }
 
     }

@@ -4,6 +4,8 @@ import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
 
 import java.io.Serializable;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 /**
  * Created by costin on 10/6/2015.
@@ -30,6 +32,16 @@ public class Client extends IBMDataObject implements Serializable
     public String toString()
     {
         return (String) getObject(NAME);
+    }
+    public HashMap<String, String> toHashMap()
+    {
+        HashMap<String, String> clientMap = new HashMap<String, String>();
+        clientMap.put("Name", getName());
+        clientMap.put("Address", getAddress());
+        clientMap.put("Age", getAge());
+        clientMap.put("Diet", getDietPreference());
+
+        return clientMap;
     }
 
     public String getName()
