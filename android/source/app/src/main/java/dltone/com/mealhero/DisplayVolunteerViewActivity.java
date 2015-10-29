@@ -8,28 +8,29 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class DisplayVolunteerViewActivity extends AppCompatActivity
 {
     ArrayAdapter<Volunteer> lvArrayAdapter;
     List<Volunteer> query;
-    MealHeroApplication MHApp;
+    MealHeroApplication MHA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        CountDownLatch latch = new CountDownLatch(1);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_volunteer_view);
 
         /* Use application class to maintain global state. */
-        MHApp = (MealHeroApplication) getApplication();
-        query = MHApp.getVolunteerList();
+        MHA = (MealHeroApplication) getApplication();
+        query = VolunteerProvider.GetVolunteers();
 
         /* Set up the array adapter for items list view. */
         ListView volunteerListView = (ListView) findViewById(R.id._lvwVolunteerList);
         lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, query);
         volunteerListView.setAdapter(lvArrayAdapter);
-
         //query = VolunteerProvider.GetVolunteers();
 
         lvArrayAdapter.notifyDataSetChanged();

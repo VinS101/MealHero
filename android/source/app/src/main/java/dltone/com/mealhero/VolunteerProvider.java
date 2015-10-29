@@ -22,7 +22,7 @@ public class VolunteerProvider
     private static String CLASS_NAME = MealHeroApplication.class.getSimpleName();
     private static VolunteerProvider volunteerProvider = new VolunteerProvider();
 
-    private VolunteerProvider(){ }
+    public VolunteerProvider(){ }
 
     public static VolunteerProvider getInstance()
     {
@@ -32,6 +32,7 @@ public class VolunteerProvider
     public static List<Volunteer> GetVolunteers()
     {
         final List<Volunteer> volunteerList = new ArrayList<Volunteer>();
+
         try
         {
             IBMQuery<Volunteer> query = IBMQuery.queryForClass(Volunteer.class);
@@ -55,13 +56,16 @@ public class VolunteerProvider
                     }
                     else
                     {
-                        // result success, load that list!
+                        // result success, load list!
                         // Clear local itemList
                         volunteerList.clear();
                         for (IBMDataObject item : objects)
                         {
-                            volunteerList.add((Volunteer)item);
+                            volunteerList.add((Volunteer) item);
                         }
+
+                        Log.e(CLASS_NAME, "Finished query for volunteers with " + volunteerList.size() + " items.");
+
                         // sortItems(volunteerList);
                         // List view thing -> lvArrayAdapter.notifyDataSetChanged();
                     }
@@ -69,10 +73,16 @@ public class VolunteerProvider
                 }
 
             }, Task.UI_THREAD_EXECUTOR); // end continutation definition
+
+            query.find().waitForCompletion();
         }
         catch (IBMDataException e)
         {
             Log.e(CLASS_NAME, "Exception: " + e.getMessage());
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
         }
 
         return volunteerList;

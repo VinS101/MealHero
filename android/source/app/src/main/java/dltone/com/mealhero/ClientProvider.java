@@ -67,10 +67,16 @@ public class ClientProvider
                 }
 
             }, Task.UI_THREAD_EXECUTOR); // end continutation definition
+
+            query.find().waitForCompletion();
         }
         catch (IBMDataException e)
         {
             Log.e(CLASS_NAME, "Exception: " + e.getMessage());
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
         }
 
         return clientList;

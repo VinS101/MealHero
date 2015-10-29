@@ -297,6 +297,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             Volunteer volunteerToBeAdded = new Volunteer("", "", encryptedPassword, mEmail, "Admin");
             mVolunteer = volunteerToBeAdded;
+
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
             MHA.setVolunteerList(query);
