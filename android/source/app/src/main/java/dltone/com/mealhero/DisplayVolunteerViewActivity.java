@@ -1,5 +1,7 @@
 package dltone.com.mealhero;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,28 +14,33 @@ import java.util.concurrent.CountDownLatch;
 
 public class DisplayVolunteerViewActivity extends AppCompatActivity
 {
-    ArrayAdapter<Volunteer> lvArrayAdapter;
-    List<Volunteer> query;
+    private ArrayAdapter<Volunteer> lvArrayAdapter;
+    private List<Volunteer> query;
     MealHeroApplication MHA;
+    private SetupTask setupTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        CountDownLatch latch = new CountDownLatch(1);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_volunteer_view);
+        //Leave UI thread alone
+        SetupTask setup = new SetupTask();
+        setup.execute((Void) null);
+        CountDownLatch latch = new CountDownLatch(1);
 
-        /* Use application class to maintain global state. */
+        setContentView(R.layout.activity_display_volunteer_view);
+            /* Use application class to maintain global state. */
         MHA = (MealHeroApplication) getApplication();
         query = VolunteerProvider.GetVolunteers();
 
-        /* Set up the array adapter for items list view. */
         ListView volunteerListView = (ListView) findViewById(R.id._lvwVolunteerList);
         lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, query);
         volunteerListView.setAdapter(lvArrayAdapter);
         //query = VolunteerProvider.GetVolunteers();
 
         lvArrayAdapter.notifyDataSetChanged();
+        /* Set up the array adapter for items list view. */
+
 
     }
 
@@ -60,5 +67,28 @@ public class DisplayVolunteerViewActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class SetupTask extends AsyncTask<Void, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(Void... params)
+        {
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success)
+        {
+            setupTask = null;
+
+        }
+
+        @Override
+        protected void onCancelled()
+        {
+            setupTask = null;
+        }
     }
 }
