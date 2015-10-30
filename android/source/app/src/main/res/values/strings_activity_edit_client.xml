@@ -6,4 +6,5 @@
     <string name="client_age_hint">Age</string>
     <string name="client_address_hint">Address</string>
     <string name="client_diet_hint">Diet</string>
+    <string name="button_done_text">DONE</string>
 </resources>

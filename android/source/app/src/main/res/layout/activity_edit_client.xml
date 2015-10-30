@@ -26,14 +26,14 @@
 
         <EditText
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/client_edit_text_container_height"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:inputType="textPersonName"
             android:gravity="center"
             android:background="@drawable/rounded_edit_text"
             android:layout_toRightOf="@id/client_edit_image"
-            android:paddingTop="@dimen/padding_top"
             android:paddingLeft="@dimen/padding_left"
             android:textSize="@dimen/client_edit_name_font_size"
             android:text="First Last"
@@ -54,7 +54,7 @@
 
     <EditText
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/client_edit_text_container_height"
         android:inputType="textPostalAddress"
         android:layout_marginTop="@dimen/padding_top"
         android:layout_marginBottom="@dimen/padding_bottom"
@@ -78,7 +78,7 @@
 
     <EditText
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/client_edit_text_container_height"
         android:layout_marginTop="@dimen/padding_top"
         android:layout_marginBottom="@dimen/padding_bottom"
         android:background="@drawable/rounded_edit_text"
@@ -103,7 +103,7 @@
 
     <EditText
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/client_edit_text_container_height"
         android:layout_marginTop="@dimen/padding_top"
         android:layout_marginBottom="@dimen/padding_bottom"
         android:background="@drawable/rounded_edit_text"
@@ -113,6 +113,17 @@
         android:textSize="@dimen/client_edit_text_font_size"
         android:inputType="text"
         android:id="@+id/client_edit_diet_box"
+        />
+    
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/client_edit_button_height"
+        android:layout_marginTop="@dimen/client_edit_button_margin_top"
+        android:layout_marginLeft="@dimen/client_edit_button_margin"
+        android:layout_marginRight="@dimen/client_edit_button_margin"
+        android:text="@string/button_done_text"
+        android:textSize="@dimen/client_edit_name_font_size"
+        android:id="@+id/client_edit_button"
         />
 
 </LinearLayout>

@@ -1,6 +1,5 @@
 package dltone.com.mealhero;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,8 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
+
 
 /**
  * Created by costin on 10/6/2015.
@@ -62,6 +60,12 @@ public class ClientListActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        clientAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -16,8 +16,6 @@ public class EditVolunteerActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_volunteer);
-
-
     }
 
     @Override

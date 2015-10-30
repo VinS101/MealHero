@@ -5,6 +5,7 @@ import android.util.Log;
 import com.ibm.mobile.services.data.IBMDataException;
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMQuery;
+import com.ibm.mobile.services.data.IBMQueryCondition;
 
 import org.json.JSONObject;
 
