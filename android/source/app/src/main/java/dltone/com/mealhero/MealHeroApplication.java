@@ -130,4 +130,51 @@ public final class MealHeroApplication extends Application
     {
         clientList = list;
     }
+
+
+    /**
+     * Path to the map resources directory on the device
+     */
+    private String mapResourcesDirPath;
+
+    public void setMapResourcesDirPath(String mapResourcesDirPath)
+    {
+        this.mapResourcesDirPath = mapResourcesDirPath;
+    }
+
+    public String getMapResourcesDirPath() {
+        return mapResourcesDirPath;
+    }
+
+
+    /**
+     * Absolute path to the file used for mapCreator - mapcreatorFile.json
+     */
+    private String mapCreatorFilePath;
+
+    public String getMapCreatorFilePath()
+    {
+        return mapCreatorFilePath;
+    }
+
+    public void setMapCreatorFilePath(String mapCreatorFilePath)
+    {
+        this.mapCreatorFilePath = mapCreatorFilePath;
+    }
+
+
+    /**
+     * Object for accessing application preferences
+     */
+    private ApplicationPreferences appPrefs;
+
+    public ApplicationPreferences getAppPrefs()
+    {
+        return appPrefs;
+    }
+
+    public void setAppPrefs(ApplicationPreferences appPrefs)
+    {
+        this.appPrefs = appPrefs;
+    }
 }

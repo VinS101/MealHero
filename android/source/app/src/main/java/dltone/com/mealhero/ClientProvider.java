@@ -60,6 +60,8 @@ public class ClientProvider
                         {
                             clientList.add((Client)item);
                         }
+
+                        Log.e(CLASS_NAME, "Finished query for clients with " + clientList.size() + " items.");
                         // sortItems(volunteerList);
                         // List view thing -> lvArrayAdapter.notifyDataSetChanged();
                     }

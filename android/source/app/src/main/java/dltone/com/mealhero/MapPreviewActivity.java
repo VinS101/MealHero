@@ -1,9 +1,10 @@
 package dltone.com.mealhero;
 
-
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,22 +13,37 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.skobbler.ngx.SKDeveloperKeyException;
+import com.skobbler.ngx.SKMaps;
+import com.skobbler.ngx.SKMapsInitSettings;
+import com.skobbler.ngx.SKPrepareMapTextureListener;
+import com.skobbler.ngx.SKPrepareMapTextureThread;
+import com.skobbler.ngx.map.SKMapViewStyle;
+import com.skobbler.ngx.navigation.SKAdvisorSettings;
+import com.skobbler.ngx.util.SKLogging;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapPreviewActivity extends AppCompatActivity
+public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMapTextureListener
 {
     Volunteer mVolunteerToDisplay;
     ArrayAdapter<Client> lvArrayAdapter;
     List<Client> query = new ArrayList<>();
     MealHeroApplication MHApp;
 
+    private static final String TAG = "MapPreviewActivity";
     private static final int MENU_ADMIN = Menu.FIRST;
     private static final int MENU_SETTINGS = Menu.FIRST + 1;
     private static final int MENU_LOGOUT = Menu.FIRST + 2;
+    public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
+
+    private String mapResourceDirPath;
+
     private Button _btnNavigate;
 
-    public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,8 +66,6 @@ public class MapPreviewActivity extends AppCompatActivity
         lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, query);
         volunteerListView.setAdapter(lvArrayAdapter);
 
-        //query = ClientProvider.GetClients();
-
         lvArrayAdapter.notifyDataSetChanged();
 
         _btnNavigate = (Button) findViewById(R.id._btnNavigate);
@@ -63,6 +77,65 @@ public class MapPreviewActivity extends AppCompatActivity
             }
         });
 
+        _btnNavigate.setEnabled(false);
+
+        /* Initialize SKMaps */
+        String applicationPath = chooseStoragePath(this);
+
+        if (applicationPath != null)
+        {
+            mapResourceDirPath = applicationPath + "/" + "SKMaps/";
+            final SKPrepareMapTextureThread prepThread = new SKPrepareMapTextureThread(this, mapResourceDirPath, "SKMaps.zip", this);
+            prepThread.start();
+        }
+        else
+        {
+            // show a dialog and finish
+        }
+
+
+    }
+
+    @Override
+    public void onMapTexturesPrepared(final boolean prepared)
+    {
+        // get object holding map initialization settings
+        SKMapsInitSettings initMapSettings = new SKMapsInitSettings();
+
+        final String  mapResourcesPath = mapResourceDirPath;
+        // set path to map resources and initial map style
+        initMapSettings.setMapResourcesPaths(mapResourcesPath,
+                new SKMapViewStyle(mapResourcesPath + "daystyle/", "daystyle.json"));
+
+        final SKAdvisorSettings advisorSettings = initMapSettings.getAdvisorSettings();
+        advisorSettings.setAdvisorConfigPath(mapResourcesPath +"/Advisor");
+        advisorSettings.setResourcePath(mapResourcesPath +"/Advisor/Languages");
+        advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
+        advisorSettings.setAdvisorVoice("en");
+        initMapSettings.setAdvisorSettings(advisorSettings);
+
+        // EXAMPLE OF ADDING PREINSTALLED MAPS
+//         initMapSettings.setPreinstalledMapsPath(((DemoApplication)context.getApplicationContext()).getMapResourcesDirPath()
+//         + "/PreinstalledMaps");
+        // initMapSettings.setConnectivityMode(SKMaps.CONNECTIVITY_MODE_OFFLINE);
+
+        // Example of setting light maps
+        // initMapSettings.setMapDetailLevel(SKMapsInitSettings.SK_MAP_DETAIL_LIGHT);
+        // initialize map using the settings object
+
+        try
+        {
+            SKMaps.getInstance().initializeSKMaps(this, initMapSettings);
+            _btnNavigate.setEnabled(true);
+        }
+        catch (SKDeveloperKeyException exception)
+        {
+            exception.printStackTrace();
+            //showApiKeyErrorDialog(context);
+        }
+
+        // if prepared is true means that the resources are in place and
+        //the library can be initialized
     }
 
     @Override
@@ -126,6 +199,92 @@ public class MapPreviewActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public static final long KILO = 1024;
+
+    public static final long MEGA = KILO * KILO;
+
+    /**
+     * Find the best storage path based on device properties
+     * @param context
+     * @return
+     */
+    public static String chooseStoragePath(Context context) {
+        if (getAvailableMemorySize(Environment.getDataDirectory().getPath()) >= 50 * MEGA)
+        {
+            if (context != null && context.getFilesDir() != null)
+            {
+                return context.getFilesDir().getPath();
+            }
+        }
+        else
+        {
+            if ((context != null) && (context.getExternalFilesDir(null) != null))
+            {
+                if (getAvailableMemorySize(context.getExternalFilesDir(null).toString()) >= 50 * MEGA)
+                {
+                    return context.getExternalFilesDir(null).toString();
+                }
+            }
+        }
+
+        SKLogging.writeLog(TAG, "There is not enough memory on any storage, but return internal memory",
+                SKLogging.LOG_DEBUG);
+
+        if (context != null && context.getFilesDir() != null) {
+            return context.getFilesDir().getPath();
+        }
+        else
+        {
+            if ((context != null) && (context.getExternalFilesDir(null) != null))
+            {
+                return context.getExternalFilesDir(null).toString();
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * get the available internal memory size
+     *
+     * @return available memory size in bytes
+     */
+    public static long getAvailableMemorySize(String path) {
+        StatFs statFs = null;
+        try {
+            statFs = new StatFs(path);
+        } catch (IllegalArgumentException ex) {
+            SKLogging.writeLog("SplashActivity", "Exception when creating StatF ; message = " + ex,
+                    SKLogging.LOG_DEBUG);
+        }
+        if (statFs != null) {
+            Method getAvailableBytesMethod = null;
+            try {
+                getAvailableBytesMethod = statFs.getClass().getMethod("getAvailableBytes");
+            } catch (NoSuchMethodException e) {
+                SKLogging.writeLog(TAG, "Exception at getAvailableMemorySize method = " + e.getMessage(),
+                        SKLogging.LOG_DEBUG);
+            }
+
+            if (getAvailableBytesMethod != null) {
+                try {
+                    SKLogging.writeLog(TAG, "Using new API for getAvailableMemorySize method !!!", SKLogging.LOG_DEBUG);
+                    return (Long) getAvailableBytesMethod.invoke(statFs);
+                } catch (IllegalAccessException e) {
+                    return (long) statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
+                } catch (InvocationTargetException e) {
+                    return (long) statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
+                }
+            } else {
+                return (long) statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
+            }
+        } else {
+            return 0;
+        }
+    }
+
     private void openNavigation()
     {
         Intent intent = new Intent(MapPreviewActivity.this, NavigationActivity.class);
@@ -151,4 +310,5 @@ public class MapPreviewActivity extends AppCompatActivity
         Intent intent = new Intent(MapPreviewActivity.this, MapPreviewActivity.class);
         startActivity(intent);
     }
+
 }
