@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "dltone.com.mealhero"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -23,6 +23,12 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.google.android.gms:play-services:8.1.0'
+    // IBM cloud jars
+    compile 'com.ibm.mobile.services:ibmpush:1.+'
+    compile 'com.ibm.mobile.services:ibmcloudcode:1.+'
+    compile 'com.ibm.mobile.services:ibmdata:1.+'
+    compile 'com.ibm.mobile.services:ibmbluemix:1.+'
+    compile 'com.ibm.mobile.services:ibmfilesync:1.+'
 }
 
 repositories {
