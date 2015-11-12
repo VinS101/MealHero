@@ -1,8 +1,10 @@
 package dltone.com.mealhero;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.skobbler.ngx.SKCoordinate;
@@ -16,6 +18,7 @@ import com.skobbler.ngx.map.SKMapSurfaceView;
 import com.skobbler.ngx.map.SKMapViewHolder;
 import com.skobbler.ngx.map.SKPOICluster;
 import com.skobbler.ngx.map.SKScreenPoint;
+import com.skobbler.ngx.navigation.SKAdvisorSettings;
 import com.skobbler.ngx.navigation.SKNavigationListener;
 import com.skobbler.ngx.navigation.SKNavigationManager;
 import com.skobbler.ngx.navigation.SKNavigationSettings;
@@ -29,9 +32,13 @@ import com.skobbler.ngx.routing.SKRouteJsonAnswer;
 import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
+import com.skobbler.ngx.routing.SKViaPoint;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class NavigationActivity extends FragmentActivity implements SKCurrentPositionListener, SKMapSurfaceListener, SKRouteListener, SKNavigationListener
 {
@@ -54,6 +61,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
      * timestamp for the last currentPosition
      */
     private long currentPositionTime;
+
+    /**
+     *  flag for initializing navigation after location get
+     */
+    private Boolean _locationInitialized = false;
 
     /**
      * Tells if a navigation is ongoing
@@ -102,16 +114,20 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
             return;
         }*/
 
-        launchRouteCalculation();
+        //launchRouteCalculation();
 
     }
 
     private void launchRouteCalculation() {
+
+
         // get a route object and populate it with the desired properties
         SKRouteSettings route = new SKRouteSettings();
         // set start and destination points
-        route.setStartCoordinate(new SKCoordinate(-122.397674, 37.761278));
-        route.setDestinationCoordinate(new SKCoordinate(-122.448270, 37.738761));
+        //route.setStartCoordinate(new SKCoordinate(-122.397674, 37.761278));
+        //route.setDestinationCoordinate(new SKCoordinate(-122.448270, 37.738761));
+        route.setStartCoordinate(new SKCoordinate(currentPosition.getCoordinate().getLongitude(), currentPosition.getCoordinate().getLatitude()));
+        route.setDestinationCoordinate(new SKCoordinate(-80.107222, 26.371595));
         // set the number of routes to be calculated
         route.setNoOfRoutes(1);
         // set the route mode
@@ -121,9 +137,180 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         // set the route listener to be notified of route calculation
         // events
         SKRouteManager.getInstance().setRouteListener(this);
+
+        SKViaPoint point1 = new SKViaPoint(1, new SKCoordinate(-80.146659, 26.618922));
+
+        // using SKViaPoint to add waypoints
+        List<SKViaPoint> points = new List<SKViaPoint>()
+        {
+            //region things
+            @Override
+            public void add(int location, SKViaPoint object)
+            {
+
+            }
+
+            @Override
+            public boolean add(SKViaPoint object)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(int location, Collection<? extends SKViaPoint> collection)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends SKViaPoint> collection)
+            {
+                return false;
+            }
+
+            @Override
+            public void clear()
+            {
+
+            }
+
+            @Override
+            public boolean contains(Object object)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> collection)
+            {
+                return false;
+            }
+
+            @Override
+            public SKViaPoint get(int location)
+            {
+                return null;
+            }
+
+            @Override
+            public int indexOf(Object object)
+            {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty()
+            {
+                return false;
+            }
+
+            @NonNull
+            @Override
+            public Iterator<SKViaPoint> iterator()
+            {
+                return null;
+            }
+
+            @Override
+            public int lastIndexOf(Object object)
+            {
+                return 0;
+            }
+
+            @Override
+            public ListIterator<SKViaPoint> listIterator()
+            {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public ListIterator<SKViaPoint> listIterator(int location)
+            {
+                return null;
+            }
+
+            @Override
+            public SKViaPoint remove(int location)
+            {
+                return null;
+            }
+
+            @Override
+            public boolean remove(Object object)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> collection)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> collection)
+            {
+                return false;
+            }
+
+            @Override
+            public SKViaPoint set(int location, SKViaPoint object)
+            {
+                return null;
+            }
+
+            @Override
+            public int size()
+            {
+                return 0;
+            }
+
+            @NonNull
+            @Override
+            public List<SKViaPoint> subList(int start, int end)
+            {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public Object[] toArray()
+            {
+                return new Object[0];
+            }
+
+            @NonNull
+            @Override
+            public <T> T[] toArray(T[] array)
+            {
+                return null;
+            }
+            //endregion
+        };
+        points.add(point1);
+        //route.setViaPoints(points);
+        //SKRouteManager.getInstance().addViaPoint(point1, -1);
+
         // pass the route to the calculation routine
         SKRouteManager.getInstance().calculateRoute(route);
 
+
+
+
+        /* // using pointsList for waypoints
+        //list of points
+        List pointsList = new ArrayList();
+        pointsList.add(new SKPosition(23.609239, 46.767936));
+        pointsList.add(new SKPosition(23.609149, 46.769281));
+        pointsList.add(new SKPosition(23.605704, 46.768879));
+        // set the route listener
+        SKRouteManager.getInstance().setRouteListener(this);
+        SKRouteSettings routeSettings = new SKRouteSettings();
+        //set route mode
+        routeSettings.setRouteMode(SKRouteSettings.SKRouteMode.CAR_FASTEST);
+        SKRouteManager.getInstance().calculateRouteWithPoints(pointsList, routeSettings);
+        */
     }
 
     @Override
@@ -309,6 +496,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
                 onGPSSignalRecovered();
             }
         }
+        if (!_locationInitialized)
+        {
+            _locationInitialized = true;
+            launchRouteCalculation();
+        }
     }
 
 
@@ -344,6 +536,13 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onAllRoutesCompleted()
     {
+        final SKAdvisorSettings advisorSettings = new SKAdvisorSettings();
+        advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
+        advisorSettings.setAdvisorConfigPath(app.getMapResourcesDirPath() + "/Advisor");
+        advisorSettings.setResourcePath(app.getMapResourcesDirPath()+"/Advisor/Languages");
+        advisorSettings.setAdvisorVoice("en");
+        advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
+
         SKNavigationSettings navigationSettings = new SKNavigationSettings();
         navigationSettings.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
 
