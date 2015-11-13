@@ -1,11 +1,15 @@
 package dltone.com.mealhero;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -15,7 +19,7 @@ import java.util.concurrent.CountDownLatch;
 public class DisplayVolunteerViewActivity extends AppCompatActivity
 {
     private ArrayAdapter<Volunteer> lvArrayAdapter;
-    private List<Volunteer> query;
+    private List<Volunteer> volunteers;
     MealHeroApplication MHA;
     private SetupTask setupTask = null;
 
@@ -29,19 +33,48 @@ public class DisplayVolunteerViewActivity extends AppCompatActivity
         CountDownLatch latch = new CountDownLatch(1);
 
         setContentView(R.layout.activity_display_volunteer_view);
-            /* Use application class to maintain global state. */
+
+        /* Use application class to maintain global state. */
         MHA = (MealHeroApplication) getApplication();
-        query = VolunteerProvider.GetVolunteers();
+        if(MHA.getVolunteerList().size() == 0) {
+            MHA.setVolunteerList(VolunteerProvider.GetVolunteers());
+        }
+
+        volunteers = MHA.getVolunteerList();
 
         ListView volunteerListView = (ListView) findViewById(R.id._lvwVolunteerList);
-        lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, query);
+        lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, volunteers);
         volunteerListView.setAdapter(lvArrayAdapter);
-        //query = VolunteerProvider.GetVolunteers();
 
         lvArrayAdapter.notifyDataSetChanged();
         /* Set up the array adapter for items list view. */
 
+        //Set item click listener
+        volunteerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), EditVolunteerActivity.class);
+                intent.putExtra("ItemLocation", (int) id);
+                startActivityForResult(intent, MealHeroApplication.EDIT_ACTIVITY_RC);
+            }
+        });
 
+
+    }
+
+    /**
+     * On return from other activity, check result code to determine behavior.
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (resultCode)
+        {
+		/* If an edit has been made, notify that the data set has changed. */
+            case MealHeroApplication.EDIT_ACTIVITY_RC:
+                lvArrayAdapter.notifyDataSetChanged();
+                break;
+        }
     }
 
     @Override
@@ -82,7 +115,6 @@ public class DisplayVolunteerViewActivity extends AppCompatActivity
         protected void onPostExecute(final Boolean success)
         {
             setupTask = null;
-
         }
 
         @Override

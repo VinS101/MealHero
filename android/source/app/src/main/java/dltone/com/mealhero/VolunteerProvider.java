@@ -135,7 +135,6 @@ public class VolunteerProvider
                 else
                 {
                     // Produce some callback of delete success
-
                 }
                 return null;
             }

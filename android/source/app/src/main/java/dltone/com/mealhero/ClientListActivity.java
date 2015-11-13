@@ -49,12 +49,11 @@ public class ClientListActivity extends AppCompatActivity
         //Notify adapter of data change
         clientAdapter.notifyDataSetChanged();
 
-        final Context context = this;
         //Set item click listener
         mClientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(context, ClientEditActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ClientEditActivity.class);
                 Client client = clients.get((int) id);
                 intent.putExtra("CLIENT", client.toHashMap());
                 startActivity(intent);

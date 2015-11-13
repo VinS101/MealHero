@@ -1,17 +1,24 @@
 package dltone.com.mealhero;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * w-garcia 10/1/2015.
  * S-Shahrdar 10/6/2015
+ * costin 11/6/2015
  */
 @IBMDataObjectSpecialization("Volunteer")
-public class Volunteer  extends IBMDataObject implements Serializable
+public class Volunteer  extends IBMDataObject implements Serializable//, Parcelable
 {
     //region variables
     public static final String CLASS_NAME = "Volunteer";
@@ -35,6 +42,7 @@ public class Volunteer  extends IBMDataObject implements Serializable
         setObject(PASSWORD, (vPassword != null) ? vPassword : "");
         setObject(EMAIL, (vEmail != null) ? vEmail : "");
         setObject(PERMISSION, (vPermission != null) ? vPermission : "");
+        setObject(LISTCLIENTS, new ArrayList<Client>());
     }
 
     //region Accessors
@@ -108,6 +116,18 @@ public class Volunteer  extends IBMDataObject implements Serializable
         setObject(NAME, (volunteerName != null) ? volunteerName : "" );
     }
 
+    public void setUsername(String userName) {
+        setObject(USERNAME, (userName != null) ? userName : "" );
+    }
+
+    public void setEmail(String email) {
+        setObject(EMAIL, (email != null) ? email : "");
+    }
+
+    public void setPermission(String permission) {
+        setObject(PERMISSION, (permission != null) ? permission : "");
+    }
+
     public void setClientList(List<Client> list)
     {
         setObject(LISTCLIENTS, list);
@@ -115,7 +135,5 @@ public class Volunteer  extends IBMDataObject implements Serializable
 
 
     //endregion
-
-
 
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="volunteer_edit_name_label">NAME</string>
+    <string name="volunteer_edit_name_hint">Name</string>
+    <string name="volunteer_edit_email_label">EMAIL</string>
+    <string name="volunteer_edit_email_hint">example@company.com</string>
+    <string name="volunteer_edit_username_hint">Username</string>
+    <string name="volunteer_edit_username_label">USERNAME</string>
+    <string name="volunteer_edit_password_hint">Password</string>
+    <string name="volunteer_edit_password_label">PASSWORD</string>
+    <string name="volunteer_edit_permission_label">PERMISSION</string>
+    <string name="volunteer_edit_permission_hint">Permission</string>
+    <string name="button_assign_clients_text">Assign Clients</string>
+    <string name="menu_delete">Delete</string>
+</resources>

@@ -31,8 +31,8 @@ public final class MealHeroApplication extends Application
     public static final int EDIT_ACTIVITY_RC = 1;
     private static final String CLASS_NAME = MealHeroApplication.class.getSimpleName();
 
-    public List<Volunteer> volunteerList = new ArrayList<>();
-    public List<Client> clientList = new ArrayList<>();
+    private List<Volunteer> volunteerList = new ArrayList<>();
+    private List<Client> clientList = new ArrayList<>();
 
     public MealHeroApplication() {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
