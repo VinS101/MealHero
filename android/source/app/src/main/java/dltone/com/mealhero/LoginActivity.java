@@ -67,10 +67,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent)
+            {
+                if (id == R.id.login || id == EditorInfo.IME_NULL)
+                {
                     attemptLogin();
                     return true;
                 }
@@ -90,7 +93,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
         mProgressView = findViewById(R.id.login_progress);
 
         MHA = (MealHeroApplication) getApplication();
-        MHA.setClientList(ClientProvider.GetClients());
     }
 
     private void populateAutoComplete()
@@ -315,6 +317,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             if (success)
             {
+                MHA.setClientList(ClientProvider.GetClients());
                 Intent intent = null;
                 Bundle b = null;
                 if(mVolunteer.getPermission().equalsIgnoreCase("Admin"))
