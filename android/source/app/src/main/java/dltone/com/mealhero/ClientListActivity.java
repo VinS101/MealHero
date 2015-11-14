@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -21,7 +22,6 @@ public class ClientListActivity extends AppCompatActivity
     private ListView mClientListView;
 
     //List of Clients
-    private ArrayList<Client> clients;
     private ClientListAdapter clientAdapter;
 
     //App Reference
@@ -39,11 +39,8 @@ public class ClientListActivity extends AppCompatActivity
         //Get references to UI elements
         mClientListView = (ListView) findViewById(R.id.clientListView);
 
-        //Get list of Clients
-        clients = (ArrayList) MHApp.getClientList();
-
         //Set up array adapter
-        clientAdapter = new ClientListAdapter(this, clients);
+        clientAdapter = new ClientListAdapter(this, (ArrayList<Client>) MHApp.getClientList());
         mClientListView.setAdapter(clientAdapter);
 
         //Notify adapter of data change
@@ -54,17 +51,25 @@ public class ClientListActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), ClientEditActivity.class);
-                Client client = clients.get((int) id);
-                intent.putExtra("CLIENT", client.toHashMap());
-                startActivity(intent);
+                intent.putExtra("ItemLocation", (int) id);
+                startActivityForResult(intent, MealHeroApplication.EDIT_ACTIVITY_RC);
             }
         });
     }
 
+    /**
+     * On return from other activity, check result code to determine behavior.
+     */
     @Override
-    public void onResume(){
-        super.onResume();
-        clientAdapter.notifyDataSetChanged();
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (resultCode)
+        {
+		/* If an edit has been made, notify that the data set has changed. */
+            case MealHeroApplication.EDIT_ACTIVITY_RC:
+                clientAdapter.notifyDataSetChanged();
+                break;
+        }
     }
 
     @Override
