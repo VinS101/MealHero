@@ -8,6 +8,7 @@ import com.ibm.mobile.services.data.IBMQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -84,11 +85,16 @@ public class ClientProvider
         return clientList;
     }
 
-    public static void RegisterClient(Client clientToBeRegistered)
-    {
+    public static void RegisterClient(Client clientToBeRegistered) {
         if (clientToBeRegistered == null) return;
 
-        clientToBeRegistered.save().continueWith(new Continuation<IBMDataObject, Void>()
+        SaveClient(clientToBeRegistered);
+    }
+
+    public static void SaveClient(Client clientToSave) {
+        if(clientToSave == null) return;
+
+        clientToSave.save().continueWith(new Continuation<IBMDataObject, Void>()
         {
             @Override
             public Void then(Task<IBMDataObject> task) throws Exception
@@ -103,33 +109,26 @@ public class ClientProvider
                 }
                 else
                 {
-                    // Produce some callback of Registration success
+
                 }
                 return null;
             }
         });
-
     }
 
-    public static void DeleteClient(Client clientToBeDeleted)
-    {
+    public static void DeleteClient(Client clientToBeDeleted) {
         if (clientToBeDeleted == null) return;
+
         clientToBeDeleted.delete().continueWith(new Continuation<IBMDataObject, Void>()
         {
             @Override
             public Void then(Task<IBMDataObject> task) throws Exception
             {
-                if (task.isCancelled())
-                {
+                if (task.isCancelled()) {
                     Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
-                }
-                else if (task.isFaulted())
-                {
+                } else if (task.isFaulted()) {
                     Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
-                }
-                else
-                {
-                    // Produce some callback of delete success
+                } else {
 
                 }
                 return null;

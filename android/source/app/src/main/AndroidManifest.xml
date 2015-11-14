@@ -57,8 +57,8 @@
         <activity
             android:name=".EditVolunteerActivity"
             android:label="@string/title_activity_edit_volunteer"
-            android:theme="@style/Theme.CustomActionBar"
-            android:parentActivityName=".AdministrationActivity" >
+            android:parentActivityName=".AdministrationActivity"
+            android:theme="@android:style/Theme.Holo.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dltone.com.mealhero.DisplayVolunteerViewActivity" />
@@ -92,10 +92,8 @@
         <activity
             android:name=".ClientEditActivity"
             android:label="@string/title_activity_client_edit"
-            android:parentActivityName=".ClientListActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="dltone.com.mealhero.ClientEditActivity" />
+            android:parentActivityName=".ClientListActivity"
+            android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
 
         <meta-data

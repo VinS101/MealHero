@@ -19,8 +19,7 @@ public class Client extends IBMDataObject implements Serializable
 
     public Client() { }
 
-    public Client(String pName, String pAddress, String pDiet, String pAge)
-    {
+    public Client(String pName, String pAddress, String pDiet, String pAge) {
         setName(pName);
         setAddress(pAddress);
         setDietPreference(pDiet);
@@ -28,36 +27,8 @@ public class Client extends IBMDataObject implements Serializable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return (String) getObject(NAME);
-    }
-    public HashMap<String, String> toHashMap()
-    {
-        HashMap<String, String> clientMap = new HashMap<String, String>();
-        clientMap.put("Name", getName());
-        clientMap.put("Address", getAddress());
-        clientMap.put("Age", getAge());
-        clientMap.put("Diet", getDiet());
-
-        return clientMap;
-    }
-
-    @Override
-    public boolean equals(Object other)
-    {
-        if(this == other)
-            return true;
-
-        if(!(other.getClass() == this.getClass()))
-            return false;
-
-        Client c = (Client) other;
-
-        if(this.getName().equals(c.getName()) && this.getAddress().equals(c.getAddress()) && this.getAge().equals(c.getAge())) {
-            return true;
-        }
-        else return false;
     }
 
     public String getName()

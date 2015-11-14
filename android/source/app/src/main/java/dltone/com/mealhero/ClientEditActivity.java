@@ -1,21 +1,22 @@
 package dltone.com.mealhero;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.concurrent.Callable;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -23,11 +24,21 @@ import bolts.Task;
 /**
  * Created by costin on 10/22/2015.
  */
-public class ClientEditActivity extends AppCompatActivity
+public class ClientEditActivity extends Activity
 {
     String CLASS_NAME = this.getClass().getName();
 
-    Map<String,String> clientInfo;
+    //Local copy of Client
+    Client client;
+
+    //App reference
+    MealHeroApplication MHApp;
+
+    //Action Mode
+    ActionMode mActionMode;
+
+    //Action Mode Callback
+    ActionMode.Callback mActionModeCallback;
 
     //UI Elements
     ImageView userImage;
@@ -35,7 +46,6 @@ public class ClientEditActivity extends AppCompatActivity
     EditText addressTextBox;
     EditText ageTextBox;
     EditText dietTextBox;
-    Button doneButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,63 +59,103 @@ public class ClientEditActivity extends AppCompatActivity
         addressTextBox = (EditText) findViewById(R.id.client_edit_address_box);
         ageTextBox = (EditText) findViewById(R.id.client_edit_age_box);
         dietTextBox = (EditText) findViewById(R.id.client_edit_diet_box);
-        doneButton = (Button) findViewById(R.id.client_edit_button);
+
+        //Get App Reference
+        MHApp = (MealHeroApplication) getApplication();
 
         //Get Selected Client
-        clientInfo = (Map<String, String>) getIntent().getSerializableExtra("CLIENT");
+        int index = getIntent().getIntExtra("ItemLocation", -1);
+        if(index >= 0) {
+            client = MHApp.getClientList().get(index);
+        } else {
+            client = null;
+        }
 
         //Set UI values
-        nameTextBox.setText(clientInfo.get("Name"));
-        addressTextBox.setText(clientInfo.get("Address"));
-        ageTextBox.setText(clientInfo.get("Age"));
-        dietTextBox.setText(clientInfo.get("Diet"));
+        nameTextBox.setText(client.getName());
+        addressTextBox.setText(client.getAddress());
+        ageTextBox.setText(client.getAge());
+        dietTextBox.setText(client.getDiet());
 
-        doneButton.setOnClickListener(new View.OnClickListener() {
+        //Implement Contextual Action Bar
+        mActionModeCallback = new ActionMode.Callback() {
+
             @Override
-            public void onClick(View v) {
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.setTitle("Edit Client");
+                getMenuInflater().inflate(R.menu.menu_edit_client, menu);
+                return true;
+            }
 
-                ////Get reference to Meal Hero App
-                final MealHeroApplication MHApp = (MealHeroApplication) getApplication();
-                //Get list of Clients
-                ArrayList<Client> clients = (ArrayList) MHApp.getClientList();
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
 
-                Client clientToFind = new Client(clientInfo.get("Name"), clientInfo.get("Address"), clientInfo.get("Diet"), clientInfo.get("Age"));
-                Client clientToEdit = null;
-                for(int i = 0; i < clients.size(); i++) {
-                    if(clients.get(i).equals(clientToFind)) {
-                        clientToEdit = clients.get(i);
-                        break;
-                    }
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.menu_delete_client:
+                        if(client != null) {
+                            MHApp.getClientList().remove(client);
+                            client.delete().continueWith(new Continuation<IBMDataObject, Void>() {
+                                @Override
+                                public Void then(Task<IBMDataObject> task) throws Exception {
+                                    if (task.isCancelled()) {
+                                        Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
+                                    } else if (task.isFaulted()) {
+                                        Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
+                                    } else {
+
+                                    }
+                                    return null;
+                                }
+                            });
+                            Toast.makeText(MHApp.getApplicationContext(), "Client deleted!", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
+                        }
+                        Intent returnIntent = new Intent();
+                        setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+                        finish();
+                        return true;
+                    default:
+                        return false;
                 }
+            }
 
-                if(clientToEdit != null) {
-                    clientToEdit.setName(nameTextBox.getText().toString());
-                    clientToEdit.setAddress(addressTextBox.getText().toString());
-                    clientToEdit.setDietPreference(dietTextBox.getText().toString());
-                    clientToEdit.setAge(ageTextBox.getText().toString());
-                    clientToEdit.save().continueWith(new Continuation<IBMDataObject, Void>() {
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                if (client != null) {
+                    client.setName(nameTextBox.getText().toString());
+                    client.setAddress(addressTextBox.getText().toString());
+                    client.setDietPreference(dietTextBox.getText().toString());
+                    client.setAge(ageTextBox.getText().toString());
+                    client.save().continueWith(new Continuation<IBMDataObject, Void>() {
                         @Override
                         public Void then(Task<IBMDataObject> task) throws Exception {
                             if (task.isCancelled()) {
-                                Log.e(CLASS_NAME, "Exception: " + task.toString() + " was cancelled.");
+                                Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
                             } else if (task.isFaulted()) {
-                                Log.e(CLASS_NAME, "Exception: " + task.getError().getMessage());
+                                Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
                             } else {
-                                Intent returnIntent = new Intent();
-                                setResult(MHApp.EDIT_ACTIVITY_RC, returnIntent);
-                                Toast.makeText(getApplicationContext(), "Client edit successful!", Toast.LENGTH_SHORT).show();
-                                finish();
+
                             }
                             return null;
                         }
-
-                    }, Task.UI_THREAD_EXECUTOR);
+                    });
+                    Toast.makeText(MHApp.getApplicationContext(), "Client changes saved!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MHApp.getApplicationContext(), "Error! Could not save changes!", Toast.LENGTH_LONG).show();
                 }
-                else {
-                    Toast.makeText(getApplicationContext(), "Error! Could not save changes!", Toast.LENGTH_LONG).show();
-                }
+                Intent returnIntent = new Intent();
+                setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+                finish();
+                mode.finish();
             }
-        });
-    }
+        };
 
+        //Get Action Mode and show Contextual Action Bar
+        mActionMode = startActionMode(mActionModeCallback);
+    }
 }

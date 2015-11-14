@@ -27,10 +27,11 @@ import bolts.Task;
  * costin 11/6/2015
  */
 
-public class EditVolunteerActivity extends AppCompatActivity
+public class EditVolunteerActivity extends Activity
 {
     String CLASS_NAME = this.getClass().getName();
 
+    //Volunteer reference
     Volunteer volunteer;
 
     //UI Elements
@@ -41,8 +42,14 @@ public class EditVolunteerActivity extends AppCompatActivity
     EditText permissionTextBox;
     Button assignClients;
 
-    //APP
+    //App reference
     MealHeroApplication MHApp;
+
+    //Action Mode
+    ActionMode mActionMode;
+
+    //Action Mode Callback
+    ActionMode.Callback mActionModeCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +65,10 @@ public class EditVolunteerActivity extends AppCompatActivity
         permissionTextBox = (EditText) findViewById(R.id.volunteer_edit_permission_box);
         assignClients = (Button) findViewById(R.id.volunteer_edit_button);
 
-        //App
+        //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
 
-        //Get Volunteer
+        //Get Volunteer Reference
         int index = getIntent().getIntExtra("ItemLocation", 0);
         volunteer = MHApp.getVolunteerList().get(index);
 
@@ -81,30 +88,57 @@ public class EditVolunteerActivity extends AppCompatActivity
             }
         });
 
-    }
+        //Implement Contextual Action Bar
+        mActionModeCallback = new ActionMode.Callback() {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_volunteer, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case android.R.id.home:
-                //Done editing. Save Volunteer.
-                saveVolunteer(volunteer);
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.setTitle("Edit Volunteer");
+                getMenuInflater().inflate(R.menu.menu_edit_volunteer, menu);
                 return true;
-            case R.id.menu_delete_volunteer:
-                //Delete volunteer
-                deleteVolunteer(volunteer);
-                //Return to parent Activity
-                return true;
-            default:
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                 return false;
-        }
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.menu_delete_volunteer:
+                        if(volunteer != null) {
+                            deleteVolunteer(volunteer);
+                            Toast.makeText(getApplicationContext(), "Volunteer delete successful!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
+                        }
+                        Intent returnIntent = new Intent();
+                        setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+                        finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                if (volunteer != null) {
+                    saveVolunteer(volunteer);
+                    Toast.makeText(getApplicationContext(), "Volunteer edit successful!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MHApp.getApplicationContext(), "Error! Could not save changes!", Toast.LENGTH_LONG).show();
+                }
+                Intent returnIntent = new Intent();
+                setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+                finish();
+                mode.finish();
+            }
+        };
+
+        //Get Action Mode and show Contextual Action Bar
+        mActionMode = startActionMode(mActionModeCallback);
     }
 
     private void saveVolunteer(Volunteer v) {
@@ -123,10 +157,7 @@ public class EditVolunteerActivity extends AppCompatActivity
                 } else if (task.isFaulted()) {
                     Log.e(CLASS_NAME, "Exception: " + task.getError().getMessage());
                 } else {
-                    Intent returnIntent = new Intent();
-                    setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
-                    Toast.makeText(getApplicationContext(), "Volunteer edit successful!", Toast.LENGTH_SHORT).show();
-                    finish();
+
                 }
                 return null;
             }
@@ -145,11 +176,7 @@ public class EditVolunteerActivity extends AppCompatActivity
                 } else if (task.isFaulted()) {
                     Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
                 } else {
-                    // Produce some callback of delete success
-                    Intent returnIntent = new Intent();
-                    setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
-                    Toast.makeText(getApplicationContext(), "Volunteer delete successful!", Toast.LENGTH_SHORT).show();
-                    finish();
+
                 }
                 return null;
             }
