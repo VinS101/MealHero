@@ -59,6 +59,7 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
         /* Use application class to maintain global state. */
         MHApp = (MealHeroApplication) getApplication();
+
         query = MHApp.getClientList();
 
         /* Set up the array adapter for items list view. */
