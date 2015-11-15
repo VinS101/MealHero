@@ -7,76 +7,80 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 tools:context="dltone.com.mealhero.AddClientActivity">
+    <ScrollView
+        android:id="@+id/login_form" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/addClient" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:weightSum="1">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:hint="Name"
+            android:id="@+id/_txtName"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="20dp"
+            android:layout_alignRight="@+id/_txtAddress"
+            android:layout_alignEnd="@+id/_txtAddress"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="15dp"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:hint="Name"
-        android:id="@+id/_txtName"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="20dp"
-        android:layout_alignRight="@+id/_txtAddress"
-        android:layout_alignEnd="@+id/_txtAddress"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="15dp"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPostalAddress"
+            android:ems="10"
+            android:id="@+id/_txtAddress"
+            android:hint="Adress"
+            android:layout_below="@+id/_txtName"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="15dp"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPostalAddress"
-        android:ems="10"
-        android:id="@+id/_txtAddress"
-        android:hint="Adress"
-        android:layout_below="@+id/_txtName"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="15dp"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/_txtAge"
+            android:hint="Age"
+            android:layout_marginTop="33dp"
+            android:layout_below="@+id/_txtAddress"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="15dp"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/_txtAge"
-        android:hint="Age"
-        android:layout_marginTop="33dp"
-        android:layout_below="@+id/_txtAddress"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="15dp"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/_txtDiet"
+            android:layout_below="@+id/_txtAge"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="15dp"
+            android:hint="Diet Preference"/>
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/_txtDiet"
-        android:layout_below="@+id/_txtAge"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="15dp"
-        android:hint="Diet Preference"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/submit_button"
-        android:layout_below="@+id/_txtDiet"
-        android:layout_marginTop="36dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="OnSubmit"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:id="@+id/submit_button"
+            android:layout_marginTop="16dp"
+            android:background="#2bb5c5"
+            android:onClick="OnSubmit"/>
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>
