@@ -62,6 +62,8 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         switch(position)
         {
             case 0:
+                intent = new Intent(AdministrationActivity.this, AddVolunteerActivity.class);
+                startActivity(intent);
                 break;
             case 1:
                 showProgress(true);

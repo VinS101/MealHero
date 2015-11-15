@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="VolunteerName">Name</string>
+    <string name="volunteer_email">Email</string>
+    <string name="volunteer_password">password</string>
+    <string name="action_AddVolunteer">Add User</string>
+    <string name="action_AddVolunteer_short">Add</string>
+</resources>
