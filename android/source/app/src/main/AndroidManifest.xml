@@ -63,6 +63,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dltone.com.mealhero.DisplayVolunteerViewActivity" />
         </activity>
+
+        <activity
+            android:name=".AssignClientsActivity"
+            android:label="@string/title_activity_assign_clients"
+            android:parentActivityName=".ClientEditActivity"
+            android:theme="@android:style/Theme.Holo.NoActionBar" >
+
+        </activity>
+
         <activity
             android:name=".DisplayVolunteerViewActivity"
             android:label="@string/title_activity_display_volunteer_view"

@@ -1,6 +1,8 @@
 package dltone.com.mealhero;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +44,17 @@ public class ClientListAdapter extends ArrayAdapter<Client>
 
         //4. Set values for image and text views
         // TODO change default user to image of client
-        imageView.setImageResource(R.mipmap.default_user);
-        nameTextView.setText(clientsArrayList.get(position).getName());
-        addressTextView.setText(clientsArrayList.get(position).getAddress());
+        if(clientsArrayList.get(position) != null) {
+            imageView.setImageResource(R.mipmap.default_user);
+            nameTextView.setText(clientsArrayList.get(position).getName());
+            addressTextView.setText(clientsArrayList.get(position).getAddress());
+        }
 
         return clientRowView;
     }
+
+    public ArrayList<Client> getClients () {
+        return clientsArrayList;
+    }
+
 }

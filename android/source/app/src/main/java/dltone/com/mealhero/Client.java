@@ -12,18 +12,21 @@ import java.util.HashMap;
 @IBMDataObjectSpecialization("Client")
 public class Client extends IBMDataObject implements Serializable
 {
-    private static String NAME = "Name";
-    private static String ADDRESS = "Address";
-    private static String DIET = "Diet";
-    private static String AGE = "Age";
+    private static final String NAME = "Name";
+    private static final String ADDRESS = "Address";
+    private static final String DIET = "Diet";
+    private static final String AGE = "Age";
+    private static final String ISASSIGNED = "IsAssigned";
+
 
     public Client() { }
 
-    public Client(String pName, String pAddress, String pDiet, String pAge) {
+    public Client(String pName, String pAddress, String pDiet, String pAge, boolean pIsAssigned) {
         setName(pName);
         setAddress(pAddress);
         setDietPreference(pDiet);
         setAge(pAge);
+        setAssigned(pIsAssigned);
     }
 
     @Override
@@ -47,9 +50,12 @@ public class Client extends IBMDataObject implements Serializable
     {
         return (String) getObject(AGE);
     }
+    public boolean getAssigned() { return (boolean) getObject(ISASSIGNED); }
+
     public void setName(String name) { setObject(NAME, (name != null) ? name : ""); }
     public void setAddress(String address) { setObject(ADDRESS, (address != null) ? address : ""); }
     public void setDietPreference(String diet) { setObject(DIET, (diet != null) ? diet : ""); }
     public void setAge(String age) { setObject(AGE, (age != null) ? age : ""); }
+    public void setAssigned(boolean isAssigned) { setObject(ISASSIGNED, isAssigned); }
 
 }

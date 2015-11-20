@@ -1,16 +1,14 @@
 package dltone.com.mealhero;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.util.Log;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * w-garcia 10/1/2015.
@@ -35,14 +33,14 @@ public class Volunteer  extends IBMDataObject implements Serializable//, Parcela
 
     public Volunteer() {}
 
-    public Volunteer(String vName, String vUsername, String vPassword, String vEmail, String vPermission)
+    public Volunteer(String vName, String vUsername, String vPassword, String vEmail, String vPermission, ArrayList<String> vListClientIds)
     {
         setObject(NAME, (vName != null) ? vName : "");
         setObject(USERNAME, (vUsername != null) ? vUsername : "");
         setObject(PASSWORD, (vPassword != null) ? vPassword : "");
         setObject(EMAIL, (vEmail != null) ? vEmail : "");
         setObject(PERMISSION, (vPermission != null) ? vPermission : "");
-        setObject(LISTCLIENTS, new ArrayList<Client>());
+        setObject(LISTCLIENTS, (vListClientIds != null) ? vListClientIds: new ArrayList<String>());
     }
 
     //region Accessors
@@ -97,10 +95,21 @@ public class Volunteer  extends IBMDataObject implements Serializable//, Parcela
     }
 
     /**
-     * Gets volunteer's permission setting. Make sure to cast each iterated object.
-     * @return List of Clients
+     * Gets volunteer's client ids list.
+     * @return List of Client IDs
      */
-    public List<?> getClientList() { return (List<?>) getObject(LISTCLIENTS); }
+    public ArrayList<String> getClientIdsList() {
+        JSONArray json = (JSONArray) getObject(LISTCLIENTS);
+        ArrayList<String> ids = new ArrayList<>();
+        for(int i = 0; i < json.length(); i++) {
+            try {
+                ids.add(json.get(i).toString());
+            } catch (Exception e) {
+                Log.e(getClassName(), e.getMessage());
+            }
+        }
+        return ids;
+    }
 
     //endregion
 
@@ -128,7 +137,7 @@ public class Volunteer  extends IBMDataObject implements Serializable//, Parcela
         setObject(PERMISSION, (permission != null) ? permission : "");
     }
 
-    public void setClientList(List<Client> list)
+    public void setClientList(ArrayList<String> list)
     {
         setObject(LISTCLIENTS, list);
     }

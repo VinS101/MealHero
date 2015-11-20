@@ -39,6 +39,11 @@ public class ClientListActivity extends AppCompatActivity
         //Get references to UI elements
         mClientListView = (ListView) findViewById(R.id.clientListView);
 
+        //Ensure Client List is retrieved from DB
+        if(MHApp.getClientList().size() < 1) {
+            MHApp.setClientList(ClientProvider.GetClients());
+        }
+
         //Set up array adapter
         clientAdapter = new ClientListAdapter(this, (ArrayList<Client>) MHApp.getClientList());
         mClientListView.setAdapter(clientAdapter);

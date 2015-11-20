@@ -49,7 +49,7 @@ public class AddClientActivity extends AppCompatActivity
         //Ready to add
         if(addClientKey)
         {
-            Client clientToSubmit = new Client(Name, Address, Diet, Age);
+            Client clientToSubmit = new Client(Name, Address, Diet, Age, false);
             ClientProvider.RegisterClient(clientToSubmit);
             Toast.makeText(this, "Client Sucessfully Added", Toast.LENGTH_LONG).show();
             _MHA = (MealHeroApplication) getApplication();

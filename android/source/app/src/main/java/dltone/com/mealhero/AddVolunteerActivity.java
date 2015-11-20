@@ -207,7 +207,7 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
 
             String encryptedPassword = bpe.encryptPassword(mPassword);
 
-            Volunteer volunteerToBeAdded = new Volunteer(mName, "", encryptedPassword, mEmail, "Volunteer");
+            Volunteer volunteerToBeAdded = new Volunteer(mName, "", encryptedPassword, mEmail, "Volunteer", null);
             mVolunteer = volunteerToBeAdded;
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);

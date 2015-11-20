@@ -40,7 +40,7 @@ public class EditVolunteerActivity extends Activity
     EditText passwordTextBox;
     EditText emailTextBox;
     EditText permissionTextBox;
-    Button assignClients;
+    Button assignClientsButton;
 
     //App reference
     MealHeroApplication MHApp;
@@ -63,14 +63,21 @@ public class EditVolunteerActivity extends Activity
         passwordTextBox = (EditText) findViewById(R.id.volunteer_edit_password_box);
         passwordTextBox.setEnabled(false);
         permissionTextBox = (EditText) findViewById(R.id.volunteer_edit_permission_box);
-        assignClients = (Button) findViewById(R.id.volunteer_edit_button);
+        assignClientsButton = (Button) findViewById(R.id.volunteer_edit_button);
 
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
 
+        //Make sure Volunteer List is Populated
+        if(MHApp.getVolunteerList().size() < 1) {
+            MHApp.setVolunteerList(VolunteerProvider.GetVolunteers());
+        }
+
         //Get Volunteer Reference
-        int index = getIntent().getIntExtra("ItemLocation", 0);
-        volunteer = MHApp.getVolunteerList().get(index);
+        final int index = getIntent().getIntExtra("ItemLocation", 0);
+        if(MHApp.getVolunteerList().size() > 0) {
+            volunteer = MHApp.getVolunteerList().get(index);
+        }
 
         //Set UI Values
         if (volunteer != null) {
@@ -81,10 +88,13 @@ public class EditVolunteerActivity extends Activity
             permissionTextBox.setText(volunteer.getPermission());
         }
 
-        assignClients.setOnClickListener(new View.OnClickListener() {
+        //Assign Clients Button Behavior
+        assignClientsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Not yet implemented!!!", Toast.LENGTH_SHORT).show();
+                Intent assignClientsIntent = new Intent(getApplicationContext(), AssignClientsActivity.class);
+                assignClientsIntent.putExtra("ItemLocation", index);
+                startActivity(assignClientsIntent);
             }
         });
 
