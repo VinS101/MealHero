@@ -6,13 +6,14 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context="dltone.com.mealhero.DisplayVolunteerViewActivity">
+                tools:context="dltone.com.mealhero.VolunteerListActivity">
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/_lvwVolunteerList"
+        android:id="@+id/VolunteerListView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:headerDividersEnabled="false"/>
+
 </RelativeLayout>

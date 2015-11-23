@@ -60,7 +60,7 @@
             android:theme="@android:style/Theme.Holo.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="dltone.com.mealhero.DisplayVolunteerViewActivity" />
+                android:value=".VolunteerListActivity" />
         </activity>
 
         <activity
@@ -72,7 +72,7 @@
         </activity>
 
         <activity
-            android:name=".DisplayVolunteerViewActivity"
+            android:name=".VolunteerListActivity"
             android:label="@string/title_activity_display_volunteer_view"
             android:parentActivityName=".AdministrationActivity" >
             <meta-data

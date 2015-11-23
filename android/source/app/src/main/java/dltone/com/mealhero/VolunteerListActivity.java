@@ -1,11 +1,10 @@
 package dltone.com.mealhero;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,12 +15,13 @@ import android.widget.ListView;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class DisplayVolunteerViewActivity extends AppCompatActivity
+public class VolunteerListActivity extends AppCompatActivity
 {
     private ArrayAdapter<Volunteer> lvArrayAdapter;
     private List<Volunteer> volunteers;
     MealHeroApplication MHA;
     private SetupTask setupTask = null;
+    private String role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,7 +32,7 @@ public class DisplayVolunteerViewActivity extends AppCompatActivity
         setup.execute((Void) null);
         CountDownLatch latch = new CountDownLatch(1);
 
-        setContentView(R.layout.activity_display_volunteer_view);
+        setContentView(R.layout.activity_volunteer_list);
 
         /* Use application class to maintain global state. */
         MHA = (MealHeroApplication) getApplication();
@@ -42,20 +42,33 @@ public class DisplayVolunteerViewActivity extends AppCompatActivity
 
         volunteers = MHA.getVolunteerList();
 
-        ListView volunteerListView = (ListView) findViewById(R.id._lvwVolunteerList);
+        ListView volunteerListView = (ListView) findViewById(R.id.VolunteerListView);
         lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, volunteers);
         volunteerListView.setAdapter(lvArrayAdapter);
 
         lvArrayAdapter.notifyDataSetChanged();
         /* Set up the array adapter for items list view. */
 
+        //Get role from Intent
+        role = getIntent().getStringExtra("Role");
+
         //Set item click listener
         volunteerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), EditVolunteerActivity.class);
-                intent.putExtra("ItemLocation", (int) id);
-                startActivityForResult(intent, MealHeroApplication.EDIT_ACTIVITY_RC);
+                Intent intent = null;
+                if(role.equals("EditVolunteer")) {
+                    intent = new Intent(getApplicationContext(), EditVolunteerActivity.class);
+                } else if(role.equals("AssignClients")) {
+                    intent = new Intent(getApplicationContext(), AssignClientsActivity.class);
+                } else {
+                    Log.e(getClass().toString(), "Unknown role '" + role + "'!!!");
+                }
+
+                if(intent != null) {
+                    intent.putExtra("ItemLocation", (int) id);
+                    startActivityForResult(intent, MealHeroApplication.EDIT_ACTIVITY_RC);
+                }
             }
         });
 

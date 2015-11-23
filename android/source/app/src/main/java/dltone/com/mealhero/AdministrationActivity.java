@@ -10,13 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.os.AsyncTask;
 public class AdministrationActivity extends AppCompatActivity implements AdapterView.OnItemClickListener
 {
-    private ClientListTask mAuthTask = null;
+    private VolunteerListTask mAuthTask = null;
     private View adminList;
     private View progressView;
     @Override
@@ -67,9 +65,8 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
                 break;
             case 1:
                 showProgress(true);
-                mAuthTask = new ClientListTask();
+                mAuthTask = new VolunteerListTask("EditVolunteer");
                 mAuthTask.execute((Void) null);
-
                 break;
             case 2:
                 intent = new Intent(AdministrationActivity.this, AddClientActivity.class);
@@ -80,6 +77,9 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
                 startActivity(intent);
                 break;
             case 4:
+                showProgress(true);
+                mAuthTask = new VolunteerListTask("AssignClients");
+                mAuthTask.execute((Void) null);
                 break;
             case 5:
                 intent = new Intent(AdministrationActivity.this, MapPreviewActivity.class);
@@ -124,17 +124,18 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
     }
 
 
-    public class ClientListTask extends AsyncTask<Void, Void, Boolean>
+    public class VolunteerListTask extends AsyncTask<Void, Void, Boolean>
     {
-        ClientListTask()
+        VolunteerListTask(String role)
         {
-
+            this.role = role;
         }
         Intent intent;
         @Override
         protected Boolean doInBackground(Void... params)
         {
-            intent = new Intent(AdministrationActivity.this, DisplayVolunteerViewActivity.class);
+            intent = new Intent(AdministrationActivity.this, VolunteerListActivity.class);
+            intent.putExtra("Role", role);
             startActivity(intent);
             return true;
         }
@@ -144,6 +145,7 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         {
             mAuthTask = null;
             showProgress(false);
+            intent.putExtra("Role", role);
             startActivity(intent);
         }
 
@@ -153,5 +155,7 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
             mAuthTask = null;
             showProgress(false);
         }
+
+        private String role;
     }
 }
