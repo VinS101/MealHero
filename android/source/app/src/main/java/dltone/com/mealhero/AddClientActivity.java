@@ -1,6 +1,8 @@
 package dltone.com.mealhero;
 
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,30 +11,85 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class AddClientActivity extends AppCompatActivity
 {
     MealHeroApplication _MHA;
+    private Address _Address;
+    private ArrayList<Address> _addressResultList;
+
+    public void OnVerifyAddress(View view)
+    {
+        EditText cAddress = (EditText)findViewById(R.id._txtAddress);
+        String address = cAddress.getText().toString();
+
+        if(address.isEmpty())
+        {
+            cAddress.setError("Address cannot be blank!");
+            return;
+        }
+
+        Geocoder geocoder = new Geocoder(getApplicationContext());
+        try
+        {
+            _addressResultList = (ArrayList<Address>) geocoder.getFromLocationName(address, 20);
+            if (_addressResultList.size() > 0)
+            {
+                Intent intent = new Intent(getApplicationContext(), AddressListActivity.class);
+                intent.putParcelableArrayListExtra("Results_List", _addressResultList);
+                startActivityForResult(intent, MealHeroApplication.EDIT_ACTIVITY_RC);
+            }
+            else
+            {
+                Toast.makeText(this, "No addresses could be found,", Toast.LENGTH_LONG).show();
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    /**
+     * On return from other activity, check result code to determine behavior.
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (resultCode)
+        {
+		/* If an edit has been made, notify that the data set has changed. */
+            case MealHeroApplication.EDIT_ACTIVITY_RC:
+                int index = data.getIntExtra("ItemLocation", -1);
+                _Address = _addressResultList.get(index);
+                EditText cAddress = (EditText)findViewById(R.id._txtAddress);
+                String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
+                cAddress.setText(String.format(fullAddress));
+                break;
+        }
+    }
 
     public void OnSubmit(View view)
     {
         EditText cName = (EditText)findViewById(R.id._txtName);
         String Name = cName.getText().toString();
-        EditText cAddress = (EditText)findViewById(R.id._txtAddress);
-        String Address = cAddress.getText().toString();
+
         EditText cDiet = (EditText)findViewById(R.id._txtDiet);
         String Diet = cDiet.getText().toString();
+
         EditText cAge = (EditText)findViewById(R.id._txtAge);
         String Age = cAge.getText().toString();
+
+        EditText cAddress = (EditText)findViewById(R.id._txtAddress);
 
         boolean addClientKey = true;
         if(Name.isEmpty())
         {
             cName.setError("Name cannot be blank!");
-            addClientKey = false;
-        }
-        if(Address.isEmpty())
-        {
-            cAddress.setError("Address cannot be blank!");
             addClientKey = false;
         }
         if(Diet.isEmpty())
@@ -45,19 +102,24 @@ public class AddClientActivity extends AppCompatActivity
             cAge.setError("Age cannot be empty");
             addClientKey = false;
         }
+        if (_Address == null)
+        {
+            cAddress.setError("Address must be verified");
+            addClientKey = false;
+        }
 
         //Ready to add
         if(addClientKey)
         {
-            Client clientToSubmit = new Client(Name, Address, Diet, Age, false);
+            String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
+
+            Client clientToSubmit = new Client(Name, fullAddress, Diet, Age, false, _Address.getLatitude(), _Address.getLongitude());
             ClientProvider.RegisterClient(clientToSubmit);
             Toast.makeText(this, "Client Sucessfully Added", Toast.LENGTH_LONG).show();
             _MHA = (MealHeroApplication) getApplication();
             _MHA.setClientList(ClientProvider.GetClients());
             finish();
-
         }
-
     }
 
     @Override
@@ -91,4 +153,5 @@ public class AddClientActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
 }

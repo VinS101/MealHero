@@ -31,6 +31,7 @@ public final class MealHeroApplication extends Application
     public static final int EDIT_ACTIVITY_RC = 1;
     private static final String CLASS_NAME = MealHeroApplication.class.getSimpleName();
 
+    public Volunteer currentLoggedInVolunteer;
     private List<Volunteer> volunteerList = new ArrayList<>();
     private List<Client> clientList = new ArrayList<>();
 
@@ -111,6 +112,15 @@ public final class MealHeroApplication extends Application
         Volunteer.registerSpecialization(Volunteer.class);
         Client.registerSpecialization(Client.class);
 
+    }
+
+    public Volunteer getLoggedInVolunteer()
+    {
+        return currentLoggedInVolunteer;
+    }
+    public void setLoggedInVolunteer(Volunteer v)
+    {
+        currentLoggedInVolunteer = v;
     }
 
     public List<Volunteer> getVolunteerList()

@@ -12,7 +12,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKDeveloperKeyException;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.SKMapsInitSettings;
@@ -29,16 +31,18 @@ import java.util.List;
 
 public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMapTextureListener
 {
-    Volunteer mVolunteerToDisplay;
+    private Volunteer mVolunteerToDisplay;
+
     ArrayAdapter<Client> lvArrayAdapter;
-    List<Client> query = new ArrayList<>();
+    List<Client> mClientsToDisplay = new ArrayList<>();
+    List<SKCoordinate> mCoordinatesList = new ArrayList<>();
     MealHeroApplication MHApp;
 
+    private static final String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
     private static final String TAG = "MapPreviewActivity";
     private static final int MENU_ADMIN = Menu.FIRST;
     private static final int MENU_SETTINGS = Menu.FIRST + 1;
     private static final int MENU_LOGOUT = Menu.FIRST + 2;
-    public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
 
     private String mapResourceDirPath;
 
@@ -50,21 +54,15 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_preview);
-        Bundle incoming = getIntent().getExtras();
-
-        if (incoming != null)
-        {
-            mVolunteerToDisplay = (Volunteer)incoming.getSerializable(VOLUNTEER);
-        }
 
         /* Use application class to maintain global state. */
         MHApp = (MealHeroApplication) getApplication();
 
-        query = MHApp.getClientList();
+        mClientsToDisplay = MHApp.getClientList();
 
         /* Set up the array adapter for items list view. */
         ListView volunteerListView = (ListView) findViewById(R.id._lvwClients);
-        lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, query);
+        lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, mClientsToDisplay);
         volunteerListView.setAdapter(lvArrayAdapter);
 
         lvArrayAdapter.notifyDataSetChanged();
@@ -74,7 +72,15 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
             @Override
             public void onClick(View view)
             {
+
+            if (ValidateAddresses())
+            {
                 openNavigation();
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "Unabled to Validate Addresses... check addresses and try again", Toast.LENGTH_LONG).show();
+            }
             }
         });
 
@@ -137,6 +143,23 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
         // if prepared is true means that the resources are in place and
         //the library can be initialized
+    }
+
+    private Boolean ValidateAddresses()
+    {
+        mCoordinatesList.clear();
+
+        for (Client client : mClientsToDisplay)
+        {
+            Double latitude = client.getLatitude();
+            Double longitude = client.getLongitude();
+            if (latitude == -1 || longitude == -1)
+            {
+                return false;
+            }
+            mCoordinatesList.add(new SKCoordinate(longitude, latitude));
+        }
+        return true;
     }
 
     @Override

@@ -18,4 +18,5 @@
     <string name="title_deliver_to_clients">Deliver To Clients</string>
     <string name="title_activity_assign_clients">Assign Clients</string>
     <string name="skobbler_key">8d466e2012c0aa4f24c69fb4a7ca8a07b347de249e141f16e04391d70426fd0f</string>
+    <string name="title_activity_address_list">Verify Client Address</string>
 </resources>

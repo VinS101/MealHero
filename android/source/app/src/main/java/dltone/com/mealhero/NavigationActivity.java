@@ -127,7 +127,8 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         //route.setStartCoordinate(new SKCoordinate(-122.397674, 37.761278));
         //route.setDestinationCoordinate(new SKCoordinate(-122.448270, 37.738761));
         route.setStartCoordinate(new SKCoordinate(currentPosition.getCoordinate().getLongitude(), currentPosition.getCoordinate().getLatitude()));
-        route.setDestinationCoordinate(new SKCoordinate(-80.107222, 26.371595));
+        //route.setDestinationCoordinate(new SKCoordinate(-80.107222, 26.371595));
+        route.setDestinationCoordinate(new SKCoordinate(-80.107402, 26.371744));
         // set the number of routes to be calculated
         route.setNoOfRoutes(1);
         // set the route mode
@@ -140,18 +141,34 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
         SKViaPoint point0 = new SKViaPoint(0, new SKCoordinate(-80.146659, 26.618922));
         SKViaPoint point1 = new SKViaPoint(1, new SKCoordinate(-80.189387, 26.590414));
+        SKViaPoint point2 = new SKViaPoint(1, new SKCoordinate(-80.107402, 26.371744));
+       // SKViaPoint point3 = new SKViaPoint(1, new SKCoordinate(-80.247820, 26.673515));
+        //SKViaPoint point4 = new SKViaPoint(1, new SKCoordinate(-80.232289, 26.625943));
+       // SKViaPoint point5 = new SKViaPoint(1, new SKCoordinate(-80.229815, 26.601054));
+       // SKViaPoint point6 = new SKViaPoint(1, new SKCoordinate(-80.221244, 26.561329));
+      //  SKViaPoint point7 = new SKViaPoint(1, new SKCoordinate(-80.209469, 26.538810));
+      //  SKViaPoint point8 = new SKViaPoint(1, new SKCoordinate(-80.202048, 26.514378));
+     //   SKViaPoint point9 = new SKViaPoint(1, new SKCoordinate(-80.201027, 26.479257));
+     //   SKViaPoint point10 = new SKViaPoint(1, new SKCoordinate(-80.213725, 26.447996));
 
         // using SKViaPoint to add waypoints
         ArrayList<SKViaPoint> points = new ArrayList<>();
         points.add(0, point0);
         points.add(1, point1);
+        points.add(2, point2);
+        //points.add(3, point3);
+        //points.add(4, point4);
+        //points.add(5, point5);
+        //points.add(6, point6);
+       // points.add(7, point7);
+       // points.add(8, point8);
+       // points.add(9, point9);
+        //points.add(10, point10);
+
         route.setViaPoints(points);
 
         // pass the route to the calculation routine
         SKRouteManager.getInstance().calculateRoute(route);
-
-
-
 
         /* // using pointsList for waypoints
         //list of points

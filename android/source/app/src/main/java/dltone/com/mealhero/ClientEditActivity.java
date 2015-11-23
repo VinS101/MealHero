@@ -128,7 +128,7 @@ public class ClientEditActivity extends Activity
             public void onDestroyActionMode(ActionMode mode) {
                 if (client != null) {
                     client.setName(nameTextBox.getText().toString());
-                    client.setAddress(addressTextBox.getText().toString());
+                    //TODO: client.setAddress(addressTextBox.getText().toString());
                     client.setDietPreference(dietTextBox.getText().toString());
                     client.setAge(ageTextBox.getText().toString());
                     client.save().continueWith(new Continuation<IBMDataObject, Void>() {
