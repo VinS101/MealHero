@@ -139,7 +139,8 @@ public class Volunteer  extends IBMDataObject implements Serializable//, Parcela
 
     public void setClientList(ArrayList<String> list)
     {
-        setObject(LISTCLIENTS, list);
+        JSONArray array = new JSONArray(list);
+        setObject(LISTCLIENTS, array);
     }
 
 
