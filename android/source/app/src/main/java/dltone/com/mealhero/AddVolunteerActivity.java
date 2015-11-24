@@ -1,10 +1,14 @@
 package dltone.com.mealhero;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -45,6 +49,8 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
         nameBox = (AutoCompleteTextView) findViewById(R.id.volunteer_name);
         emailBox = (AutoCompleteTextView) findViewById(R.id.volunteer_email);
         passwordBox = (EditText) findViewById(R.id.volunteer_password);
+        mProgressView = findViewById(R.id.volunteer_progress);
+        addVolunteerView = findViewById(R.id.volunteer_form);
 
         populateAutoComplete();
         passwordBox.setOnEditorActionListener(new TextView.OnEditorActionListener()
@@ -77,7 +83,8 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
 
         public void attemptLogin()
         {
-            if (mAuthTask != null) {
+            if (mAuthTask != null)
+            {
                 return;
             }
 
@@ -104,41 +111,84 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
             }
 
             // Check for a valid email address.
-            if (TextUtils.isEmpty(email)) {
+            if (TextUtils.isEmpty(email))
+            {
                 emailBox.setError(getString(R.string.error_field_required));
                 focusView = emailBox;
                 cancel = true;
-            } else if (!isEmailValid(email)) {
+            } else if (!isEmailValid(email))
+            {
                 emailBox.setError(getString(R.string.error_invalid_email));
                 focusView = emailBox;
                 cancel = true;
             }
-
             if (cancel)
             {
                 // There was an error; don't attempt login and focus the first
                 // form field with an error.
                 focusView.requestFocus();
-            } else
+            }
+            else
             {
                 // Show a progress spinner, and kick off a background task to
                 // perform the user login attempt.
-                //showProgress(true);
+                showProgress(true);
                 mAuthTask = new UserLoginTask(name, email, password);
                 mAuthTask.execute((Void) null);
             }
         }
 
-        private boolean isEmailValid(String email) {
+        private boolean isEmailValid(String email)
+        {
             //TODO: Replace this with your own logic
             return email.contains("@");
         }
 
-        private boolean isPasswordValid(String password) {
+        private boolean isPasswordValid(String password)
+        {
             //TODO: Replace this with your own logic
             return password.length() > 4;
         }
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show)
+    {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
+        {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+            addVolunteerView.setVisibility(show ? View.GONE : View.VISIBLE);
+            addVolunteerView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter()
+            {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    addVolunteerView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter()
+            {
+                @Override
+                public void onAnimationEnd(Animator animation)
+                {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        }
+        else
+        {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            addVolunteerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
     private void populateAutoComplete()
     {
         getLoaderManager().initLoader(0, null, this);
