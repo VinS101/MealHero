@@ -20,6 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jasypt.util.password.BasicPasswordEncryptor;
 
@@ -51,6 +52,17 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
         passwordBox = (EditText) findViewById(R.id.volunteer_password);
         mProgressView = findViewById(R.id.volunteer_progress);
         addVolunteerView = findViewById(R.id.volunteer_form);
+        Button mEmailSignInButton = (Button) findViewById(R.id.addvolunteer_button);
+        mEmailSignInButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                attemptLogin();
+            }
+        });
+        //addVolunteerView = findViewById(R.id.addVolunteer_form);
+        MHA = (MealHeroApplication) getApplication();
 
         populateAutoComplete();
         passwordBox.setOnEditorActionListener(new TextView.OnEditorActionListener()
@@ -67,18 +79,7 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.addvolunteer_button);
-        mEmailSignInButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                attemptLogin();
-            }
-        });
 
-        //addVolunteerView = findViewById(R.id.addVolunteer_form);
-        MHA = (MealHeroApplication) getApplication();
     }
 
         public void attemptLogin()
@@ -160,10 +161,10 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
         {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_longAnimTime);
+            int longAnimationTime = 1000; //need longer
             addVolunteerView.setVisibility(show ? View.GONE : View.VISIBLE);
-            addVolunteerView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter()
+            addVolunteerView.animate().setDuration(longAnimationTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter()
             {
                 @Override
                 public void onAnimationEnd(Animator animation) {
@@ -172,7 +173,7 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
             });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter()
+            mProgressView.animate().setDuration(longAnimationTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter()
             {
                 @Override
                 public void onAnimationEnd(Animator animation)
@@ -249,6 +250,12 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
         }
 
         @Override
+        protected void onPreExecute()
+        {
+
+        }
+
+        @Override
         protected Boolean doInBackground(Void... params)
         {
             BasicPasswordEncryptor bpe = new BasicPasswordEncryptor();
@@ -261,6 +268,12 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
             mVolunteer = volunteerToBeAdded;
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             return true;
         }
@@ -284,6 +297,8 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
                 intent.putExtras(b);
                 startActivity(intent);
                 finish();
+                MHA.setVolunteerList(VolunteerProvider.GetVolunteers()); //Refresh
+                Toast.makeText(MHA.getApplicationContext(), "New volunteer was created Successfully!", Toast.LENGTH_LONG).show();
             }
             else
             {

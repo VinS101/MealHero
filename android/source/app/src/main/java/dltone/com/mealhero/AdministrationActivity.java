@@ -145,8 +145,6 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         {
             mAuthTask = null;
             showProgress(false);
-            intent.putExtra("Role", role);
-            startActivity(intent);
         }
 
         @Override

@@ -68,10 +68,9 @@ public class EditVolunteerActivity extends Activity
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
 
-        //Make sure Volunteer List is Populated
-        if(MHApp.getVolunteerList().size() < 1) {
-            MHApp.setVolunteerList(VolunteerProvider.GetVolunteers());
-        }
+        //Always Get Volunteers
+        MHApp.setVolunteerList(VolunteerProvider.GetVolunteers());
+
 
         //Get Volunteer Reference
         final int index = getIntent().getIntExtra("ItemLocation", 0);
