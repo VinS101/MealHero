@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -21,12 +22,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.jasypt.util.password.BasicPasswordEncryptor;
 
-import java.util.List;
 
-public class AddVolunteerActivity extends Activity implements LoaderManager.LoaderCallbacks<Object>
+public class AddVolunteerActivity extends AppCompatActivity
 {
 
     private AutoCompleteTextView nameBox;
@@ -35,7 +34,9 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
     private View mProgressView;
     private View addVolunteerView;
     private Volunteer mVolunteer;
-
+    private static final int MENU_ADMIN = Menu.FIRST;
+    private static final int MENU_SETTINGS = Menu.FIRST + 1;
+    private static final int MENU_LOGOUT = Menu.FIRST + 2;
     private UserLoginTask mAuthTask = null;
 
     public final static String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
@@ -64,14 +65,10 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
         //addVolunteerView = findViewById(R.id.addVolunteer_form);
         MHA = (MealHeroApplication) getApplication();
 
-        populateAutoComplete();
-        passwordBox.setOnEditorActionListener(new TextView.OnEditorActionListener()
-        {
+        passwordBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent)
-            {
-                if (id == R.id.add_user || id == EditorInfo.IME_NULL)
-                {
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.add_user || id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
                 }
@@ -82,74 +79,121 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
 
     }
 
-        public void attemptLogin()
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_add_volunteer, menu);
+        return true;
+    }
+
+    /**
+     * Gets called every time the user presses the menu button.
+     * Use if your menu is dynamic.
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        menu.clear();
+        //if (mVolunteerToDisplay.getPermission().equalsIgnoreCase("Admin"))
+        menu.add(0, MENU_ADMIN, Menu.NONE, R.string.action_admin);
+
+        menu.add(0, MENU_SETTINGS, Menu.NONE, R.string.action_settings);
+        menu.add(0, MENU_LOGOUT, Menu.NONE, R.string.action_logout);
+
+        getMenuInflater().inflate(R.menu.menu_add_volunteer, menu);
+
+        return super.onPrepareOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings)
         {
-            if (mAuthTask != null)
-            {
-                return;
-            }
-
-            // Reset errors.
-            nameBox.setError(null);
-            emailBox.setError(null);
-            passwordBox.setError(null);
-
-
-            // Store values at the time of the login attempt.
-            String name = nameBox.getText().toString();
-            String email = emailBox.getText().toString();
-            String password = passwordBox.getText().toString();
-
-            boolean cancel = false;
-            View focusView = null;
-
-            // Check for a valid password, if the user entered one.
-            if (!TextUtils.isEmpty(password) && !isPasswordValid(password))
-            {
-                passwordBox.setError(getString(R.string.error_invalid_password));
-                focusView = passwordBox;
-                cancel = true;
-            }
-
-            // Check for a valid email address.
-            if (TextUtils.isEmpty(email))
-            {
-                emailBox.setError(getString(R.string.error_field_required));
-                focusView = emailBox;
-                cancel = true;
-            } else if (!isEmailValid(email))
-            {
-                emailBox.setError(getString(R.string.error_invalid_email));
-                focusView = emailBox;
-                cancel = true;
-            }
-            if (cancel)
-            {
-                // There was an error; don't attempt login and focus the first
-                // form field with an error.
-                focusView.requestFocus();
-            }
-            else
-            {
-                // Show a progress spinner, and kick off a background task to
-                // perform the user login attempt.
-                showProgress(true);
-                mAuthTask = new UserLoginTask(name, email, password);
-                mAuthTask.execute((Void) null);
-            }
+            return true;
         }
 
-        private boolean isEmailValid(String email)
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void attemptLogin()
+    {
+        if (mAuthTask != null)
         {
-            //TODO: Replace this with your own logic
-            return email.contains("@");
+            return;
         }
 
-        private boolean isPasswordValid(String password)
+        // Reset errors.
+        nameBox.setError(null);
+        emailBox.setError(null);
+        passwordBox.setError(null);
+
+
+        // Store values at the time of the login attempt.
+        String name = nameBox.getText().toString();
+        String email = emailBox.getText().toString();
+        String password = passwordBox.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password))
         {
-            //TODO: Replace this with your own logic
-            return password.length() > 4;
+            passwordBox.setError(getString(R.string.error_invalid_password));
+            focusView = passwordBox;
+            cancel = true;
         }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email))
+        {
+            emailBox.setError(getString(R.string.error_field_required));
+            focusView = emailBox;
+            cancel = true;
+        } else if (!isEmailValid(email))
+        {
+            emailBox.setError(getString(R.string.error_invalid_email));
+            focusView = emailBox;
+            cancel = true;
+        }
+        if (cancel)
+        {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        }
+        else
+        {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            showProgress(true);
+            mAuthTask = new UserLoginTask(name, email, password);
+            mAuthTask.execute((Void) null);
+        }
+    }
+
+    private boolean isEmailValid(String email)
+    {
+        //TODO: Replace this with your own logic
+        return email.contains("@");
+    }
+
+    private boolean isPasswordValid(String password)
+    {
+        //TODO: Replace this with your own logic
+        return password.length() > 4;
+    }
+
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -190,51 +234,6 @@ public class AddVolunteerActivity extends Activity implements LoaderManager.Load
             addVolunteerView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-    private void populateAutoComplete()
-    {
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_volunteer, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public Loader<Object> onCreateLoader(int id, Bundle args) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Object> loader, Object data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Object> loader) {
-
-    }
-
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
     {
 
