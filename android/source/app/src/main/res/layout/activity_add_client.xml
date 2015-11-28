@@ -74,16 +74,16 @@
                 android:layout_margin="15dp"/>
 
             <Button
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
                 android:text="Verify Address"
                 android:id="@+id/address_button"
                 android:onClick="OnVerifyAddress"
                 android:nestedScrollingEnabled="false"/>
 
             <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
             android:text="Submit"
             android:id="@+id/submit_button"
             android:layout_marginTop="16dp"

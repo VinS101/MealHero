@@ -36,7 +36,7 @@ public class EditVolunteerActivity extends Activity
 
     //UI Elements
     EditText nameTextBox;
-    EditText userNameTextBox;
+    //EditText userNameTextBox;
     EditText passwordTextBox;
     EditText emailTextBox;
     EditText permissionTextBox;
@@ -58,7 +58,7 @@ public class EditVolunteerActivity extends Activity
 
         //Get references to UI elements
         nameTextBox = (EditText) findViewById(R.id.volunteer_edit_name_box);
-        userNameTextBox = (EditText) findViewById(R.id.volunteer_edit_username_box);
+        //userNameTextBox = (EditText) findViewById(R.id.volunteer_edit_username_box);
         emailTextBox = (EditText) findViewById(R.id.volunteer_edit_email_box);
         passwordTextBox = (EditText) findViewById(R.id.volunteer_edit_password_box);
         passwordTextBox.setEnabled(false);
@@ -82,7 +82,7 @@ public class EditVolunteerActivity extends Activity
         //Set UI Values
         if (volunteer != null) {
             nameTextBox.setText(volunteer.getName());
-            userNameTextBox.setText(volunteer.getUserName());
+            //userNameTextBox.setText(volunteer.getUserName());
             passwordTextBox.setText(volunteer.getPassword());
             emailTextBox.setText(volunteer.getEmail());
             permissionTextBox.setText(volunteer.getPermission());
@@ -154,7 +154,7 @@ public class EditVolunteerActivity extends Activity
     private void saveVolunteer(Volunteer v) {
 
         v.setName(nameTextBox.getText().toString());
-        v.setUsername(userNameTextBox.getText().toString());
+        //v.setUsername(userNameTextBox.getText().toString());
         v.setEmail(emailTextBox.getText().toString());
         v.setPermission(permissionTextBox.getText().toString());
         //v.setClientList();

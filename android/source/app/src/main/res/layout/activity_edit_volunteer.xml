@@ -40,6 +40,7 @@
                 android:id="@+id/volunteer_edit_name_box"
                 />
 
+            <!-- [OBSOLETE]
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,6 +50,7 @@
                 android:text="@string/volunteer_edit_username_label"
                 android:id="@+id/volunteer_edit_username_label"
                 />
+
 
             <EditText
                 android:layout_width="match_parent"
@@ -62,31 +64,9 @@
                 android:paddingRight="10dp"
                 android:textSize="@dimen/client_edit_text_font_size"
                 android:id="@+id/volunteer_edit_username_box"
-                />
+                /> -->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_top"
-                android:layout_marginBottom="@dimen/padding_bottom"
-                android:textSize="@dimen/client_edit_label_font_size"
-                android:text="@string/volunteer_edit_password_label"
-                android:id="@+id/volunteer_edit_password_label"
-                />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/client_edit_text_container_height"
-                android:inputType="textPersonName"
-                android:layout_marginTop="@dimen/padding_top"
-                android:layout_marginBottom="@dimen/padding_bottom"
-                android:background="@drawable/rounded_edit_text"
-                android:hint="@string/volunteer_edit_password_hint"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textSize="@dimen/client_edit_text_font_size"
-                android:id="@+id/volunteer_edit_password_box"
-                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -111,7 +91,29 @@
                 android:textSize="@dimen/client_edit_text_font_size"
                 android:id="@+id/volunteer_edit_email_box"
                 />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_top"
+                android:layout_marginBottom="@dimen/padding_bottom"
+                android:textSize="@dimen/client_edit_label_font_size"
+                android:text="@string/volunteer_edit_password_label"
+                android:id="@+id/volunteer_edit_password_label"
+                />
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/client_edit_text_container_height"
+                android:inputType="textPersonName"
+                android:layout_marginTop="@dimen/padding_top"
+                android:layout_marginBottom="@dimen/padding_bottom"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="@string/volunteer_edit_password_hint"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textSize="@dimen/client_edit_text_font_size"
+                android:id="@+id/volunteer_edit_password_box"
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
