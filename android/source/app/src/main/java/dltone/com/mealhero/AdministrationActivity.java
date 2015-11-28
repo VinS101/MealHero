@@ -24,7 +24,7 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         setContentView(R.layout.activity_administration);
         ListView optionsView = (ListView) findViewById(R.id._lvwAdminOptions);
         adminList = findViewById(R.id._lvwAdminOptions);
-        progressView = findViewById(R.id.Admin_progress);
+        progressView = findViewById(R.id.admin_progress);
         optionsView.setOnItemClickListener(this);
     }
 
@@ -96,11 +96,10 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            int shortAnimTime = 600; //long
 
             adminList.setVisibility(show ? View.GONE : View.VISIBLE);
-            progressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            progressView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     progressView.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -108,14 +107,14 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
             });
 
             progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            progressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            progressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     progressView.setVisibility(show ? View.VISIBLE : View.GONE);
                 }
             });
-        } else {
+        } else
+        {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             progressView.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -136,6 +135,13 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         {
             intent = new Intent(AdministrationActivity.this, VolunteerListActivity.class);
             intent.putExtra("Role", role);
+            try
+            {
+                Thread.sleep(1500);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
             startActivity(intent);
             return true;
         }
