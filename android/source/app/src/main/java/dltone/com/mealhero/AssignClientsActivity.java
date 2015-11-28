@@ -74,7 +74,7 @@ public class AssignClientsActivity extends Activity {
         selectedClients = new ArrayList<>();
 
         //Get assigned clients
-        assignedClients = getAssignedClients(volunteer);
+        assignedClients = ClientProvider.GetAssignedClients(volunteer, MHApp);
 
         //Get ListView
         mClientListView = (ListView) findViewById(R.id.assignClientsListView);
@@ -157,7 +157,7 @@ public class AssignClientsActivity extends Activity {
                         c.setAssigned(true);
                     }
 
-                    volunteer.setClientList(getClientIds(selectedClients));
+                    volunteer.setClientList(ClientProvider.GetClientIds(selectedClients));
 
                 }
                 Intent returnIntent = new Intent();
@@ -171,26 +171,5 @@ public class AssignClientsActivity extends Activity {
         mActionMode = startActionMode(mActionModeCallback);
     }
 
-    private ArrayList<Client> getAssignedClients(Volunteer v) {
-        ArrayList<String> ids = v.getClientIdsList();
-        ArrayList<Client> clients = (ArrayList) MHApp.getClientList();
-        ArrayList<Client> assignedClients = new ArrayList<>();
-        for(int i = 0; i < clients.size(); i++) {
-            for(int j = 0; j < ids.size(); j++) {
-                if(clients.get(i).getObjectId().equals(ids.get(j))) {
-                    assignedClients.add(clients.get(i));
-                }
-            }
-        }
-        return assignedClients;
-    }
 
-    private ArrayList<String> getClientIds(ArrayList<Client> clients) {
-        ArrayList<String> ids = new ArrayList<>();
-        for(int i = 0; i < clients.size(); i++) {
-            ids.add(clients.get(i).getObjectId());
-        }
-
-        return ids;
-    }
 }

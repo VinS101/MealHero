@@ -56,7 +56,7 @@ public class Client extends IBMDataObject implements Serializable
     }
     public Double getLatitude()
     {
-        return (Double) getObject(LONGITUDE);
+        return (Double) getObject(LATITUDE);
     }
     public Double getLongitude()
     {

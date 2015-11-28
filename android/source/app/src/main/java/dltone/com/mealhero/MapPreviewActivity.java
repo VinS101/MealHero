@@ -22,6 +22,7 @@ import com.skobbler.ngx.SKPrepareMapTextureListener;
 import com.skobbler.ngx.SKPrepareMapTextureThread;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
+import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.util.SKLogging;
 
 import java.lang.reflect.InvocationTargetException;
@@ -31,11 +32,8 @@ import java.util.List;
 
 public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMapTextureListener
 {
-    private Volunteer mVolunteerToDisplay;
-
     ArrayAdapter<Client> lvArrayAdapter;
     List<Client> mClientsToDisplay = new ArrayList<>();
-    List<SKCoordinate> mCoordinatesList = new ArrayList<>();
     MealHeroApplication MHApp;
 
     private static final String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
@@ -58,7 +56,7 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         /* Use application class to maintain global state. */
         MHApp = (MealHeroApplication) getApplication();
 
-        mClientsToDisplay = MHApp.getClientList();
+        mClientsToDisplay = ClientProvider.GetAssignedClients(MHApp.getLoggedInVolunteer(), MHApp);
 
         /* Set up the array adapter for items list view. */
         ListView volunteerListView = (ListView) findViewById(R.id._lvwClients);
@@ -72,15 +70,15 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
             @Override
             public void onClick(View view)
             {
-
-            if (ValidateAddresses())
-            {
-                openNavigation();
-            }
-            else
-            {
-                Toast.makeText(getApplicationContext(), "Unabled to Validate Addresses... check addresses and try again", Toast.LENGTH_LONG).show();
-            }
+                if (mClientsToDisplay.isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(), "No clients assigned to you. Please contact an administrator.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else
+                {
+                    openNavigation();
+                }
             }
         });
 
@@ -92,6 +90,7 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         if (applicationPath != null)
         {
             mapResourceDirPath = applicationPath + "/" + "SKMaps/";
+            MHApp.setMapResourcesDirPath(mapResourceDirPath);
             final SKPrepareMapTextureThread prepThread = new SKPrepareMapTextureThread(this, mapResourceDirPath, "SKMaps.zip", this);
             prepThread.start();
         }
@@ -114,21 +113,13 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         initMapSettings.setMapResourcesPaths(mapResourcesPath,
                 new SKMapViewStyle(mapResourcesPath + "daystyle/", "daystyle.json"));
 
-        final SKAdvisorSettings advisorSettings = initMapSettings.getAdvisorSettings();
-        advisorSettings.setAdvisorConfigPath(mapResourcesPath +"/Advisor");
-        advisorSettings.setResourcePath(mapResourcesPath +"/Advisor/Languages");
+        final SKAdvisorSettings advisorSettings = new SKAdvisorSettings();
         advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
+        advisorSettings.setAdvisorConfigPath(MHApp.getMapResourcesDirPath() +"/Advisor");
+        advisorSettings.setResourcePath(MHApp.getMapResourcesDirPath()+"/Advisor/Languages");
         advisorSettings.setAdvisorVoice("en");
-        initMapSettings.setAdvisorSettings(advisorSettings);
-
-        // EXAMPLE OF ADDING PREINSTALLED MAPS
-//         initMapSettings.setPreinstalledMapsPath(((DemoApplication)context.getApplicationContext()).getMapResourcesDirPath()
-//         + "/PreinstalledMaps");
-        // initMapSettings.setConnectivityMode(SKMaps.CONNECTIVITY_MODE_OFFLINE);
-
-        // Example of setting light maps
-        // initMapSettings.setMapDetailLevel(SKMapsInitSettings.SK_MAP_DETAIL_LIGHT);
-        // initialize map using the settings object
+        advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.AUDIO_FILES);
+        SKRouteManager.getInstance().setAudioAdvisorSettings(advisorSettings);
 
         try
         {
@@ -143,23 +134,6 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
         // if prepared is true means that the resources are in place and
         //the library can be initialized
-    }
-
-    private Boolean ValidateAddresses()
-    {
-        mCoordinatesList.clear();
-
-        for (Client client : mClientsToDisplay)
-        {
-            Double latitude = client.getLatitude();
-            Double longitude = client.getLongitude();
-            if (latitude == -1 || longitude == -1)
-            {
-                return false;
-            }
-            mCoordinatesList.add(new SKCoordinate(longitude, latitude));
-        }
-        return true;
     }
 
     @Override

@@ -1,17 +1,14 @@
 package dltone.com.mealhero;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCoordinateRegion;
 import com.skobbler.ngx.map.SKMapCustomPOI;
-import com.skobbler.ngx.map.SKMapFragment;
 import com.skobbler.ngx.map.SKMapPOI;
 import com.skobbler.ngx.map.SKMapSurfaceListener;
 import com.skobbler.ngx.map.SKMapSurfaceView;
@@ -35,17 +32,14 @@ import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 public class NavigationActivity extends FragmentActivity implements SKCurrentPositionListener, SKMapSurfaceListener, SKRouteListener, SKNavigationListener
 {
     /**
      * Application context object
      */
-    private MealHeroApplication app;
+    private MealHeroApplication MHApp;
 
     /**
      * Current position provider
@@ -87,6 +81,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
      */
     private SKMapViewHolder mapHolder;
 
+
+    private List<SKCoordinate> _coordinatesList = new ArrayList<>();
+
+    private List<Client> _clientsToDisplay = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -94,7 +93,21 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_navigation);
-        app = (MealHeroApplication) getApplication();
+        MHApp = (MealHeroApplication) getApplication();
+
+        _clientsToDisplay = ClientProvider.GetAssignedClients(MHApp.getLoggedInVolunteer(), MHApp);
+
+        if (_clientsToDisplay == null)
+        {
+            Toast.makeText(getApplicationContext(), "Unable to retrieve user data. Log out and try again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if ( !ValidateAddresses() )
+        {
+            Toast.makeText(getApplicationContext(), "Unable to Validate Addresses. Check client addresses and try again.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         currentPositionProvider = new SKCurrentPositionProvider(this);
         currentPositionProvider.setCurrentPositionListener(this);
@@ -105,17 +118,24 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         mapView = mapHolder.getMapSurfaceView();
 
         currentPositionProvider.requestUpdateFromLastPosition();
-        //setUpMapIfNeeded();
-        /*
-        if (currentPosition == null)
+
+    }
+
+    private Boolean ValidateAddresses()
+    {
+        _coordinatesList.clear();
+
+        for (Client client : _clientsToDisplay)
         {
-            Toast.makeText(this, "Failed to get current location. Try again later", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }*/
-
-        //launchRouteCalculation();
-
+            Double latitude = client.getLatitude();
+            Double longitude = client.getLongitude();
+            if (latitude == -1 || longitude == -1)
+            {
+                return false;
+            }
+            _coordinatesList.add(new SKCoordinate(longitude, latitude));
+        }
+        return true;
     }
 
     private void launchRouteCalculation() {
@@ -128,7 +148,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         //route.setDestinationCoordinate(new SKCoordinate(-122.448270, 37.738761));
         route.setStartCoordinate(new SKCoordinate(currentPosition.getCoordinate().getLongitude(), currentPosition.getCoordinate().getLatitude()));
         //route.setDestinationCoordinate(new SKCoordinate(-80.107222, 26.371595));
-        route.setDestinationCoordinate(new SKCoordinate(-80.107402, 26.371744));
+        route.setDestinationCoordinate(MHApp.getCentralMOWHub());
         // set the number of routes to be calculated
         route.setNoOfRoutes(1);
         // set the route mode
@@ -139,50 +159,20 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         // events
         SKRouteManager.getInstance().setRouteListener(this);
 
-        SKViaPoint point0 = new SKViaPoint(0, new SKCoordinate(-80.146659, 26.618922));
-        SKViaPoint point1 = new SKViaPoint(1, new SKCoordinate(-80.189387, 26.590414));
-        SKViaPoint point2 = new SKViaPoint(1, new SKCoordinate(-80.107402, 26.371744));
-       // SKViaPoint point3 = new SKViaPoint(1, new SKCoordinate(-80.247820, 26.673515));
-        //SKViaPoint point4 = new SKViaPoint(1, new SKCoordinate(-80.232289, 26.625943));
-       // SKViaPoint point5 = new SKViaPoint(1, new SKCoordinate(-80.229815, 26.601054));
-       // SKViaPoint point6 = new SKViaPoint(1, new SKCoordinate(-80.221244, 26.561329));
-      //  SKViaPoint point7 = new SKViaPoint(1, new SKCoordinate(-80.209469, 26.538810));
-      //  SKViaPoint point8 = new SKViaPoint(1, new SKCoordinate(-80.202048, 26.514378));
-     //   SKViaPoint point9 = new SKViaPoint(1, new SKCoordinate(-80.201027, 26.479257));
-     //   SKViaPoint point10 = new SKViaPoint(1, new SKCoordinate(-80.213725, 26.447996));
-
         // using SKViaPoint to add waypoints
         ArrayList<SKViaPoint> points = new ArrayList<>();
-        points.add(0, point0);
-        points.add(1, point1);
-        points.add(2, point2);
-        //points.add(3, point3);
-        //points.add(4, point4);
-        //points.add(5, point5);
-        //points.add(6, point6);
-       // points.add(7, point7);
-       // points.add(8, point8);
-       // points.add(9, point9);
-        //points.add(10, point10);
+
+        int count = 0;
+        for (SKCoordinate coord : _coordinatesList)
+        {
+            SKViaPoint temp = new SKViaPoint(count++, coord);
+            points.add(temp);
+        }
 
         route.setViaPoints(points);
 
         // pass the route to the calculation routine
         SKRouteManager.getInstance().calculateRoute(route);
-
-        /* // using pointsList for waypoints
-        //list of points
-        List pointsList = new ArrayList();
-        pointsList.add(new SKPosition(23.609239, 46.767936));
-        pointsList.add(new SKPosition(23.609149, 46.769281));
-        pointsList.add(new SKPosition(23.605704, 46.768879));
-        // set the route listener
-        SKRouteManager.getInstance().setRouteListener(this);
-        SKRouteSettings routeSettings = new SKRouteSettings();
-        //set route mode
-        routeSettings.setRouteMode(SKRouteSettings.SKRouteMode.CAR_FASTEST);
-        SKRouteManager.getInstance().calculateRouteWithPoints(pointsList, routeSettings);
-        */
     }
 
     @Override
@@ -408,17 +398,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onAllRoutesCompleted()
     {
-        final SKAdvisorSettings advisorSettings = new SKAdvisorSettings();
-        advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
-        advisorSettings.setAdvisorConfigPath(app.getMapResourcesDirPath() + "/Advisor");
-        advisorSettings.setResourcePath(app.getMapResourcesDirPath()+"/Advisor/Languages");
-        advisorSettings.setAdvisorVoice("en");
-        advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
-
         SKNavigationSettings navigationSettings = new SKNavigationSettings();
         navigationSettings.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
 
         SKNavigationManager navigationManager = SKNavigationManager.getInstance();
+
         navigationManager.setMapView(mapView);
         navigationManager.setNavigationListener(this);
         navigationManager.startNavigation(navigationSettings);

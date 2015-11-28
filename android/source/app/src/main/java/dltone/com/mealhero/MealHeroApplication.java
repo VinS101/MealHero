@@ -14,6 +14,7 @@ import android.util.Log;
 import com.ibm.mobile.services.core.IBMBluemix;
 import com.ibm.mobile.services.core.internal.IBMBluemixException;
 import com.ibm.mobile.services.data.IBMData;
+import com.skobbler.ngx.SKCoordinate;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public final class MealHeroApplication extends Application
     private static final String CLASS_NAME = MealHeroApplication.class.getSimpleName();
 
     public Volunteer currentLoggedInVolunteer;
+    public SKCoordinate centralMOWHub;
     private List<Volunteer> volunteerList = new ArrayList<>();
     private List<Client> clientList = new ArrayList<>();
 
@@ -121,6 +123,15 @@ public final class MealHeroApplication extends Application
     public void setLoggedInVolunteer(Volunteer v)
     {
         currentLoggedInVolunteer = v;
+    }
+
+    public SKCoordinate getCentralMOWHub()
+    {
+        return centralMOWHub;
+    }
+    public void setCentralMOWHub(SKCoordinate s)
+    {
+        centralMOWHub = s;
     }
 
     public List<Volunteer> getVolunteerList()

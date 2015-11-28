@@ -1,5 +1,6 @@
 package dltone.com.mealhero;
 
+import android.app.Application;
 import android.util.Log;
 
 import com.ibm.mobile.services.data.IBMDataException;
@@ -134,5 +135,39 @@ public class ClientProvider
                 return null;
             }
         }, Task.UI_THREAD_EXECUTOR);
+    }
+
+    public static ArrayList<Client> GetAssignedClients(Volunteer v, MealHeroApplication app)
+    {
+        ArrayList<Client> assignedClients = new ArrayList<>();
+
+        if (v == null)
+        {
+            return assignedClients;
+        }
+
+        ArrayList<String> ids = v.getClientIdsList();
+        ArrayList<Client> clients = (ArrayList<Client>) app.getClientList();
+
+        for(int i = 0; i < clients.size(); i++)
+        {
+            for(int j = 0; j < ids.size(); j++)
+            {
+                if(clients.get(i).getObjectId().equals(ids.get(j)))
+                {
+                    assignedClients.add(clients.get(i));
+                }
+            }
+        }
+        return assignedClients;
+    }
+
+    public static ArrayList<String> GetClientIds(ArrayList<Client> clients) {
+        ArrayList<String> ids = new ArrayList<>();
+        for(int i = 0; i < clients.size(); i++) {
+            ids.add(clients.get(i).getObjectId());
+        }
+
+        return ids;
     }
 }

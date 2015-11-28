@@ -27,6 +27,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.skobbler.ngx.SKCoordinate;
+
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -93,6 +95,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
         mProgressView = findViewById(R.id.login_progress);
 
         MHA = (MealHeroApplication) getApplication();
+        MHA.setCentralMOWHub(new SKCoordinate(-80.115906, 26.746448));
     }
 
     private void populateAutoComplete()
@@ -317,6 +320,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             if (success)
             {
+                MHA.setLoggedInVolunteer(mVolunteer);
                 MHA.setClientList(ClientProvider.GetClients());
                 Intent intent = null;
                 Bundle b = null;
