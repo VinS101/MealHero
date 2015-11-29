@@ -16,7 +16,13 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:actionModeCloseDrawable">@mipmap/ic_done_white</item>
+
+    </style>
+
+    <!-- Custom Action Bar -->
+    <style name="Theme.CustomActionBar" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:homeAsUpIndicator">@mipmap/ic_done_white</item>
     </style>
 
 </resources>

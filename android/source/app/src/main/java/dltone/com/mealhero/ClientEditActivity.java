@@ -1,15 +1,12 @@
 package dltone.com.mealhero;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,15 +14,13 @@ import android.widget.Toast;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 
-import java.util.concurrent.Callable;
-
 import bolts.Continuation;
 import bolts.Task;
 
 /**
  * Created by costin on 10/22/2015.
  */
-public class ClientEditActivity extends Activity
+public class ClientEditActivity extends AppCompatActivity
 {
     String CLASS_NAME = this.getClass().getName();
 
@@ -37,12 +32,6 @@ public class ClientEditActivity extends Activity
 
     //App reference
     MealHeroApplication MHApp;
-
-    //Action Mode
-    ActionMode mActionMode;
-
-    //Action Mode Callback
-    ActionMode.Callback mActionModeCallback;
 
     //UI Elements
     ImageView userImage;
@@ -85,56 +74,19 @@ public class ClientEditActivity extends Activity
         ageTextBox.setText(client.getAge());
         dietTextBox.setText(client.getDiet());
         assignedToTextView.setText(client.getAssignedTo());
+    }
 
-        //Implement Contextual Action Bar
-        mActionModeCallback = new ActionMode.Callback() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_edit_client, menu);
+        return true;
+    }
 
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.setTitle("Edit Client");
-                getMenuInflater().inflate(R.menu.menu_edit_client, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch(item.getItemId()) {
-                    case R.id.menu_delete_client:
-                        if(client != null) {
-                            MHApp.getClientList().remove(client);
-                            client.delete().continueWith(new Continuation<IBMDataObject, Void>() {
-                                @Override
-                                public Void then(Task<IBMDataObject> task) throws Exception {
-                                    if (task.isCancelled()) {
-                                        Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
-                                    } else if (task.isFaulted()) {
-                                        Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
-                                    } else {
-
-                                    }
-                                    return null;
-                                }
-                            });
-                            Toast.makeText(MHApp.getApplicationContext(), "Client deleted!", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
-                        }
-                        Intent returnIntent = new Intent();
-                        setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
-                        finish();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
                 if (client != null) {
                     client.setName(nameTextBox.getText().toString());
                     //TODO: client.setAddress(addressTextBox.getText().toString());
@@ -162,11 +114,33 @@ public class ClientEditActivity extends Activity
                 Intent returnIntent = new Intent();
                 setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
                 finish();
-                mode.finish();
-            }
-        };
+                return true;
+            case R.id.menu_delete_client:
+                if(client != null) {
+                    MHApp.getClientList().remove(client);
+                    client.delete().continueWith(new Continuation<IBMDataObject, Void>() {
+                        @Override
+                        public Void then(Task<IBMDataObject> task) throws Exception {
+                            if (task.isCancelled()) {
+                                Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
+                            } else if (task.isFaulted()) {
+                                Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
+                            } else {
 
-        //Get Action Mode and show Contextual Action Bar
-        mActionMode = startActionMode(mActionModeCallback);
+                            }
+                            return null;
+                        }
+                    });
+                    Toast.makeText(MHApp.getApplicationContext(), "Client deleted!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
+                }
+                Intent rIntent = new Intent();
+                setResult(MealHeroApplication.EDIT_ACTIVITY_RC, rIntent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

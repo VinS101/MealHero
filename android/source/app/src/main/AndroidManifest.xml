@@ -66,9 +66,7 @@
         <activity
             android:name=".AssignClientsActivity"
             android:label="@string/title_activity_assign_clients"
-            android:parentActivityName=".ClientEditActivity"
-            android:theme="@android:style/Theme.Holo.NoActionBar" >
-
+            android:parentActivityName=".ClientEditActivity" >
         </activity>
 
         <activity
@@ -107,7 +105,7 @@
             android:name=".ClientEditActivity"
             android:label="@string/title_activity_client_edit"
             android:parentActivityName=".ClientListActivity"
-            android:theme="@android:style/Theme.Holo.NoActionBar" >
+            android:theme="@style/Theme.CustomActionBar">
         </activity>
 
         <meta-data
