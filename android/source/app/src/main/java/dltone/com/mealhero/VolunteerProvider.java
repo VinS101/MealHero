@@ -114,11 +114,20 @@ public class VolunteerProvider
             }
         });
 
+        try
+        {
+            volunteerToBeRegistered.save().waitForCompletion();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static void DeleteVolunteer(Volunteer volunteerToBeDeleted)
     {
         if (volunteerToBeDeleted == null) return;
+
         volunteerToBeDeleted.delete().continueWith(new Continuation<IBMDataObject, Void>()
         {
             @Override
@@ -139,5 +148,47 @@ public class VolunteerProvider
                 return null;
             }
         }, Task.UI_THREAD_EXECUTOR);
+
+        try
+        {
+            volunteerToBeDeleted.delete().waitForCompletion();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void SaveVolunteer(Volunteer v)
+    {
+        v.save().continueWith(new Continuation<IBMDataObject, Void>() {
+            @Override
+            public Void then(Task<IBMDataObject> task) throws Exception
+            {
+                if (task.isCancelled())
+                {
+                    Log.e(CLASS_NAME, "Exception: " + task.toString() + " was cancelled.");
+                }
+                else if (task.isFaulted())
+                {
+                    Log.e(CLASS_NAME, "Exception: " + task.getError().getMessage());
+                }
+                else
+                {
+
+                }
+                return null;
+            }
+
+        }, Task.UI_THREAD_EXECUTOR);
+
+        try
+        {
+            v.save().waitForCompletion();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

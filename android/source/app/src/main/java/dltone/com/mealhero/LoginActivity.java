@@ -307,6 +307,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
+            query = VolunteerProvider.GetVolunteers();
             MHA.setVolunteerList(query);
 
             return true;

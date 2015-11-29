@@ -268,12 +268,6 @@ public class AddVolunteerActivity extends AppCompatActivity
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
 
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             return true;
         }
 
@@ -285,7 +279,6 @@ public class AddVolunteerActivity extends AppCompatActivity
 
             if (success)
             {
-                MHA.setClientList(ClientProvider.GetClients());
                 Intent intent = null;
                 Bundle b = null;
 
@@ -294,10 +287,14 @@ public class AddVolunteerActivity extends AppCompatActivity
 
                 b.putSerializable(VOLUNTEER, mVolunteer);
                 intent.putExtras(b);
-                startActivity(intent);
-                finish();
+
                 MHA.setVolunteerList(VolunteerProvider.GetVolunteers()); //Refresh
                 Toast.makeText(MHA.getApplicationContext(), "New volunteer was created Successfully!", Toast.LENGTH_LONG).show();
+
+                startActivity(intent);
+                finish();
+
+
             }
             else
             {

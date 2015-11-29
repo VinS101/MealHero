@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.skobbler.ngx.SKCoordinate;
+import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCoordinateRegion;
 import com.skobbler.ngx.map.SKMapCustomPOI;
@@ -167,6 +168,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         {
             SKViaPoint temp = new SKViaPoint(count++, coord);
             points.add(temp);
+
+            SKAnnotation annotation = new SKAnnotation(count);
+            annotation.setLocation(coord);
+            annotation.setMininumZoomLevel(5);
+            mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
         }
 
         route.setViaPoints(points);

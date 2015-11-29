@@ -33,7 +33,7 @@ import java.util.List;
 public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMapTextureListener
 {
     ArrayAdapter<Client> lvArrayAdapter;
-    List<Client> mClientsToDisplay = new ArrayList<>();
+    ArrayList<Client> mClientsToDisplay = new ArrayList<>();
     MealHeroApplication MHApp;
 
     private static final String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
@@ -55,7 +55,7 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
         /* Use application class to maintain global state. */
         MHApp = (MealHeroApplication) getApplication();
-
+        
         mClientsToDisplay = ClientProvider.GetAssignedClients(MHApp.getLoggedInVolunteer(), MHApp);
 
         /* Set up the array adapter for items list view. */

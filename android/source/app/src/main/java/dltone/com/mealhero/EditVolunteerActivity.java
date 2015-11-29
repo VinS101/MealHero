@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,8 +76,15 @@ public class EditVolunteerActivity extends Activity
 
         //Get Volunteer Reference
         final int index = getIntent().getIntExtra("ItemLocation", 0);
-        if(MHApp.getVolunteerList().size() > 0) {
+        if (MHApp.getVolunteerList().size() > 0) {
             volunteer = MHApp.getVolunteerList().get(index);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "An error occurred retrieving the volunteer. Please contact an administrator.", Toast.LENGTH_SHORT).show();
+            Intent returnIntent = new Intent();
+            setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+            finish();
         }
 
         //Set UI Values
@@ -117,16 +125,40 @@ public class EditVolunteerActivity extends Activity
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.menu_delete_volunteer:
-                        if(volunteer != null) {
-                            deleteVolunteer(volunteer);
-                            Toast.makeText(getApplicationContext(), "Volunteer delete successful!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
-                        }
+                    {
+
                         Intent returnIntent = new Intent();
                         setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
-                        finish();
-                        return true;
+
+                        if (volunteer == null)
+                        {
+                            Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete Volunteer!", Toast.LENGTH_LONG).show();
+                            finish();
+                            return true;
+                        }
+
+                        if (volunteer.getEmail().equalsIgnoreCase(MHApp.getLoggedInVolunteer().getEmail()))
+                        {
+                            Toast.makeText(getApplicationContext(), "You cannot delete your own account!", Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                        else
+                        {
+                            ArrayList<Client> assignedClients = ClientProvider.GetAssignedClients(volunteer, MHApp);
+                            for (Client c : assignedClients)
+                            {
+                                c.setAssigned(false);
+                                ClientProvider.SaveClient(c);
+                            }
+
+                            VolunteerProvider.DeleteVolunteer(volunteer);
+                            Toast.makeText(getApplicationContext(), "Volunteer delete successful!", Toast.LENGTH_SHORT).show();
+                            MHApp.getVolunteerList().remove(volunteer);
+                            MHApp.setVolunteerList(VolunteerProvider.GetVolunteers());
+                            finish();
+                            return true;
+                        }
+                    }
                     default:
                         return false;
                 }
@@ -159,37 +191,6 @@ public class EditVolunteerActivity extends Activity
         v.setPermission(permissionTextBox.getText().toString());
         //v.setClientList();
 
-        v.save().continueWith(new Continuation<IBMDataObject, Void>() {
-            @Override
-            public Void then(Task<IBMDataObject> task) throws Exception {
-                if (task.isCancelled()) {
-                    Log.e(CLASS_NAME, "Exception: " + task.toString() + " was cancelled.");
-                } else if (task.isFaulted()) {
-                    Log.e(CLASS_NAME, "Exception: " + task.getError().getMessage());
-                } else {
-
-                }
-                return null;
-            }
-
-        }, Task.UI_THREAD_EXECUTOR);
-    }
-    private void deleteVolunteer(Volunteer v) {
-
-        MHApp.getVolunteerList().remove(v);
-
-        v.delete().continueWith(new Continuation<IBMDataObject, Void>() {
-            @Override
-            public Void then(Task<IBMDataObject> task) throws Exception {
-                if (task.isCancelled()) {
-                    Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
-                } else if (task.isFaulted()) {
-                    Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
-                } else {
-
-                }
-                return null;
-            }
-        }, Task.UI_THREAD_EXECUTOR);
+        VolunteerProvider.SaveVolunteer(v);
     }
 }

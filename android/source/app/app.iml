@@ -134,6 +134,7 @@
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="jasypt-1.9.2" level="project" />
     <orderEntry type="library" exported="" name="play-services-appinvite-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="ibmpush-1.0.1.20150311-1224" level="project" />
     <orderEntry type="library" exported="" name="SKMaps" level="project" />
