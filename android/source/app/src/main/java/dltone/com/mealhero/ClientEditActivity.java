@@ -32,6 +32,9 @@ public class ClientEditActivity extends Activity
     //Local copy of Client
     Client client;
 
+    //Original Copy of Client
+    Client originalClient;
+
     //App reference
     MealHeroApplication MHApp;
 
@@ -70,8 +73,10 @@ public class ClientEditActivity extends Activity
         int index = getIntent().getIntExtra("ItemLocation", -1);
         if(index >= 0) {
             client = MHApp.getClientList().get(index);
+            originalClient = new Client(client.getName(), client.getAddress(), client.getDiet(), client.getAge(), client.getAssigned(), client.getAssignedTo(), client.getLatitude(), client.getLongitude());
         } else {
             client = null;
+            originalClient = null;
         }
 
         //Set UI values
@@ -135,20 +140,22 @@ public class ClientEditActivity extends Activity
                     //TODO: client.setAddress(addressTextBox.getText().toString());
                     client.setDietPreference(dietTextBox.getText().toString());
                     client.setAge(ageTextBox.getText().toString());
-                    client.save().continueWith(new Continuation<IBMDataObject, Void>() {
-                        @Override
-                        public Void then(Task<IBMDataObject> task) throws Exception {
-                            if (task.isCancelled()) {
-                                Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
-                            } else if (task.isFaulted()) {
-                                Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
-                            } else {
+                    if(!client.equals(originalClient)) {
+                        client.save().continueWith(new Continuation<IBMDataObject, Void>() {
+                            @Override
+                            public Void then(Task<IBMDataObject> task) throws Exception {
+                                if (task.isCancelled()) {
+                                    Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
+                                } else if (task.isFaulted()) {
+                                    Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
+                                } else {
 
+                                }
+                                return null;
                             }
-                            return null;
-                        }
-                    });
-                    Toast.makeText(MHApp.getApplicationContext(), "Client changes saved!", Toast.LENGTH_LONG).show();
+                        });
+                        Toast.makeText(MHApp.getApplicationContext(), "Client changes saved!", Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(MHApp.getApplicationContext(), "Error! Could not save changes!", Toast.LENGTH_LONG).show();
                 }

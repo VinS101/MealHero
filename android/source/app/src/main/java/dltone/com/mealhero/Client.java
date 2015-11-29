@@ -4,6 +4,7 @@ import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Created by costin on 10/6/2015.
@@ -37,6 +38,18 @@ public class Client extends IBMDataObject implements Serializable
     public String toString()
     {
         return (String) getObject(NAME);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(this.getName().equals(((Client) other).getName()) && this.getAddress().equals(((Client) other).getAddress())
+                && this.getDiet().equals(((Client) other).getDiet()) && this.getAge().equals(((Client) other).getAge())
+                && this.getAssigned() == ((Client) other).getAssigned() && this.getAssignedTo().equals(((Client) other).getAssignedTo())
+                && this.getLatitude().equals(((Client) other).getLatitude()) && this.getLongitude().equals(((Client) other).getLongitude())) {
+            return true;
+        }
+
+        return false;
     }
 
     public String getName()
