@@ -115,6 +115,15 @@ public class ClientProvider
                 return null;
             }
         });
+
+        try
+        {
+            clientToSave.save().waitForCompletion();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static void DeleteClient(Client clientToBeDeleted) {
@@ -135,6 +144,15 @@ public class ClientProvider
                 return null;
             }
         }, Task.UI_THREAD_EXECUTOR);
+
+        try
+        {
+            clientToBeDeleted.delete().waitForCompletion();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static ArrayList<Client> GetAssignedClients(Volunteer v, MealHeroApplication app)
