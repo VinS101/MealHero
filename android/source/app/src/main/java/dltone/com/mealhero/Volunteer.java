@@ -22,28 +22,35 @@ public class Volunteer  extends IBMDataObject implements Serializable//, Parcela
     public static final String CLASS_NAME = "Volunteer";
 
     private static final String NAME = "Name";
-    private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
     private static final String EMAIL = "Email";
     private static final String PERMISSION = "Permission";
-
     private static final String LISTCLIENTS = "ListClients";
 
     //endregion
 
     public Volunteer() {}
 
-    public Volunteer(String vName, String vUsername, String vPassword, String vEmail, String vPermission, ArrayList<String> vListClientIds)
+    public Volunteer(String vName, String vPassword, String vEmail, String vPermission, ArrayList<String> vListClientIds)
     {
-        setObject(NAME, (vName != null) ? vName : "");
-        setObject(USERNAME, (vUsername != null) ? vUsername : "");
-        setObject(PASSWORD, (vPassword != null) ? vPassword : "");
-        setObject(EMAIL, (vEmail != null) ? vEmail : "");
-        setObject(PERMISSION, (vPermission != null) ? vPermission : "");
-        setObject(LISTCLIENTS, (vListClientIds != null) ? vListClientIds: new ArrayList<String>());
+        setName(vName);
+        setPassword(vPassword);
+        setEmail(vEmail);
+        setPermission(vPermission);
+        setClientList(vListClientIds);
     }
 
     //region Accessors
+    @Override
+    public boolean equals(Object other) {
+        if(this.getName().equals(((Volunteer)other).getName()) && this.getPassword().equals(((Volunteer) other).getPassword())
+                && this.getEmail().equals(((Volunteer) other).getEmail()) && this.getPermission().equals(((Volunteer) other).getPermission())
+                && this.getClientIdsList().equals(((Volunteer) other).getClientIdsList())) {
+            return true;
+        }
+
+        return false;
+    }
     @Override
     public String toString()
     {
@@ -56,15 +63,6 @@ public class Volunteer  extends IBMDataObject implements Serializable//, Parcela
     public String getName()
     {
         return (String) getObject(NAME);
-    }
-
-    /**
-     * Gets volunteer's username
-     * @return Username
-     */
-    public String getUserName()
-    {
-        return (String) getObject(USERNAME);
     }
 
     /**
@@ -125,13 +123,11 @@ public class Volunteer  extends IBMDataObject implements Serializable//, Parcela
         setObject(NAME, (volunteerName != null) ? volunteerName : "" );
     }
 
-    public void setUsername(String userName) {
-        setObject(USERNAME, (userName != null) ? userName : "" );
-    }
-
     public void setEmail(String email) {
         setObject(EMAIL, (email != null) ? email : "");
     }
+
+    private void setPassword(String password) { setObject(PASSWORD, (password != null) ? password : "");}
 
     public void setPermission(String permission) {
         setObject(PERMISSION, (permission != null) ? permission : "");

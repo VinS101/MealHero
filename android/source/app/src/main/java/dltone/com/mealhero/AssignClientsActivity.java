@@ -48,6 +48,9 @@ public class AssignClientsActivity extends Activity {
     //Selected Volunteer
     Volunteer volunteer;
 
+    //Original Volunteer
+    Volunteer originalVolunteer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,8 +67,10 @@ public class AssignClientsActivity extends Activity {
         int index = getIntent().getIntExtra("ItemLocation", -1);
         if(index >= 0) {
             volunteer = MHApp.getVolunteerList().get(index);
+            originalVolunteer = new Volunteer(volunteer.getName(), volunteer.getPassword(), volunteer.getEmail(), volunteer.getPermission(), volunteer.getClientIdsList());
         } else {
             volunteer = null;
+            originalVolunteer = null;
         }
         //Initialize unassigned clients list
         clients = new ArrayList<>();
@@ -144,29 +149,27 @@ public class AssignClientsActivity extends Activity {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 if(volunteer != null) {
-                    volunteer.setClientList(new ArrayList<String>());
-                    //Un-assign old clients
-                    for(Client c : assignedClients) {
-                        if(!selectedClients.contains(c)) {
-                            c.setAssigned(false);
-                            c.setAssignedTo("Not Assigned");
-                        }
-                        c.save();
-                    }
-                    //Assign new clients
-                    for(Client c : selectedClients) {
-                        c.setAssigned(true);
-                        if(!volunteer.getName().isEmpty()) {
-                            c.setAssignedTo("Assignee: " + volunteer.getName());
-                        }
-                        else {
-                            c.setAssignedTo("Assignee: " + volunteer.getEmail());
-                        }
-                        c.save();
-                    }
-
                     volunteer.setClientList(ClientProvider.GetClientIds(selectedClients));
-
+                    if(!volunteer.equals(originalVolunteer)) {
+                        //Un-assign old clients
+                        for (Client c : assignedClients) {
+                            if (!selectedClients.contains(c)) {
+                                c.setAssigned(false);
+                                c.setAssignedTo("Not Assigned");
+                            }
+                            c.save();
+                        }
+                        //Assign new clients
+                        for (Client c : selectedClients) {
+                            c.setAssigned(true);
+                            if (!volunteer.getName().isEmpty()) {
+                                c.setAssignedTo("Assignee: " + volunteer.getName());
+                            } else {
+                                c.setAssignedTo("Assignee: " + volunteer.getEmail());
+                            }
+                            c.save();
+                        }
+                    }
                 }
                 Intent returnIntent = new Intent();
                 setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);

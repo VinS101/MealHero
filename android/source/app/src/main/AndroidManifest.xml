@@ -54,7 +54,7 @@
             android:label="@string/title_activity_administration" >
         </activity>
         <activity
-            android:name=".EditVolunteerActivity"
+            android:name=".VolunteerEditActivity"
             android:label="@string/title_activity_edit_volunteer"
             android:parentActivityName=".AdministrationActivity"
             android:theme="@android:style/Theme.Holo.NoActionBar" >

@@ -58,7 +58,7 @@ public class VolunteerListActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = null;
                 if(role.equals("EditVolunteer")) {
-                    intent = new Intent(getApplicationContext(), EditVolunteerActivity.class);
+                    intent = new Intent(getApplicationContext(), VolunteerEditActivity.class);
                 } else if(role.equals("AssignClients")) {
                     intent = new Intent(getApplicationContext(), AssignClientsActivity.class);
                 } else {

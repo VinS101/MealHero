@@ -28,12 +28,14 @@ import bolts.Task;
  * costin 11/6/2015
  */
 
-public class EditVolunteerActivity extends Activity
+public class VolunteerEditActivity extends Activity
 {
     String CLASS_NAME = this.getClass().getName();
 
     //Volunteer reference
     Volunteer volunteer;
+    //Original Volunteer
+    Volunteer originalVolunteer;
 
     //UI Elements
     EditText nameTextBox;
@@ -90,10 +92,17 @@ public class EditVolunteerActivity extends Activity
         //Set UI Values
         if (volunteer != null) {
             nameTextBox.setText(volunteer.getName());
-            //userNameTextBox.setText(volunteer.getUserName());
             passwordTextBox.setText(volunteer.getPassword());
             emailTextBox.setText(volunteer.getEmail());
             permissionTextBox.setText(volunteer.getPermission());
+        }
+
+        //Initialize original Volunteer
+        if(volunteer != null) {
+            originalVolunteer = new Volunteer(volunteer.getName(), volunteer.getPassword(), volunteer.getEmail(), volunteer.getPermission(), volunteer.getClientIdsList());
+        }
+        else {
+            originalVolunteer = null;
         }
 
         //Assign Clients Button Behavior
@@ -168,7 +177,10 @@ public class EditVolunteerActivity extends Activity
             public void onDestroyActionMode(ActionMode mode) {
                 if (volunteer != null) {
                     saveVolunteer(volunteer);
-                    Toast.makeText(getApplicationContext(), "Volunteer edit successful!", Toast.LENGTH_SHORT).show();
+                    if(!volunteer.equals(originalVolunteer)){
+                        Toast.makeText(getApplicationContext(), "Volunteer edit successful!", Toast.LENGTH_SHORT).show();
+                        VolunteerProvider.SaveVolunteer(volunteer);
+                    }
                 } else {
                     Toast.makeText(MHApp.getApplicationContext(), "Error! Could not save changes!", Toast.LENGTH_LONG).show();
                 }
@@ -186,11 +198,8 @@ public class EditVolunteerActivity extends Activity
     private void saveVolunteer(Volunteer v) {
 
         v.setName(nameTextBox.getText().toString());
-        //v.setUsername(userNameTextBox.getText().toString());
         v.setEmail(emailTextBox.getText().toString());
         v.setPermission(permissionTextBox.getText().toString());
         //v.setClientList();
-
-        VolunteerProvider.SaveVolunteer(v);
     }
 }
