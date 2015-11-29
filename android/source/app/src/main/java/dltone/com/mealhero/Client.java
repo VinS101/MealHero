@@ -16,17 +16,19 @@ public class Client extends IBMDataObject implements Serializable
     private static final String DIET = "Diet";
     private static final String AGE = "Age";
     private static final String ISASSIGNED = "IsAssigned";
+    private static final String ASSIGNEDTO = "AssignedTo";
     private static final String LATITUDE = "Latitude";
     private static final String LONGITUDE = "Longitude";
 
     public Client() { }
 
-    public Client(String pName, String pAddress, String pDiet, String pAge, boolean pIsAssigned, Double pLatitude, Double pLongitude) {
+    public Client(String pName, String pAddress, String pDiet, String pAge, boolean pIsAssigned, String pAssignedTo, Double pLatitude, Double pLongitude) {
         setName(pName);
         setAddress(pAddress);
         setDietPreference(pDiet);
         setAge(pAge);
         setAssigned(pIsAssigned);
+        setAssignedTo(pAssignedTo);
         setLatitude(pLatitude);
         setLongitude(pLongitude);
     }
@@ -54,6 +56,7 @@ public class Client extends IBMDataObject implements Serializable
     {
         return (String) getObject(ADDRESS);
     }
+    public String getAssignedTo() { return (String) getObject(ASSIGNEDTO); }
     public Double getLatitude()
     {
         return (Double) getObject(LATITUDE);
@@ -68,6 +71,7 @@ public class Client extends IBMDataObject implements Serializable
     public void setAge(String age) { setObject(AGE, (age != null) ? age : ""); }
     public void setAssigned(boolean isAssigned) { setObject(ISASSIGNED, isAssigned); }
     public void setAddress(String address) { setObject(ADDRESS, (address != null) ? address : ""); }
+    public void setAssignedTo(String volunteerName) { setObject(ASSIGNEDTO, (volunteerName != null) ? volunteerName : "Not Assigned"); }
     public void setLongitude(Double longitude) { setObject(LONGITUDE, (longitude != null) ? longitude : -1.00); }
     public void setLatitude(Double latitude) { setObject(LATITUDE, (latitude != null) ? latitude : -1.00); }
 }

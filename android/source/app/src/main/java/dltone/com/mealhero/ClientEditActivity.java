@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ibm.mobile.services.data.IBMDataObject;
@@ -46,6 +47,7 @@ public class ClientEditActivity extends Activity
     EditText addressTextBox;
     EditText ageTextBox;
     EditText dietTextBox;
+    TextView assignedToTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,6 +61,7 @@ public class ClientEditActivity extends Activity
         addressTextBox = (EditText) findViewById(R.id.client_edit_address_box);
         ageTextBox = (EditText) findViewById(R.id.client_edit_age_box);
         dietTextBox = (EditText) findViewById(R.id.client_edit_diet_box);
+        assignedToTextView = (TextView) findViewById(R.id.client_edit_assigned_to);
 
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
@@ -76,6 +79,7 @@ public class ClientEditActivity extends Activity
         addressTextBox.setText(client.getAddress());
         ageTextBox.setText(client.getAge());
         dietTextBox.setText(client.getDiet());
+        assignedToTextView.setText(client.getAssignedTo());
 
         //Implement Contextual Action Bar
         mActionModeCallback = new ActionMode.Callback() {

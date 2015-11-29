@@ -208,7 +208,7 @@ public class AddClientActivity extends AppCompatActivity
         {
             String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
 
-            Client clientToSubmit = new Client(Name, fullAddress, Diet, Age, false, _Address.getLatitude(), _Address.getLongitude());
+            Client clientToSubmit = new Client(Name, fullAddress, Diet, Age, false, "Not Assigned", _Address.getLatitude(), _Address.getLongitude());
             ClientProvider.RegisterClient(clientToSubmit);
 
             _MHA = (MealHeroApplication) getApplication();

@@ -149,12 +149,20 @@ public class AssignClientsActivity extends Activity {
                     for(Client c : assignedClients) {
                         if(!selectedClients.contains(c)) {
                             c.setAssigned(false);
+                            c.setAssignedTo("Not Assigned");
                         }
                         c.save();
                     }
                     //Assign new clients
                     for(Client c : selectedClients) {
                         c.setAssigned(true);
+                        if(!volunteer.getName().isEmpty()) {
+                            c.setAssignedTo("Assignee: " + volunteer.getName());
+                        }
+                        else {
+                            c.setAssignedTo("Assignee: " + volunteer.getEmail());
+                        }
+                        c.save();
                     }
 
                     volunteer.setClientList(ClientProvider.GetClientIds(selectedClients));
