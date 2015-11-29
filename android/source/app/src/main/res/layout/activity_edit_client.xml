@@ -10,9 +10,19 @@
     android:paddingTop="@dimen/padding_top"
     android:paddingBottom="@dimen/padding_bottom"
     tools:context="dltone.com.mealhero.EditClientActivity">
+    <ProgressBar
+        android:id="@+id/editClient_progress" style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/editClient_form">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

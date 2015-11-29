@@ -1,7 +1,12 @@
 package dltone.com.mealhero;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ibm.mobile.services.data.IBMDataObject;
+
+import org.jasypt.util.password.BasicPasswordEncryptor;
 
 import java.util.concurrent.Callable;
 
@@ -37,7 +44,8 @@ public class ClientEditActivity extends Activity
 
     //App reference
     MealHeroApplication MHApp;
-
+    View clientEditView;
+    View progress;
     //Action Mode
     ActionMode mActionMode;
 
@@ -51,6 +59,13 @@ public class ClientEditActivity extends Activity
     EditText ageTextBox;
     EditText dietTextBox;
     TextView assignedToTextView;
+
+    //Background Thread
+    private DeleteClient mAuthTask = null;
+
+    //misc
+    private boolean isDeleted = false;
+    private boolean isEdited = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,7 +83,8 @@ public class ClientEditActivity extends Activity
 
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
-
+        clientEditView = findViewById(R.id.editClient_form);
+        progress = findViewById(R.id.editClient_progress);
         //Get Selected Client
         int index = getIntent().getIntExtra("ItemLocation", -1);
         if(index >= 0) {
@@ -105,28 +121,9 @@ public class ClientEditActivity extends Activity
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.menu_delete_client:
-                        if(client != null) {
-                            MHApp.getClientList().remove(client);
-                            client.delete().continueWith(new Continuation<IBMDataObject, Void>() {
-                                @Override
-                                public Void then(Task<IBMDataObject> task) throws Exception {
-                                    if (task.isCancelled()) {
-                                        Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
-                                    } else if (task.isFaulted()) {
-                                        Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
-                                    } else {
-
-                                    }
-                                    return null;
-                                }
-                            });
-                            Toast.makeText(MHApp.getApplicationContext(), "Client deleted!", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
-                        }
-                        Intent returnIntent = new Intent();
-                        setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
-                        finish();
+                        showProgress(true);
+                        mAuthTask = new DeleteClient();
+                        mAuthTask.execute((Void) null);
                         return true;
                     default:
                         return false;
@@ -168,5 +165,114 @@ public class ClientEditActivity extends Activity
 
         //Get Action Mode and show Contextual Action Bar
         mActionMode = startActionMode(mActionModeCallback);
+    }
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show)
+    {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
+        {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_longAnimTime);
+            int longAnimationTime = 1000; //need longer
+            clientEditView.setVisibility(show ? View.GONE : View.VISIBLE);
+            clientEditView.animate().setDuration(longAnimationTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter()
+            {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    clientEditView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            clientEditView.setVisibility(show ? View.VISIBLE : View.GONE);
+            clientEditView.animate().setDuration(longAnimationTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter()
+            {
+                @Override
+                public void onAnimationEnd(Animator animation)
+                {
+                    clientEditView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        }
+        else
+        {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            progress.setVisibility(show ? View.VISIBLE : View.GONE);
+            clientEditView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+    public class DeleteClient extends AsyncTask<Void, Void, Boolean>
+    {
+
+
+        DeleteClient()
+        {
+
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params)
+        {
+
+            if(client != null)
+            {
+                MHApp.getClientList().remove(client);
+                client.delete().continueWith(new Continuation<IBMDataObject, Void>() {
+                    @Override
+                    public Void then(Task<IBMDataObject> task) throws Exception {
+                        if (task.isCancelled())
+                        {
+                            Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
+                        } else if (task.isFaulted())
+                        {
+                            Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
+                        } else
+                        {
+
+                        }
+                        return null;
+                    }
+                });
+                isDeleted = true;
+            } else
+            {
+                Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
+            }
+            Intent returnIntent = new Intent();
+            setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+            finish();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success)
+        {
+            mAuthTask = null;
+            showProgress(false);
+            if(isDeleted)
+            {
+                Toast.makeText(MHApp.getApplicationContext(), "Client deleted!", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete client!", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
+        @Override
+        protected void onCancelled()
+        {
+            mAuthTask = null;
+            //showProgress(false);
+        }
     }
 }

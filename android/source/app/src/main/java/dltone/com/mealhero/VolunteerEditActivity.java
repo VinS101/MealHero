@@ -1,8 +1,12 @@
 package dltone.com.mealhero;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +43,8 @@ public class VolunteerEditActivity extends Activity
 
     //UI Elements
     EditText nameTextBox;
+    View volunteerEdit;
+    View progress;
     //EditText userNameTextBox;
     EditText passwordTextBox;
     EditText emailTextBox;
@@ -54,6 +60,9 @@ public class VolunteerEditActivity extends Activity
     //Action Mode Callback
     ActionMode.Callback mActionModeCallback;
 
+    private DeleteVolunteer mAuthTask = null;
+    private boolean isDeleted = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +76,8 @@ public class VolunteerEditActivity extends Activity
         passwordTextBox.setEnabled(false);
         permissionTextBox = (EditText) findViewById(R.id.volunteer_edit_permission_box);
         assignClientsButton = (Button) findViewById(R.id.volunteer_edit_button);
-
+        volunteerEdit = findViewById(R.id.editVolunteer_form);
+        progress = findViewById(R.id.editVolunteer_progress);
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
 
@@ -135,38 +145,10 @@ public class VolunteerEditActivity extends Activity
                 switch(item.getItemId()) {
                     case R.id.menu_delete_volunteer:
                     {
-
-                        Intent returnIntent = new Intent();
-                        setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
-
-                        if (volunteer == null)
-                        {
-                            Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete Volunteer!", Toast.LENGTH_LONG).show();
-                            finish();
-                            return true;
-                        }
-
-                        if (volunteer.getEmail().equalsIgnoreCase(MHApp.getLoggedInVolunteer().getEmail()))
-                        {
-                            Toast.makeText(getApplicationContext(), "You cannot delete your own account!", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                        else
-                        {
-                            ArrayList<Client> assignedClients = ClientProvider.GetAssignedClients(volunteer, MHApp);
-                            for (Client c : assignedClients)
-                            {
-                                c.setAssigned(false);
-                                ClientProvider.SaveClient(c);
-                            }
-
-                            VolunteerProvider.DeleteVolunteer(volunteer);
-                            Toast.makeText(getApplicationContext(), "Volunteer delete successful!", Toast.LENGTH_SHORT).show();
-                            MHApp.getVolunteerList().remove(volunteer);
-                            MHApp.setVolunteerList(VolunteerProvider.GetVolunteers());
-                            finish();
-                            return true;
-                        }
+                        //Run in background
+                        showProgress(true);
+                        mAuthTask = new DeleteVolunteer();
+                        mAuthTask.execute((Void) null);
                     }
                     default:
                         return false;
@@ -194,6 +176,42 @@ public class VolunteerEditActivity extends Activity
         //Get Action Mode and show Contextual Action Bar
         mActionMode = startActionMode(mActionModeCallback);
     }
+    public void showProgress(final boolean show)
+    {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
+        {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_longAnimTime);
+            int longAnimationTime = 1000; //need longer
+            volunteerEdit.setVisibility(show ? View.GONE : View.VISIBLE);
+            volunteerEdit.animate().setDuration(longAnimationTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter()
+            {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    volunteerEdit.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            volunteerEdit.setVisibility(show ? View.VISIBLE : View.GONE);
+            volunteerEdit.animate().setDuration(longAnimationTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter()
+            {
+                @Override
+                public void onAnimationEnd(Animator animation)
+                {
+                    volunteerEdit.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        }
+        else
+        {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            progress.setVisibility(show ? View.VISIBLE : View.GONE);
+            volunteerEdit.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
 
     private void saveVolunteer(Volunteer v) {
 
@@ -201,5 +219,95 @@ public class VolunteerEditActivity extends Activity
         v.setEmail(emailTextBox.getText().toString());
         v.setPermission(permissionTextBox.getText().toString());
         //v.setClientList();
+    }
+    public class DeleteVolunteer extends AsyncTask<Void, Void, Boolean>
+    {
+
+
+        DeleteVolunteer()
+        {
+
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params)
+        {
+            //Give user the illusion of progress
+            try
+            {
+                Thread.sleep(500);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            Intent returnIntent = new Intent();
+            setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+
+            if (volunteer == null)
+            {
+                Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete Volunteer!", Toast.LENGTH_LONG).show();
+                finish();
+                return true;
+            }
+
+            if (volunteer.getEmail().equalsIgnoreCase(MHApp.getLoggedInVolunteer().getEmail()))
+            {
+                Toast.makeText(getApplicationContext(), "You cannot delete your own account!", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            else
+            {
+                ArrayList<Client> assignedClients = ClientProvider.GetAssignedClients(volunteer, MHApp);
+                for (Client c : assignedClients)
+                {
+                    c.setAssigned(false);
+                    ClientProvider.SaveClient(c);
+                }
+
+                VolunteerProvider.DeleteVolunteer(volunteer);
+                isDeleted = true;
+                //MHApp.getVolunteerList().remove(volunteer);
+                try
+                {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                MHApp.setVolunteerList(VolunteerProvider.GetVolunteers());
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success)
+        {
+            mAuthTask = null;
+            showProgress(false);
+            Intent intent = new Intent(VolunteerEditActivity.this, AdministrationActivity.class);
+            startActivity(intent);
+            if(isDeleted)
+            {
+                Toast.makeText(MHApp.getApplicationContext(), "Volunteer was successfully deleted!", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Toast.makeText(MHApp.getApplicationContext(), "Error! Could not delete volunteer!", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
+        @Override
+        protected void onCancelled()
+        {
+            mAuthTask = null;
+            //showProgress(false);
+        }
     }
 }

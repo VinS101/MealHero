@@ -302,7 +302,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
             String encryptedPassword = bpe.encryptPassword(mPassword);
 
-            Volunteer volunteerToBeAdded = new Volunteer("", encryptedPassword, mEmail, "Admin", null);
+            Volunteer volunteerToBeAdded = new Volunteer("", encryptedPassword, mEmail, "Admin", new ArrayList<String>());
             mVolunteer = volunteerToBeAdded;
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
