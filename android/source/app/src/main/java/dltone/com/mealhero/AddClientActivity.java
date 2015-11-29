@@ -214,15 +214,7 @@ public class AddClientActivity extends AppCompatActivity
             _MHA = (MealHeroApplication) getApplication();
             _MHA.setClientList(ClientProvider.GetClients());
             finish();
-            intent = new Intent(AddClientActivity.this, AdministrationActivity.class);
-            try
-            {
-                Thread.sleep(200);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            startActivity(intent);
+
             return true;
         }
 

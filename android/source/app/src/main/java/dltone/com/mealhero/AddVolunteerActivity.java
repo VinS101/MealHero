@@ -290,11 +290,7 @@ public class AddVolunteerActivity extends AppCompatActivity
 
                 MHA.setVolunteerList(VolunteerProvider.GetVolunteers()); //Refresh
                 Toast.makeText(MHA.getApplicationContext(), "New volunteer was created Successfully!", Toast.LENGTH_LONG).show();
-
-                startActivity(intent);
                 finish();
-
-
             }
             else
             {
