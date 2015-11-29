@@ -7,6 +7,14 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 tools:context="dltone.com.mealhero.AddClientActivity">
+    <ProgressBar
+        android:id="@+id/addClient_progress" style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
     <ScrollView
         android:id="@+id/login_form" android:layout_width="match_parent"
         android:layout_height="match_parent">

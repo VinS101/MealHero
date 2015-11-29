@@ -1,8 +1,13 @@
 package dltone.com.mealhero;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +23,12 @@ public class AddClientActivity extends AppCompatActivity
 {
     MealHeroApplication _MHA;
     private Address _Address;
+    private View progressView;
+    private View addClientView;
+    private AddClientTask mAuthTask = null;
+    private String Name;
+    private String Diet;
+    private String Age;
     private ArrayList<Address> _addressResultList;
 
     public void OnVerifyAddress(View view)
@@ -76,13 +87,13 @@ public class AddClientActivity extends AppCompatActivity
     public void OnSubmit(View view)
     {
         EditText cName = (EditText)findViewById(R.id._txtName);
-        String Name = cName.getText().toString();
+        Name = cName.getText().toString();
 
         EditText cDiet = (EditText)findViewById(R.id._txtDiet);
-        String Diet = cDiet.getText().toString();
+        Diet = cDiet.getText().toString();
 
         EditText cAge = (EditText)findViewById(R.id._txtAge);
-        String Age = cAge.getText().toString();
+        Age = cAge.getText().toString();
 
         EditText cAddress = (EditText)findViewById(R.id._txtAddress);
 
@@ -111,14 +122,10 @@ public class AddClientActivity extends AppCompatActivity
         //Ready to add
         if(addClientKey)
         {
-            String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
-
-            Client clientToSubmit = new Client(Name, fullAddress, Diet, Age, false, _Address.getLatitude(), _Address.getLongitude());
-            ClientProvider.RegisterClient(clientToSubmit);
-            Toast.makeText(this, "Client Sucessfully Added", Toast.LENGTH_LONG).show();
-            _MHA = (MealHeroApplication) getApplication();
-            _MHA.setClientList(ClientProvider.GetClients());
-            finish();
+            //Show Spinning bar, run in the thread
+            showProgress(true);
+            mAuthTask = new AddClientTask("Add Client");
+            mAuthTask.execute((Void) null);
         }
     }
 
@@ -127,6 +134,8 @@ public class AddClientActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_client);
+        progressView = findViewById(R.id.addClient_progress);
+        addClientView = findViewById(R.id.addClient);
     }
 
     @Override
@@ -154,4 +163,88 @@ public class AddClientActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show)
+    {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = 600; //long
+
+            addClientView.setVisibility(show ? View.GONE : View.VISIBLE);
+            progressView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    progressView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            progressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else
+        {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            addClientView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    public class AddClientTask extends AsyncTask<Void, Void, Boolean>
+    {
+        AddClientTask(String role)
+        {
+            this.role = role;
+        }
+        Intent intent;
+        @Override
+        protected Boolean doInBackground(Void... params)
+        {
+            String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
+
+            Client clientToSubmit = new Client(Name, fullAddress, Diet, Age, false, _Address.getLatitude(), _Address.getLongitude());
+            ClientProvider.RegisterClient(clientToSubmit);
+
+            _MHA = (MealHeroApplication) getApplication();
+            _MHA.setClientList(ClientProvider.GetClients());
+            finish();
+            intent = new Intent(AddClientActivity.this, AdministrationActivity.class);
+            try
+            {
+                Thread.sleep(200);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            startActivity(intent);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success)
+        {
+            mAuthTask = null;
+            showProgress(false);
+            Toast.makeText(_MHA.getApplicationContext(), "Client Successfully Added!", Toast.LENGTH_LONG).show();
+
+        }
+
+        @Override
+        protected void onCancelled()
+        {
+            mAuthTask = null;
+            showProgress(false);
+        }
+
+        private String role;
+    }
+
 }
+
+
