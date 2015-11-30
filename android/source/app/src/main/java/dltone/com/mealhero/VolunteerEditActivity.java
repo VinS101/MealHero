@@ -2,37 +2,26 @@ package dltone.com.mealhero;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.ActionMode;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.ibm.mobile.services.data.IBMDataObject;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-
-import bolts.Continuation;
-import bolts.Task;
 
 /**
  * costin 11/6/2015
  */
 
-public class VolunteerEditActivity extends Activity
+public class VolunteerEditActivity extends AppCompatActivity
 {
     String CLASS_NAME = this.getClass().getName();
 
@@ -45,7 +34,6 @@ public class VolunteerEditActivity extends Activity
     EditText nameTextBox;
     View volunteerEdit;
     View progress;
-    //EditText userNameTextBox;
     EditText passwordTextBox;
     EditText emailTextBox;
     EditText permissionTextBox;
@@ -53,12 +41,6 @@ public class VolunteerEditActivity extends Activity
 
     //App reference
     MealHeroApplication MHApp;
-
-    //Action Mode
-    ActionMode mActionMode;
-
-    //Action Mode Callback
-    ActionMode.Callback mActionModeCallback;
 
     private DeleteVolunteer mAuthTask = null;
     private boolean isDeleted = false;
@@ -70,7 +52,6 @@ public class VolunteerEditActivity extends Activity
 
         //Get references to UI elements
         nameTextBox = (EditText) findViewById(R.id.volunteer_edit_name_box);
-        //userNameTextBox = (EditText) findViewById(R.id.volunteer_edit_username_box);
         emailTextBox = (EditText) findViewById(R.id.volunteer_edit_email_box);
         passwordTextBox = (EditText) findViewById(R.id.volunteer_edit_password_box);
         passwordTextBox.setEnabled(false);
@@ -124,39 +105,19 @@ public class VolunteerEditActivity extends Activity
                 startActivity(assignClientsIntent);
             }
         });
+    }
 
-        //Implement Contextual Action Bar
-        mActionModeCallback = new ActionMode.Callback() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_edit_volunteer, menu);
+        return true;
+    }
 
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.setTitle("Edit Volunteer");
-                getMenuInflater().inflate(R.menu.menu_edit_volunteer, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch(item.getItemId()) {
-                    case R.id.menu_delete_volunteer:
-                    {
-                        //Run in background
-                        showProgress(true);
-                        mAuthTask = new DeleteVolunteer();
-                        mAuthTask.execute((Void) null);
-                    }
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
                 if (volunteer != null) {
                     saveVolunteer(volunteer);
                     if(!volunteer.equals(originalVolunteer)){
@@ -169,13 +130,19 @@ public class VolunteerEditActivity extends Activity
                 Intent returnIntent = new Intent();
                 setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
                 finish();
-                mode.finish();
-            }
-        };
+                return true;
+            case R.id.menu_delete_volunteer:
+                //Run in background
+                showProgress(true);
+                mAuthTask = new DeleteVolunteer();
+                mAuthTask.execute((Void) null);
+                return true;
 
-        //Get Action Mode and show Contextual Action Bar
-        mActionMode = startActionMode(mActionModeCallback);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
+
     public void showProgress(final boolean show)
     {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow

@@ -1,11 +1,11 @@
 package dltone.com.mealhero;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.ActionMode;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by costin on 11/15/2015.
  */
-public class AssignClientsActivity extends Activity {
+public class AssignClientsActivity extends AppCompatActivity {
 
     //Selected Color
     private int selectedColor = Color.rgb(100, 181, 246);
@@ -35,12 +35,6 @@ public class AssignClientsActivity extends Activity {
 
     //Adapter to List of Unassigned Clients
     private AssignClientListAdapter clientAdapter;
-
-    //Action Mode
-    ActionMode mActionMode;
-
-    //Action Mode Callback
-    ActionMode.Callback mActionModeCallback;
 
     //App Reference
     MealHeroApplication MHApp;
@@ -125,29 +119,19 @@ public class AssignClientsActivity extends Activity {
 
         //Notify adapter of data change
         clientAdapter.notifyDataSetChanged();
+    }
 
-        //Implement Contextual Action Bar
-        mActionModeCallback = new ActionMode.Callback() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_assign_clients, menu);
+        return true;
+    }
 
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.setTitle("Assign Clients");
-                getMenuInflater().inflate(R.menu.menu_assign_clients, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
                 if(volunteer != null) {
                     volunteer.setClientList(ClientProvider.GetClientIds(selectedClients));
                     if(!volunteer.equals(originalVolunteer)) {
@@ -174,12 +158,10 @@ public class AssignClientsActivity extends Activity {
                 Intent returnIntent = new Intent();
                 setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
                 finish();
-                mode.finish();
-            }
-        };
-
-        //Get Action Mode and show Contextual Action Bar
-        mActionMode = startActionMode(mActionModeCallback);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
