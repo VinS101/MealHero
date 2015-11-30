@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMapTextureListener
 {
@@ -55,7 +57,7 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
         /* Use application class to maintain global state. */
         MHApp = (MealHeroApplication) getApplication();
-        
+
         mClientsToDisplay = ClientProvider.GetAssignedClients(MHApp.getLoggedInVolunteer(), MHApp);
 
         /* Set up the array adapter for items list view. */
@@ -112,14 +114,6 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         // set path to map resources and initial map style
         initMapSettings.setMapResourcesPaths(mapResourcesPath,
                 new SKMapViewStyle(mapResourcesPath + "daystyle/", "daystyle.json"));
-
-        final SKAdvisorSettings advisorSettings = new SKAdvisorSettings();
-        advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
-        advisorSettings.setAdvisorConfigPath(MHApp.getMapResourcesDirPath() +"/Advisor");
-        advisorSettings.setResourcePath(MHApp.getMapResourcesDirPath()+"/Advisor/Languages");
-        advisorSettings.setAdvisorVoice("en");
-        advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.AUDIO_FILES);
-        SKRouteManager.getInstance().setAudioAdvisorSettings(advisorSettings);
 
         try
         {

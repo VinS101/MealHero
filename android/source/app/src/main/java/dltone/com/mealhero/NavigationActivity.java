@@ -1,8 +1,12 @@
 package dltone.com.mealhero;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.skobbler.ngx.SKCoordinate;
@@ -25,15 +29,20 @@ import com.skobbler.ngx.positioner.SKCurrentPositionListener;
 import com.skobbler.ngx.positioner.SKCurrentPositionProvider;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
+import com.skobbler.ngx.routing.SKRouteAdvice;
 import com.skobbler.ngx.routing.SKRouteInfo;
 import com.skobbler.ngx.routing.SKRouteJsonAnswer;
 import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
+import com.skobbler.ngx.util.SKLogging;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class NavigationActivity extends FragmentActivity implements SKCurrentPositionListener, SKMapSurfaceListener, SKRouteListener, SKNavigationListener
 {
@@ -41,6 +50,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
      * Application context object
      */
     private MealHeroApplication MHApp;
+
+    /**
+     *  ID Tag
+     */
+    private static final String TAG = "NavigationActivity";
 
     /**
      * Current position provider
@@ -87,6 +101,9 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
     private List<Client> _clientsToDisplay = new ArrayList<>();
 
+    // Audio advisor
+    private TextToSpeech textToSpeechEngine;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -110,6 +127,8 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
             return;
         }
 
+        setupAudioAdvisor();
+
         currentPositionProvider = new SKCurrentPositionProvider(this);
         currentPositionProvider.setCurrentPositionListener(this);
         currentPositionProvider.requestLocationUpdates(MealHeroUtils.hasGpsModule(this), MealHeroUtils.hasNetworkModule(this), false);
@@ -120,6 +139,41 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
         currentPositionProvider.requestUpdateFromLastPosition();
 
+    }
+
+    private void setupAudioAdvisor()
+    {
+        if (textToSpeechEngine == null)
+        {
+            textToSpeechEngine = new TextToSpeech(NavigationActivity.this, new TextToSpeech.OnInitListener()
+            {
+                @Override
+                public void onInit(int status)
+                {
+                    if (status == TextToSpeech.SUCCESS)
+                    {
+                        int result = textToSpeechEngine.setLanguage(Locale.ENGLISH);
+                        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED)
+                        {
+                            Toast.makeText(NavigationActivity.this, "Text-To-Speech initiation failed. No speech advisor will be used.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else
+                    {
+                        Toast.makeText(NavigationActivity.this, "Text-to-speech could not be initialized. No speech advisor will be used.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+
+        final SKAdvisorSettings advisorSettings = new SKAdvisorSettings();
+        advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
+        advisorSettings.setAdvisorConfigPath(MHApp.getMapResourcesDirPath() +"/Advisor");
+        advisorSettings.setResourcePath(MHApp.getMapResourcesDirPath()+"/Advisor/Languages");
+        advisorSettings.setAdvisorVoice("en");
+        advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
+        SKRouteManager.getInstance().setAudioAdvisorSettings(advisorSettings);
     }
 
     private Boolean ValidateAddresses()
@@ -166,12 +220,14 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         int count = 0;
         for (SKCoordinate coord : _coordinatesList)
         {
-            SKViaPoint temp = new SKViaPoint(count++, coord);
+            SKViaPoint temp = new SKViaPoint(count, coord);
             points.add(temp);
 
             SKAnnotation annotation = new SKAnnotation(count);
             annotation.setLocation(coord);
+            annotation.setUniqueID(count++);
             annotation.setMininumZoomLevel(5);
+            annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
             mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
         }
 
@@ -437,7 +493,31 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onSignalNewAdviceWithInstruction(String s)
     {
+        SKLogging.writeLog(TAG, " onSignalNewAdviceWithInstruction " + s, Log.DEBUG);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            ttsGreater21(s);
+        }
+        else
+        {
+            ttsUnder20(s);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String s)
+    {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        textToSpeechEngine.speak(s, TextToSpeech.QUEUE_ADD, map);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String s)
+    {
+        String utteranceId = this.hashCode() + "";
+        textToSpeechEngine.speak(s, TextToSpeech.QUEUE_ADD, null, utteranceId);
     }
 
     @Override
