@@ -1,11 +1,15 @@
 package dltone.com.mealhero;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -155,7 +159,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
                         int result = textToSpeechEngine.setLanguage(Locale.ENGLISH);
                         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED)
                         {
-                            Toast.makeText(NavigationActivity.this, "Text-To-Speech initiation failed. No speech advisor will be used.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(NavigationActivity.this, "Text-To-Speech: Missing data or language not supported. No speech advisor will be used.", Toast.LENGTH_SHORT).show();
                         }
                     }
                     else
@@ -166,10 +170,9 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
             });
         }
 
-
         final SKAdvisorSettings advisorSettings = new SKAdvisorSettings();
         advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
-        advisorSettings.setAdvisorConfigPath(MHApp.getMapResourcesDirPath() +"/Advisor");
+        advisorSettings.setAdvisorConfigPath(MHApp.getMapResourcesDirPath() + "/Advisor");
         advisorSettings.setResourcePath(MHApp.getMapResourcesDirPath()+"/Advisor/Languages");
         advisorSettings.setAdvisorVoice("en");
         advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
@@ -220,6 +223,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         int count = 0;
         for (SKCoordinate coord : _coordinatesList)
         {
+            if (coord == null)
+            {
+                Toast.makeText(this, "Error retrieving addresses. Verify client addresses or contact an administrator.", Toast.LENGTH_SHORT).show();
+                abort(); //get out
+            }
             SKViaPoint temp = new SKViaPoint(count, coord);
             points.add(temp);
 
@@ -237,6 +245,36 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         SKRouteManager.getInstance().calculateRoute(route);
     }
 
+
+    private long backPressedTime = 0;
+
+    @Override
+    public void onBackPressed()
+    {
+        long t = System.currentTimeMillis();
+        if (t - backPressedTime > 2000)
+        {
+            backPressedTime = t;
+            Toast.makeText(this, "Press back again to exit navigation.", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            abort();
+        }
+    }
+
+    private void abort()
+    {
+        if (skToolsNavigationInProgress)
+        {
+            SKNavigationManager.getInstance().stopNavigation();
+        }
+
+        SKRouteManager.getInstance().clearCurrentRoute();
+        textToSpeechEngine.stop();
+        textToSpeechEngine.shutdown();
+        finish(); //bye
+    }
     @Override
     protected void onPause()
     {
@@ -420,7 +458,8 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
                 onGPSSignalRecovered();
             }
         }
-        if (!_locationInitialized)
+
+        if (mapView != null && !_locationInitialized)
         {
             _locationInitialized = true;
             launchRouteCalculation();
@@ -468,6 +507,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         navigationManager.setMapView(mapView);
         navigationManager.setNavigationListener(this);
         navigationManager.startNavigation(navigationSettings);
+        skToolsNavigationInProgress = true;
     }
 
     @Override
@@ -563,7 +603,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     }
 
     @Override
-    public void onVisualAdviceChanged(boolean b, boolean b1, SKNavigationState skNavigationState)
+    public void onVisualAdviceChanged(boolean firstVisualAdviceChanged, boolean secondVisualAdviceChanged, SKNavigationState skNavigationState)
     {
 
     }
