@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 
+import java.util.ArrayList;
+
 
 public class AddVolunteerActivity extends AppCompatActivity
 {
@@ -263,7 +265,7 @@ public class AddVolunteerActivity extends AppCompatActivity
 
             String encryptedPassword = bpe.encryptPassword(mPassword);
 
-            Volunteer volunteerToBeAdded = new Volunteer(mName, encryptedPassword, mEmail, "Volunteer", null);
+            Volunteer volunteerToBeAdded = new Volunteer(mName, encryptedPassword, mEmail, "Volunteer", new ArrayList<String>());
             mVolunteer = volunteerToBeAdded;
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
