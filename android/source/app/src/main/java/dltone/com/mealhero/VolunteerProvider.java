@@ -191,4 +191,29 @@ public class VolunteerProvider
             e.printStackTrace();
         }
     }
+
+    public static Volunteer FindVolunteerByEmail(String email, ArrayList<Volunteer> list)
+    {
+        for (Volunteer v : list)
+        {
+            if (v.getEmail().equalsIgnoreCase(email))
+            {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    public static Volunteer FindVolunteerByName(String name, ArrayList<Volunteer> list)
+    {
+        for (Volunteer v : list)
+        {
+            if (v.getName().equalsIgnoreCase(name))
+            {
+                return v;
+            }
+        }
+        return null;
+    }
+
 }

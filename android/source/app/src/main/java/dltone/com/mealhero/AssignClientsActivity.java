@@ -130,25 +130,36 @@ public class AssignClientsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch(item.getItemId())
+        {
             case android.R.id.home:
-                if(volunteer != null) {
+                if (volunteer != null)
+                {
                     volunteer.setClientList(ClientProvider.GetClientIds(selectedClients));
-                    if(!volunteer.equals(originalVolunteer)) {
+                    VolunteerProvider.SaveVolunteer(volunteer);
+
+                    if(!volunteer.equals(originalVolunteer))
+                    {
                         //Un-assign old clients
-                        for (Client c : assignedClients) {
-                            if (!selectedClients.contains(c)) {
+                        for (Client c : assignedClients)
+                        {
+                            if (!selectedClients.contains(c))
+                            {
                                 c.setAssigned(false);
                                 c.setAssignedTo("Not Assigned");
                             }
                             c.save();
                         }
                         //Assign new clients
-                        for (Client c : selectedClients) {
+                        for (Client c : selectedClients)
+                        {
                             c.setAssigned(true);
-                            if (!volunteer.getName().isEmpty()) {
+                            if (!volunteer.getName().isEmpty())
+                            {
                                 c.setAssignedTo("Assignee: " + volunteer.getName());
-                            } else {
+                            }
+                            else
+                            {
                                 c.setAssignedTo("Assignee: " + volunteer.getEmail());
                             }
                             c.save();
