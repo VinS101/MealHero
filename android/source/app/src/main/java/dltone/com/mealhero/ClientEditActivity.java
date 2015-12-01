@@ -4,10 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +24,9 @@ import android.widget.Toast;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import bolts.Continuation;
 import bolts.Task;
 
@@ -28,6 +35,9 @@ import bolts.Task;
  */
 public class ClientEditActivity extends AppCompatActivity
 {
+    private ArrayList<Address> _addressResultList;
+    private Address _Address;
+
     String CLASS_NAME = this.getClass().getName();
 
     //Local copy of Client
@@ -50,12 +60,14 @@ public class ClientEditActivity extends AppCompatActivity
     EditText dietTextBox;
     TextView assignedToTextView;
 
+    Boolean addressVerified = true;
+    private Boolean addressEdited = false;
+
     //Background Thread
     private DeleteClient mAuthTask = null;
 
     //misc
     private boolean isDeleted = false;
-    private boolean isEdited = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -91,6 +103,33 @@ public class ClientEditActivity extends AppCompatActivity
         ageTextBox.setText(client.getAge());
         dietTextBox.setText(client.getDiet());
         assignedToTextView.setText(client.getAssignedTo());
+
+        TextWatcher textWatcher = new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                addressVerified = false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                if (addressTextBox.getText().toString().equalsIgnoreCase(originalClient.getAddress().toString()))
+                {
+                    addressVerified = true;
+                    addressEdited = false;
+                }
+            }
+        };
+        addressTextBox.addTextChangedListener(textWatcher);
+
     }
 
     @Override
@@ -101,45 +140,70 @@ public class ClientEditActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
             case android.R.id.home:
-                if (client != null) {
+                if (client != null)
+                {
+                    if (nameTextBox.getText().toString().isEmpty())
+                    {
+                        nameTextBox.setError("Name cannot be empty.");
+                        return true;
+                    }
+                    else if (addressTextBox.getText().toString().isEmpty())
+                    {
+                        addressTextBox.setError("Address cannot be empty.");
+                        return true;
+                    }
+                    else if (!addressVerified)
+                    {
+                        addressTextBox.setError("Address must be verified.");
+                        return true;
+                    }
+                    else if (dietTextBox.getText().toString().isEmpty())
+                    {
+                        dietTextBox.setError("Diet cannot be empty.");
+                        return true;
+                    }
+                    else if (ageTextBox.getText().toString().isEmpty())
+                    {
+                        ageTextBox.setError("Age cannot be empty.");
+                        return true;
+                    }
+
                     client.setName(nameTextBox.getText().toString());
-                    //TODO: client.setAddress(addressTextBox.getText().toString());
+                    client.setAddress(addressTextBox.getText().toString());
                     client.setDietPreference(dietTextBox.getText().toString());
                     client.setAge(ageTextBox.getText().toString());
-                    if(!client.equals(originalClient)) {
-                        client.save().continueWith(new Continuation<IBMDataObject, Void>() {
-                            @Override
-                            public Void then(Task<IBMDataObject> task) throws Exception {
-                                if (task.isCancelled()) {
-                                    Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
-                                } else if (task.isFaulted()) {
-                                    Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
-                                } else {
+                    if (addressEdited)
+                    {
+                        client.setLatitude(_Address.getLatitude());
+                        client.setLongitude(_Address.getLongitude());
+                    }
 
-                                }
-                                return null;
-                            }
-                        });
+                    if(!client.equals(originalClient))
+                    {
+                        ClientProvider.SaveClient(client);
                         Toast.makeText(MHApp.getApplicationContext(), "Client changes saved!", Toast.LENGTH_LONG).show();
                     }
-                } else {
+                }
+                else
+                {
                     Toast.makeText(MHApp.getApplicationContext(), "Error! Could not save changes!", Toast.LENGTH_LONG).show();
                 }
                 Intent returnIntent = new Intent();
                 setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
                 finish();
-                return true;
+                break;
             case R.id.menu_delete_client:
                 showProgress(true);
                 mAuthTask = new DeleteClient();
                 mAuthTask.execute((Void) null);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void showProgress(final boolean show)
@@ -200,22 +264,7 @@ public class ClientEditActivity extends AppCompatActivity
             if(client != null)
             {
                 MHApp.getClientList().remove(client);
-                client.delete().continueWith(new Continuation<IBMDataObject, Void>() {
-                    @Override
-                    public Void then(Task<IBMDataObject> task) throws Exception {
-                        if (task.isCancelled())
-                        {
-                            Log.e(CLASS_NAME, "Exception : Task " + task.toString() + " was cancelled.");
-                        } else if (task.isFaulted())
-                        {
-                            Log.e(CLASS_NAME, "Exception : " + task.getError().getMessage());
-                        } else
-                        {
-
-                        }
-                        return null;
-                    }
-                });
+                ClientProvider.DeleteClient(client);
                 isDeleted = true;
             } else
             {
@@ -250,4 +299,58 @@ public class ClientEditActivity extends AppCompatActivity
             //showProgress(false);
         }
     }
+
+
+    public void OnVerifyAddress(View view)
+    {
+        String address = addressTextBox.getText().toString();
+
+        if(address.isEmpty())
+        {
+            addressTextBox.setError("Address cannot be blank!");
+            return;
+        }
+
+        Geocoder geocoder = new Geocoder(getApplicationContext());
+        try
+        {
+            _addressResultList = (ArrayList<Address>) geocoder.getFromLocationName(address, 20);
+            if (_addressResultList.size() > 0)
+            {
+                Intent intent = new Intent(getApplicationContext(), AddressListActivity.class);
+                intent.putParcelableArrayListExtra("Results_List", _addressResultList);
+                startActivityForResult(intent, MealHeroApplication.EDIT_ACTIVITY_RC);
+            }
+            else
+            {
+                Toast.makeText(this, "No addresses could be found,", Toast.LENGTH_LONG).show();
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * On return from other activity, check result code to determine behavior.
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (resultCode)
+        {
+        /* If an edit has been made, notify that the data set has changed. */
+            case MealHeroApplication.EDIT_ACTIVITY_RC:
+                int index = data.getIntExtra("ItemLocation", -1);
+                _Address = _addressResultList.get(index);
+                String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
+                addressTextBox.setText(fullAddress);
+                addressTextBox.setError(null);
+                addressVerified = true;
+                addressEdited = true;
+                break;
+        }
+    }
+
 }

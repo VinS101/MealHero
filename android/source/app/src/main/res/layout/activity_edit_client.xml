@@ -95,6 +95,15 @@
                 android:id="@+id/client_edit_address_box"
                 />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Verify Address"
+                android:id="@+id/_btnVerify"
+                android:layout_gravity="center_horizontal"
+                android:onClick="OnVerifyAddress"
+                android:nestedScrollingEnabled="false"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
