@@ -152,6 +152,15 @@
                 android:inputType="text"
                 android:id="@+id/client_edit_diet_box"
                 />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unassign from Assignee"
+                android:id="@+id/_btnUnassign"
+                android:layout_gravity="center_horizontal"
+                android:onClick="OnClickUnassign"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

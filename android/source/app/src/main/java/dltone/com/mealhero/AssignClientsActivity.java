@@ -156,11 +156,11 @@ public class AssignClientsActivity extends AppCompatActivity {
                             c.setAssigned(true);
                             if (!volunteer.getName().isEmpty())
                             {
-                                c.setAssignedTo("Assignee: " + volunteer.getName());
+                                c.setAssignedTo(volunteer.getName());
                             }
                             else
                             {
-                                c.setAssignedTo("Assignee: " + volunteer.getEmail());
+                                c.setAssignedTo(volunteer.getEmail());
                             }
                             c.save();
                         }

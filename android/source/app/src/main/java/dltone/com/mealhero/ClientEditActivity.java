@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,6 +64,11 @@ public class ClientEditActivity extends AppCompatActivity
     Boolean addressVerified = true;
     private Boolean addressEdited = false;
 
+    // Client assignment
+    Button unassignButton;
+    Boolean assignmentChanged = false;
+    Volunteer assigneeVolunteer;
+
     //Background Thread
     private DeleteClient mAuthTask = null;
 
@@ -82,6 +88,7 @@ public class ClientEditActivity extends AppCompatActivity
         ageTextBox = (EditText) findViewById(R.id.client_edit_age_box);
         dietTextBox = (EditText) findViewById(R.id.client_edit_diet_box);
         assignedToTextView = (TextView) findViewById(R.id.client_edit_assigned_to);
+        unassignButton = (Button) findViewById(R.id._btnUnassign);
 
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
@@ -103,6 +110,19 @@ public class ClientEditActivity extends AppCompatActivity
         ageTextBox.setText(client.getAge());
         dietTextBox.setText(client.getDiet());
         assignedToTextView.setText(client.getAssignedTo());
+        assignedToTextView.setText("Assignee: " + client.getAssignedTo());
+
+        if (client.getAssigned())
+        {
+            unassignButton.setEnabled(true);
+            assigneeVolunteer = VolunteerProvider.FindVolunteerByEmail(client.getAssignedTo(), (ArrayList<Volunteer>)MHApp.getVolunteerList());
+            if (assigneeVolunteer == null)
+                assigneeVolunteer = VolunteerProvider.FindVolunteerByName(client.getAssignedTo(),(ArrayList<Volunteer>) MHApp.getVolunteerList());
+        }
+        else
+        {
+            unassignButton.setEnabled(false);
+        }
 
         TextWatcher textWatcher = new TextWatcher()
         {
@@ -185,6 +205,13 @@ public class ClientEditActivity extends AppCompatActivity
 
                     if(!client.equals(originalClient))
                     {
+
+                        if (assignmentChanged)
+                        {
+                            VolunteerProvider.SaveVolunteer(assigneeVolunteer);
+                            MHApp.setVolunteerList(VolunteerProvider.GetVolunteers());
+                        }
+
                         ClientProvider.SaveClient(client);
                         Toast.makeText(MHApp.getApplicationContext(), "Client changes saved!", Toast.LENGTH_LONG).show();
                     }
@@ -300,6 +327,31 @@ public class ClientEditActivity extends AppCompatActivity
         }
     }
 
+    public void OnClickUnassign(View view)
+    {
+        if (client != null)
+        {
+            client.setAssigned(false);
+            client.setAssignedTo("Not Assigned");
+            assignedToTextView.setText("Assignee: Not Assigned");
+            unassignButton.setEnabled(false);
+            if (assigneeVolunteer != null)
+            {
+                if (assigneeVolunteer.getClientIdsList().remove(client.getObjectId()))
+                {
+                    Toast.makeText(MHApp.getApplicationContext(), "Un-assignment successful.", Toast.LENGTH_SHORT).show();
+                    assignmentChanged = true;
+                }
+            }
+            else
+            {
+                if (!assignmentChanged)
+                {
+                    Toast.makeText(MHApp.getApplicationContext(), "Failed to find assignee. Client assignment reset.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
 
     public void OnVerifyAddress(View view)
     {
