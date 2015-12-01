@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.skobbler.ngx.SKCoordinate;
+import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCoordinateRegion;
@@ -29,6 +31,11 @@ import com.skobbler.ngx.navigation.SKNavigationListener;
 import com.skobbler.ngx.navigation.SKNavigationManager;
 import com.skobbler.ngx.navigation.SKNavigationSettings;
 import com.skobbler.ngx.navigation.SKNavigationState;
+import com.skobbler.ngx.poitracker.SKDetectedPOI;
+import com.skobbler.ngx.poitracker.SKPOITrackerListener;
+import com.skobbler.ngx.poitracker.SKPOITrackerManager;
+import com.skobbler.ngx.poitracker.SKTrackablePOI;
+import com.skobbler.ngx.poitracker.SKTrackablePOIType;
 import com.skobbler.ngx.positioner.SKCurrentPositionListener;
 import com.skobbler.ngx.positioner.SKCurrentPositionProvider;
 import com.skobbler.ngx.positioner.SKPosition;
@@ -47,8 +54,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class NavigationActivity extends FragmentActivity implements SKCurrentPositionListener, SKMapSurfaceListener, SKRouteListener, SKNavigationListener
+public class NavigationActivity extends FragmentActivity implements SKCurrentPositionListener, SKMapSurfaceListener, SKRouteListener, SKNavigationListener, SKPOITrackerListener
 {
     /**
      * Application context object
@@ -100,6 +109,19 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
      */
     private SKMapViewHolder mapHolder;
 
+    /**
+     * POIs to be detected on route
+     */
+    private Map<Integer, SKTrackablePOI> trackablePOIs;
+
+    /**
+     * Trackable POIs that are currently rendered on the map
+     */
+    private Map<Integer, SKTrackablePOI> drawnTrackablePOIs;
+
+    private SKPOITrackerManager poiTrackingManager;
+
+    private ArrayList<SKViaPoint> _pointsList = new ArrayList<>();
 
     private List<SKCoordinate> _coordinatesList = new ArrayList<>();
 
@@ -196,31 +218,33 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         return true;
     }
 
-    private void launchRouteCalculation() {
-
-
+    private void launchRouteCalculation()
+    {
         // get a route object and populate it with the desired properties
         SKRouteSettings route = new SKRouteSettings();
-        // set start and destination points
-        //route.setStartCoordinate(new SKCoordinate(-122.397674, 37.761278));
-        //route.setDestinationCoordinate(new SKCoordinate(-122.448270, 37.738761));
-        route.setStartCoordinate(new SKCoordinate(currentPosition.getCoordinate().getLongitude(), currentPosition.getCoordinate().getLatitude()));
-        //route.setDestinationCoordinate(new SKCoordinate(-80.107222, 26.371595));
-        route.setDestinationCoordinate(MHApp.getCentralMOWHub());
+
+        SKCoordinate currentPositionCoord = new SKCoordinate(currentPosition.getCoordinate().getLongitude(), currentPosition.getCoordinate().getLatitude());
+        // set start point
+        route.setStartCoordinate(currentPositionCoord);
+
+        mapView.addAnnotation(createAnnotationFromCoordinate(UniqueID.getID(), currentPositionCoord, SKAnnotation.SK_ANNOTATION_TYPE_GREEN), SKAnimationSettings.ANIMATION_PIN_DROP);
+
+
         // set the number of routes to be calculated
         route.setNoOfRoutes(1);
+
         // set the route mode
         route.setRouteMode(SKRouteSettings.SKRouteMode.CAR_FASTEST);
+
         // set whether the route should be shown on the map after it's computed
         route.setRouteExposed(true);
-        // set the route listener to be notified of route calculation
-        // events
+
+        // set the route listener to be notified of route calculation events
         SKRouteManager.getInstance().setRouteListener(this);
 
         // using SKViaPoint to add waypoints
-        ArrayList<SKViaPoint> points = new ArrayList<>();
+        _pointsList = new ArrayList<>();
 
-        int count = 0;
         for (SKCoordinate coord : _coordinatesList)
         {
             if (coord == null)
@@ -228,21 +252,44 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
                 Toast.makeText(this, "Error retrieving addresses. Verify client addresses or contact an administrator.", Toast.LENGTH_SHORT).show();
                 abort(); //get out
             }
-            SKViaPoint temp = new SKViaPoint(count, coord);
-            points.add(temp);
 
-            SKAnnotation annotation = new SKAnnotation(count);
-            annotation.setLocation(coord);
-            annotation.setUniqueID(count++);
-            annotation.setMininumZoomLevel(5);
-            annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
-            mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
+            SKViaPoint temp = new SKViaPoint(UniqueID.getID(), coord);
+            _pointsList.add(temp);
         }
 
-        route.setViaPoints(points);
+        SKCoordinate destCoord = MHApp.getCentralMOWHub();
+        route.setDestinationCoordinate(destCoord);
 
+
+        setupAnnotations(currentPositionCoord, _pointsList, destCoord);
+
+        route.setViaPoints(_pointsList);
+        route.setDestinationIsPoint(false);
         // pass the route to the calculation routine
         SKRouteManager.getInstance().calculateRoute(route);
+    }
+
+    private void setupAnnotations(SKCoordinate currentPositionCoord, ArrayList<SKViaPoint> pointsList, SKCoordinate destCoord)
+    {
+        mapView.addAnnotation(createAnnotationFromCoordinate(UniqueID.getID(), currentPositionCoord, SKAnnotation.SK_ANNOTATION_TYPE_GREEN), SKAnimationSettings.ANIMATION_PIN_DROP);
+
+        for (SKViaPoint point : pointsList)
+        {
+            mapView.addAnnotation(createAnnotationFromCoordinate(UniqueID.getID(), point.getPosition(), SKAnnotation.SK_ANNOTATION_TYPE_RED), SKAnimationSettings.ANIMATION_PIN_DROP);
+        }
+
+        mapView.addAnnotation(createAnnotationFromCoordinate(UniqueID.getID(), destCoord, SKAnnotation.SK_ANNOTATION_TYPE_DESTINATION_FLAG), SKAnimationSettings.ANIMATION_PIN_DROP);
+    }
+
+    private SKAnnotation createAnnotationFromCoordinate(int id, SKCoordinate coordinate, int skAnnotationType)
+    {
+        SKAnnotation annotation = new SKAnnotation(id);
+        annotation.setLocation(coordinate);
+        annotation.setUniqueID(id);
+        annotation.setMininumZoomLevel(5);
+        annotation.setAnnotationType(skAnnotationType);
+
+        return annotation;
     }
 
 
@@ -269,10 +316,15 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         {
             SKNavigationManager.getInstance().stopNavigation();
         }
-
+        currentPositionProvider.stopLocationUpdates();
         SKRouteManager.getInstance().clearCurrentRoute();
-        textToSpeechEngine.stop();
-        textToSpeechEngine.shutdown();
+        mapView.deleteAllAnnotationsAndCustomPOIs();
+
+        if (textToSpeechEngine != null)
+        {
+            textToSpeechEngine.stop();
+            textToSpeechEngine.shutdown();
+        }
         finish(); //bye
     }
     @Override
@@ -281,6 +333,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         super.onPause();
         mapHolder.onPause();
     }
+
     @Override
     protected void onResume()
     {
@@ -487,13 +540,13 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onRouteCalculationCompleted(SKRouteInfo skRouteInfo)
     {
-
+        //TODO: implement
     }
 
     @Override
     public void onRouteCalculationFailed(SKRoutingErrorCode skRoutingErrorCode)
     {
-
+        //TODO: implement
     }
 
     @Override
@@ -506,7 +559,9 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
         navigationManager.setMapView(mapView);
         navigationManager.setNavigationListener(this);
+
         navigationManager.startNavigation(navigationSettings);
+
         skToolsNavigationInProgress = true;
     }
 
@@ -527,7 +582,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onDestinationReached()
     {
-
+        //TODO: implement
     }
 
     @Override
@@ -587,7 +642,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onReRoutingStarted()
     {
-
+        //TODO: implement
     }
 
     @Override
@@ -599,7 +654,36 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onViaPointReached(int i)
     {
+        Client c = getClientFromViaPointID(i);
+        if (c == null) return;
 
+        Toast.makeText(this, "Reached client " + c.getName(), Toast.LENGTH_SHORT).show();
+    }
+
+    private Client getClientFromViaPointID(int i)
+    {
+        SKViaPoint pointReached = null;
+        for (SKViaPoint vP : _pointsList)
+        {
+            if (vP.getUniqueId() == i)
+            {
+                pointReached = vP;
+            }
+        }
+        if (pointReached == null) return null;
+
+        Client gegClient = null;
+        for (Client c : _clientsToDisplay)
+        {
+            if (c.getLatitude() == pointReached.getPosition().getLatitude())
+            {
+                if (c.getLongitude() == pointReached.getPosition().getLongitude())
+                {
+                    gegClient = c;
+                }
+            }
+        }
+        return gegClient;
     }
 
     @Override
@@ -610,6 +694,20 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
     @Override
     public void onTunnelEvent(boolean b)
+    {
+
+    }
+    //endregion
+
+    //region POITrackerListener
+    @Override
+    public void onUpdatePOIsInRadius(double v, double v1, int i)
+    {
+
+    }
+
+    @Override
+    public void onReceivedPOIs(SKTrackablePOIType skTrackablePOIType, List<SKDetectedPOI> list)
     {
 
     }

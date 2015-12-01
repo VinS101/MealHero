@@ -105,6 +105,13 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
     }
 
     @Override
+    public void onDestroy()
+    {
+        SKMaps.getInstance().destroySKMaps();
+        super.onDestroy();
+    }
+
+    @Override
     public void onMapTexturesPrepared(final boolean prepared)
     {
         // get object holding map initialization settings
