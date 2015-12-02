@@ -8,6 +8,8 @@ import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMQuery;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -82,7 +84,12 @@ public class ClientProvider
         {
             e.printStackTrace();
         }
-
+        Collections.sort(clientList, new Comparator<Client>() {
+            @Override
+            public int compare(Client c1, Client c2) {
+                return c1.getName().toUpperCase().compareTo(c2.getName().toUpperCase());
+            }
+        });
         return clientList;
     }
 

@@ -34,6 +34,8 @@ import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -281,6 +283,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
             // TODO: attempt authentication against a network service.
             List<Volunteer> query = VolunteerProvider.GetVolunteers();
 
+            Collections.sort(query, new Comparator<Volunteer>() {
+                @Override
+                public int compare(Volunteer v1, Volunteer v2)
+                {
+                    return v1.getEmail().toUpperCase().compareTo(v2.getEmail().toUpperCase());
+                }
+            });
             MHA.setVolunteerList(query);
 
             for (Volunteer volunteer : query)

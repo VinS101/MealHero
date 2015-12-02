@@ -10,6 +10,8 @@ import com.ibm.mobile.services.data.IBMQueryCondition;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import bolts.Continuation;
@@ -86,6 +88,12 @@ public class VolunteerProvider
             e.printStackTrace();
         }
 
+        Collections.sort(volunteerList, new Comparator<Volunteer>() {
+            @Override
+            public int compare(Volunteer v1, Volunteer v2) {
+                return v1.getEmail().toUpperCase().compareTo(v2.getEmail().toUpperCase());
+            }
+        });
         return volunteerList;
     }
 

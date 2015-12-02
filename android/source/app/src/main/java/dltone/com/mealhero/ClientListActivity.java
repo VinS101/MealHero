@@ -10,6 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -42,7 +44,16 @@ public class ClientListActivity extends AppCompatActivity
         //Ensure Client List is retrieved from DB
         if(MHApp.getClientList().size() < 1) {
             MHApp.setClientList(ClientProvider.GetClients());
+
         }
+        Collections.sort(MHApp.getClientList(), new Comparator<Client>()
+        {
+            @Override
+            public int compare(Client c1, Client c2)
+            {
+                return c1.getName().toUpperCase().compareTo(c2.getName().toUpperCase());
+            }
+        });
 
         //Set up array adapter
         clientAdapter = new ClientListAdapter(this, (ArrayList<Client>) MHApp.getClientList());
