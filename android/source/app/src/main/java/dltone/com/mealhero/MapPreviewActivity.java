@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -81,6 +82,16 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
                 {
                     openNavigation();
                 }
+            }
+        });
+
+        //Add Click Listener
+        volunteerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), ClientDetailActivity.class);
+                intent.putExtra("ClientID", mClientsToDisplay.get((int) id).getObjectId());
+                startActivity(intent);
             }
         });
 
