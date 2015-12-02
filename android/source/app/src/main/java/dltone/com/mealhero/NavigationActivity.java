@@ -47,14 +47,17 @@ import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
+import com.skobbler.ngx.util.SKGeoUtils;
 import com.skobbler.ngx.util.SKLogging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NavigationActivity extends FragmentActivity implements SKCurrentPositionListener, SKMapSurfaceListener, SKRouteListener, SKNavigationListener, SKPOITrackerListener
@@ -127,6 +130,8 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
     private List<Client> _clientsToDisplay = new ArrayList<>();
 
+    private List<Client> _clientsToVisit = new ArrayList<>();
+
     // Audio advisor
     private TextToSpeech textToSpeechEngine;
 
@@ -140,6 +145,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         MHApp = (MealHeroApplication) getApplication();
 
         _clientsToDisplay = ClientProvider.GetAssignedClients(MHApp.getLoggedInVolunteer(), MHApp);
+        _clientsToVisit.addAll(_clientsToDisplay);
 
         if (_clientsToDisplay == null)
         {
@@ -229,6 +235,21 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
         mapView.addAnnotation(createAnnotationFromCoordinate(UniqueID.getID(), currentPositionCoord, SKAnnotation.SK_ANNOTATION_TYPE_GREEN), SKAnimationSettings.ANIMATION_PIN_DROP);
 
+        // Greedy sort clients based on air distance (TreeMap automatically sorts by key)
+        Map<Double, SKCoordinate> distanceToClientCoordinate = new TreeMap<>();
+
+        for (SKCoordinate coord : _coordinatesList)
+        {
+            if (coord == null)
+            {
+                Toast.makeText(this, "Error retrieving addresses. Verify client addresses or contact an administrator.", Toast.LENGTH_SHORT).show();
+                abort(); //get out
+            }
+
+            Double airDistance = SKGeoUtils.calculateAirDistanceBetweenCoordinates(currentPositionCoord, coord);
+
+            distanceToClientCoordinate.put(airDistance, coord);
+        }
 
         // set the number of routes to be calculated
         route.setNoOfRoutes(1);
@@ -245,7 +266,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         // using SKViaPoint to add waypoints
         _pointsList = new ArrayList<>();
 
-        for (SKCoordinate coord : _coordinatesList)
+        for (SKCoordinate coord : distanceToClientCoordinate.values())
         {
             if (coord == null)
             {
@@ -510,6 +531,23 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
                 numberOfConsecutiveBadPositionReceivedDuringNavi = 0;
                 onGPSSignalRecovered();
             }
+
+            // Client coordinate redundancy check
+            Iterator<Client> iter = _clientsToVisit.iterator();
+            while(iter.hasNext())
+            {
+                Client c = iter.next();
+                SKCoordinate clientCoord = new SKCoordinate(c.getLongitude(), c.getLatitude());
+                Double airDistance = SKGeoUtils.calculateAirDistanceBetweenCoordinates(currentPosition.getCoordinate(), clientCoord);
+                if (airDistance <= 100)
+                {
+                    // Client is in the area
+                    performLoggingOnVisitedClientList(c);
+                    iter.remove();
+                }
+
+            }
+
         }
 
         if (mapView != null && !_locationInitialized)
@@ -517,6 +555,18 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
             _locationInitialized = true;
             launchRouteCalculation();
         }
+
+    }
+
+    private void performLoggingOnVisitedClientList(Client c)
+    {
+        SKNavigationManager.getInstance().decreaseSimulationSpeed(100);
+        Toast.makeText(this, "Reached client " + c.getName(), Toast.LENGTH_SHORT).show();
+        String clientAlert = "Approaching delivery for " + c.getName();
+        // Announce the arrival with TTS
+        onSignalNewAdviceWithInstruction(clientAlert);
+        SKNavigationManager.getInstance().increaseSimulationSpeed(100);
+
     }
 
 
@@ -657,7 +707,12 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         Client c = getClientFromViaPointID(i);
         if (c == null) return;
 
-        Toast.makeText(this, "Reached client " + c.getName(), Toast.LENGTH_SHORT).show();
+        if (_clientsToVisit.contains(c))
+        {
+            performLoggingOnVisitedClientList(c);
+            _clientsToVisit.remove(c);
+        }
+
     }
 
     private Client getClientFromViaPointID(int i)
