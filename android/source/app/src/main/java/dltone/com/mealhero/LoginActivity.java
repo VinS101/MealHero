@@ -176,7 +176,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_longAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
@@ -298,19 +298,19 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
                     return false;
                 }
             }
+            /** OBSOLETE AS OF 12/1/2015
             // TODO: register the new account here.
-
             String encryptedPassword = bpe.encryptPassword(mPassword);
 
             Volunteer volunteerToBeAdded = new Volunteer("", encryptedPassword, mEmail, "Admin", new ArrayList<String>());
             mVolunteer = volunteerToBeAdded;
 
             VolunteerProvider.RegisterVolunteer(volunteerToBeAdded);
-
+             **/
             query = VolunteerProvider.GetVolunteers();
             MHA.setVolunteerList(query);
 
-            return true;
+            return false;
         }
 
         @Override
