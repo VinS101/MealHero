@@ -42,10 +42,9 @@ public class ClientListActivity extends AppCompatActivity
         mClientListView = (ListView) findViewById(R.id.clientListView);
 
         //Ensure Client List is retrieved from DB
-        if(MHApp.getClientList().size() < 1) {
+        //if(MHApp.getClientList().size() < 1) {
             MHApp.setClientList(ClientProvider.GetClients());
-
-        }
+        //}
         Collections.sort(MHApp.getClientList(), new Comparator<Client>()
         {
             @Override

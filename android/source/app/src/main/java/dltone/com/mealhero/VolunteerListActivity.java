@@ -18,7 +18,6 @@ import java.util.concurrent.CountDownLatch;
 public class VolunteerListActivity extends AppCompatActivity
 {
     private ArrayAdapter<Volunteer> lvArrayAdapter;
-    private List<Volunteer> volunteers;
     MealHeroApplication MHA;
     private SetupTask setupTask = null;
     private String role;
@@ -36,14 +35,12 @@ public class VolunteerListActivity extends AppCompatActivity
 
         /* Use application class to maintain global state. */
         MHA = (MealHeroApplication) getApplication();
-        if(MHA.getVolunteerList().size() == 0) {
+        //if(MHA.getVolunteerList().size() == 0) {
             MHA.setVolunteerList(VolunteerProvider.GetVolunteers());
-        }
-
-        volunteers = MHA.getVolunteerList();
+        //}
 
         ListView volunteerListView = (ListView) findViewById(R.id.VolunteerListView);
-        lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, volunteers);
+        lvArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item, MHA.getVolunteerList());
         volunteerListView.setAdapter(lvArrayAdapter);
 
         lvArrayAdapter.notifyDataSetChanged();
