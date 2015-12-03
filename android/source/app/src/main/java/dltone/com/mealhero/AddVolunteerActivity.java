@@ -176,6 +176,15 @@ public class AddVolunteerActivity extends AppCompatActivity
         }
         else
         {
+            //Check for existing volunteer.
+            for(int i = 0; i < MHA.getVolunteerList().size(); i++) {
+                if(MHA.getVolunteerList().get(i).getEmail().equals(emailBox.getText().toString().trim())) {
+                    emailBox.setError("Email address is taken.");
+                    emailBox.requestFocus();
+                    return;
+                }
+            }
+
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
