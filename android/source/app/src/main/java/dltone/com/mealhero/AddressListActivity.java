@@ -1,16 +1,14 @@
 package dltone.com.mealhero;
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import com.skobbler.ngx.search.SKSearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,5 +72,26 @@ public class AddressListActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_address_list, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent returnIntent = new Intent();
+        setResult(MealHeroApplication.EDIT_ACTIVITY_RC, returnIntent);
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // back button
+                Intent resultIntent = new Intent();
+                setResult(MealHeroApplication.EDIT_ACTIVITY_RC, resultIntent);
+                finish();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -8,8 +8,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +30,10 @@ public class AddClientActivity extends AppCompatActivity
     private String Diet;
     private String Age;
     private ArrayList<Address> _addressResultList;
+    private EditText cName;
+    private EditText cDiet;
+    private EditText cAge;
+    private EditText cAddress;
 
     public void OnVerifyAddress(View view)
     {
@@ -76,26 +80,23 @@ public class AddClientActivity extends AppCompatActivity
 		/* If an edit has been made, notify that the data set has changed. */
             case MealHeroApplication.EDIT_ACTIVITY_RC:
                 int index = data.getIntExtra("ItemLocation", -1);
-                _Address = _addressResultList.get(index);
-                EditText cAddress = (EditText)findViewById(R.id._txtAddress);
-                String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
-                cAddress.setText(String.format(fullAddress));
+                if(index >= 0) {
+                    _Address = _addressResultList.get(index);
+                    String fullAddress = String.format("%s, %s, %s", _Address.getAddressLine(0), _Address.getAddressLine(1), _Address.getAddressLine(2));
+                    cAddress.setText(String.format(fullAddress));
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
     }
 
     public void OnSubmit(View view)
     {
-        EditText cName = (EditText)findViewById(R.id._txtName);
         Name = cName.getText().toString();
-
-        EditText cDiet = (EditText)findViewById(R.id._txtDiet);
         Diet = cDiet.getText().toString();
-
-        EditText cAge = (EditText)findViewById(R.id._txtAge);
         Age = cAge.getText().toString();
-
-        EditText cAddress = (EditText)findViewById(R.id._txtAddress);
 
         boolean addClientKey = true;
         if(Name.isEmpty())
@@ -136,6 +137,11 @@ public class AddClientActivity extends AppCompatActivity
         setContentView(R.layout.activity_add_client);
         progressView = findViewById(R.id.addClient_progress);
         addClientView = findViewById(R.id.addClient);
+
+        cName = (EditText)findViewById(R.id._txtName);
+        cDiet = (EditText)findViewById(R.id._txtDiet);
+        cAge = (EditText)findViewById(R.id._txtAge);
+        cAddress = (EditText)findViewById(R.id._txtAddress);
     }
 
     @Override
