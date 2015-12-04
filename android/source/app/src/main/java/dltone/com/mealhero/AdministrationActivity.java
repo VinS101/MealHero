@@ -73,8 +73,17 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
             case MENU_LOGOUT:
                 logout();
                 break;
+            case MENU_SETTINGS:
+                settings();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void settings()
+    {
+        Intent intent = new Intent(AdministrationActivity.this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     private void logout()

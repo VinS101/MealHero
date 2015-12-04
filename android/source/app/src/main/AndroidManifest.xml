@@ -62,14 +62,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".VolunteerListActivity" />
         </activity>
-
         <activity
             android:name=".AssignClientsActivity"
             android:label="@string/title_activity_assign_clients"
             android:parentActivityName=".ClientEditActivity"
-            android:theme="@style/Theme.CustomActionBar">
+            android:theme="@style/Theme.CustomActionBar" >
         </activity>
-
         <activity
             android:name=".VolunteerListActivity"
             android:label="@string/title_activity_display_volunteer_view"
@@ -106,12 +104,12 @@
             android:name=".ClientEditActivity"
             android:label="@string/title_activity_client_edit"
             android:parentActivityName=".ClientListActivity"
-            android:theme="@style/Theme.CustomActionBar">
+            android:theme="@style/Theme.CustomActionBar" >
         </activity>
         <activity
             android:name=".ClientDetailActivity"
             android:label="@string/title_activity_client_detail"
-            android:parentActivityName=".MapPreviewActivity">
+            android:parentActivityName=".MapPreviewActivity" >
         </activity>
 
         <meta-data
@@ -138,6 +136,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="dltone.com.mealhero.AddClientActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".AdministrationActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="dltone.com.mealhero.AdministrationActivity" />
         </activity>
     </application>
 

@@ -319,7 +319,10 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         setupAnnotations(currentPositionCoord, _pointsList, destCoord);
         setupClientUIOverlay();
 
-        route.setViaPoints(_pointsList);
+        if (_pointsList.size() > 1)
+        {
+            route.setViaPoints(_pointsList);
+        }
         route.setDestinationIsPoint(false);
         // pass the route to the calculation routine
         SKRouteManager.getInstance().calculateRoute(route);
@@ -358,13 +361,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
             }
         });
 
-        if (clientAdapter.getCount() > 1)
-        {
-            View item = clientAdapter.getView(0, null, mClientListView);
-            item.measure(0, 0);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (1.5 * item.getMeasuredHeight()));
-            mClientListView.setLayoutParams(params);
-        }
+
+        View item = clientAdapter.getView(0, null, mClientListView);
+        item.measure(0, 0);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (1.5 * item.getMeasuredHeight()));
+        mClientListView.setLayoutParams(params);
 
         // Aesthetics 0xFF444444
         //region Hex Opacity Values
@@ -736,7 +737,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     public void onAllRoutesCompleted()
     {
         SKNavigationSettings navigationSettings = new SKNavigationSettings();
-        navigationSettings.setNavigationType(SKNavigationSettings.SKNavigationType.SIMULATION);
+        navigationSettings.setNavigationType(MHApp.NavigationType);
 
         SKNavigationManager navigationManager = SKNavigationManager.getInstance();
 
@@ -765,7 +766,10 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onDestinationReached()
     {
-        //TODO: implement
+        if (_pointsList.size() == 1)
+        {
+            performLoggingOnVisitedClientList(_clientsToVisit.get(0));
+        }
     }
 
     @Override

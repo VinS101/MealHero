@@ -15,6 +15,7 @@ import com.ibm.mobile.services.core.IBMBluemix;
 import com.ibm.mobile.services.core.internal.IBMBluemixException;
 import com.ibm.mobile.services.data.IBMData;
 import com.skobbler.ngx.SKCoordinate;
+import com.skobbler.ngx.navigation.SKNavigationSettings;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,6 +35,8 @@ public final class MealHeroApplication extends Application
 
     public Volunteer currentLoggedInVolunteer;
     public SKCoordinate centralMOWHub;
+    public Boolean settings_isNavChecked = false;
+    public SKNavigationSettings.SKNavigationType NavigationType = SKNavigationSettings.SKNavigationType.REAL;
     private List<Volunteer> volunteerList = new ArrayList<>();
     private List<Client> clientList = new ArrayList<>();
 
