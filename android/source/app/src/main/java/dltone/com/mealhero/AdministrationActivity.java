@@ -18,8 +18,8 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
     private View adminList;
     private View progressView;
     private static final int MENU_SETTINGS = Menu.FIRST;
-    private static final int MENU_ADMIN = Menu.FIRST+1;
-    private static final int MENU_LOGOUT = Menu.FIRST+2;
+    private static final int MENU_ADMIN = Menu.FIRST;
+    private static final int MENU_LOGOUT = Menu.FIRST+1;
 
 
     @Override
@@ -50,7 +50,6 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         menu.clear();
         //if (mVolunteerToDisplay.getPermission().equalsIgnoreCase("Admin"))
 
-        menu.add(0, MENU_ADMIN, Menu.NONE, R.string.action_admin);
         menu.add(0, MENU_SETTINGS, Menu.NONE, R.string.action_settings);
         menu.add(0, MENU_LOGOUT, Menu.NONE, R.string.action_logout);
 
@@ -178,7 +177,8 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
             try
             {
                 Thread.sleep(1500);
-            } catch (InterruptedException e)
+            }
+            catch (InterruptedException e)
             {
                 e.printStackTrace();
             }

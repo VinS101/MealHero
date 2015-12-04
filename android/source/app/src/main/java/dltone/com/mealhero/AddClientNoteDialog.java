@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 
 /**
@@ -18,27 +19,39 @@ public class AddClientNoteDialog extends DialogFragment {
     NoticeDialogListener mListener;
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.dialog_add_client_note, null))
-                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+
+        //final EditText noteBox = (EditText) getActivity().findViewById(R.id.dialog_add_note_edit_text);
+        //final EditText noteBox = new EditText(getActivity().getApplicationContext());
+        final View dView = inflater.inflate(R.layout.dialog_add_client_note, null);
+        builder.setView(dView)
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener()
+                {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText noteBox = (EditText) getView().findViewById(R.id.dialog_add_note_edit_text);
-                        if(noteBox.getText().toString().trim().isEmpty()) {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        EditText noteBox = (EditText) dView.findViewById(R.id.dialog_add_note_edit_text);
+                        if (noteBox.getText().toString().trim().isEmpty())
+                        {
                             noteBox.setError("Note can't be empty.");
                             noteBox.requestFocus();
-                        } else {
+                        }
+                        else
+                        {
                             note = noteBox.getText().toString().trim();
                             mListener.onDialogPositiveClick(AddClientNoteDialog.this);
                         }
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+                {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
                         mListener.onDialogNegativeClick(AddClientNoteDialog.this);
                         getDialog().cancel();
                     }

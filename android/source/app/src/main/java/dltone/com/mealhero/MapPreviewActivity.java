@@ -45,9 +45,9 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
     private static final String VOLUNTEER = "dltone.com.mealhero.VOLUNTEER";
     private static final String TAG = "MapPreviewActivity";
-    private static final int MENU_ADMIN = Menu.FIRST;
-    private static final int MENU_SETTINGS = Menu.FIRST + 1;
-    private static final int MENU_LOGOUT = Menu.FIRST + 2;
+    private static final int MENU_ADMIN = Menu.FIRST + 2;
+    private static final int MENU_SETTINGS = Menu.FIRST;
+    private static final int MENU_LOGOUT = Menu.FIRST + 1;
 
     private String mapResourceDirPath;
 
@@ -182,7 +182,6 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
     public boolean onPrepareOptionsMenu(Menu menu)
     {
         menu.clear();
-        menu.add(0, MENU_ADMIN, Menu.NONE, R.string.action_admin);
 
         menu.add(0, MENU_SETTINGS, Menu.NONE, R.string.action_settings);
         menu.add(0, MENU_LOGOUT, Menu.NONE, R.string.action_logout);
@@ -204,9 +203,6 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
         switch (id)
         {
-            case MENU_ADMIN:
-                openAdministration();
-                break;
             case MENU_SETTINGS:
                 break;
             case MENU_LOGOUT:
@@ -330,6 +326,7 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
     {
         Intent intent = new Intent(MapPreviewActivity.this, AdministrationActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void logout()

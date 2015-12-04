@@ -57,15 +57,19 @@ public class ClientDetailActivity extends AppCompatActivity {
 
         //Get Selected Client
         String clientId = getIntent().getStringExtra("ClientID");
-        for(int i = 0; i < MHApp.getClientList().size(); i++) {
-            if(MHApp.getClientList().get(i).getObjectId().equals(clientId)) {
+        for(int i = 0; i < MHApp.getClientList().size(); i++)
+        {
+            if(MHApp.getClientList().get(i).getObjectId().equals(clientId))
+            {
                 client = MHApp.getClientList().get(i);
                 break;
             }
         }
 
         //Populate NotesBox
-        noteView.setText(client.getNotes());
+        String notes = client.getNotes();
+        if (notes == null) notes = "";
+        noteView.setText(notes);
 
         logButton.setOnClickListener(new View.OnClickListener()
         {
@@ -83,7 +87,7 @@ public class ClientDetailActivity extends AppCompatActivity {
         //client.appendLog("Test3");
 
         //For demonseration purposes. Will be opolete after logging in navigation
-        displayLogPrototype();
+        //displayLogPrototype();
         //Set UI Values
         if(client != null) {
             nameTextView.setText(client.getName());
@@ -101,7 +105,10 @@ public class ClientDetailActivity extends AppCompatActivity {
         SimpleDateFormat sm = new SimpleDateFormat("MM-dd-yyyy");
         Date d = new Date();
         String timestamp = "["+ sm.format(d) + "] ";
-        noteView.append(timestamp + note.toString() + "\n");
+        String vName = MHApp.currentLoggedInVolunteer.getName();
+        if (vName == null || vName.isEmpty()) vName = MHApp.currentLoggedInVolunteer.getEmail();
+
+        noteView.append(timestamp + vName + ": " + note.toString() + "\n");
         client.appendNote(noteView.getText().toString());
     }
 

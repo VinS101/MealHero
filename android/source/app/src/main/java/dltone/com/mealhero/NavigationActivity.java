@@ -12,6 +12,8 @@ package dltone.com.mealhero;
 
 import android.annotation.TargetApi;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -61,7 +63,9 @@ import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.ngx.util.SKGeoUtils;
 import com.skobbler.ngx.util.SKLogging;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -680,17 +684,30 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
         //Create dialog + set listener
         AddClientNoteDialog dialog = new AddClientNoteDialog();
-        dialog.setNoticeDialogListener(new NoticeDialogListener() {
+        dialog.setNoticeDialogListener(new NoticeDialogListener()
+        {
             @Override
-            public void onDialogPositiveClick(DialogFragment dialog) {
-                c.appendLog(((AddClientNoteDialog) dialog).getNote());
+            public void onDialogPositiveClick(DialogFragment dialog)
+            {
+                SimpleDateFormat sm = new SimpleDateFormat("MM-dd-yyyy");
+                Date d = new Date();
+                String timestamp = "["+ sm.format(d) + "] ";
+                String currentNotes = c.getNotes();
+                if (currentNotes == null) currentNotes = "";
+                String vName = MHApp.currentLoggedInVolunteer.getName();
+                if (vName == null || vName.isEmpty()) vName = MHApp.currentLoggedInVolunteer.getEmail();
+
+                currentNotes += timestamp + vName + ": " +  ((AddClientNoteDialog) dialog).getNote() + "\n";
+                c.appendNote(currentNotes);
             }
 
             @Override
-            public void onDialogNegativeClick(DialogFragment dialog) {
+            public void onDialogNegativeClick(DialogFragment dialog)
+            {
                 Log.e(getClass().getName(), "Note add cancelled.");
             }
         });
+
 
         if (annotationToModify == null) return;
 
@@ -701,6 +718,16 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         // Update the clientList
         mClientListView.requestFocus();
         mClientListView.setSelection(_sortedClientsListByDistance.indexOf(c));
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null)
+        {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        dialog.show(ft, "dialog");
     }
 
 

@@ -85,13 +85,20 @@ public class Client extends IBMDataObject implements Serializable
         return (Double) getObject(LONGITUDE);
     }
     private JSONArray getLogsJson() { return (JSONArray) getObject(LOGS); }
+
     public String getNotes()
     {
         return (String) getObject(NOTES);
     }
+
     public ArrayList<String> getLogs()
     {
         JSONArray json = getLogsJson();
+        if (json == null)
+        {
+            setObject(LOGS, new JSONArray());
+        }
+        json = new JSONArray();
         ArrayList<String> logs = new ArrayList<>();
         for(int i = 0; i < json.length(); i++) {
             try {
