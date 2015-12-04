@@ -1,21 +1,32 @@
+/*
+  _____  _   _______ ____               ______       _                       _
+ |  __ \| | |__   __/ __ \             |  ____|     | |                     (_)
+ | |  | | |    | | | |  | |_ __   ___  | |__   _ __ | |_ ___ _ __ _ __  _ __ _ ___  ___  ___
+ | |  | | |    | | | |  | | '_ \ / _ \ |  __| | '_ \| __/ _ \ '__| '_ \| '__| / __|/ _ \/ __|
+ | |__| | |____| | | |__| | | | |  __/ | |____| | | | ||  __/ |  | |_) | |  | \__ \  __/\__ \
+ |_____/|______|_|  \____/|_| |_|\___| |______|_| |_|\__\___|_|  | .__/|_|  |_|___/\___||___/
+                                                                 | |
+                                                                 |_|
+ */
 package dltone.com.mealhero;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.Voice;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skobbler.ngx.SKCoordinate;
-import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCoordinateRegion;
@@ -40,7 +51,6 @@ import com.skobbler.ngx.positioner.SKCurrentPositionListener;
 import com.skobbler.ngx.positioner.SKCurrentPositionProvider;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
-import com.skobbler.ngx.routing.SKRouteAdvice;
 import com.skobbler.ngx.routing.SKRouteInfo;
 import com.skobbler.ngx.routing.SKRouteJsonAnswer;
 import com.skobbler.ngx.routing.SKRouteListener;
@@ -51,14 +61,12 @@ import com.skobbler.ngx.util.SKGeoUtils;
 import com.skobbler.ngx.util.SKLogging;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class NavigationActivity extends FragmentActivity implements SKCurrentPositionListener, SKMapSurfaceListener, SKRouteListener, SKNavigationListener, SKPOITrackerListener
 {
@@ -124,16 +132,35 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
     private SKPOITrackerManager poiTrackingManager;
 
+    // Points list for calculating the route
     private ArrayList<SKViaPoint> _pointsList = new ArrayList<>();
 
+    // Its a coordinates list with coordinates
     private List<SKCoordinate> _coordinatesList = new ArrayList<>();
 
+    // original copy from initial DB query
     private List<Client> _clientsToDisplay = new ArrayList<>();
 
+    // Used for keeping track of which clients have been visited.
     private List<Client> _clientsToVisit = new ArrayList<>();
+
+    // Used for auto sorting of clients during address validation
+    private Map<Double, Client> _sortedDistanceToClientsTree;
+
+    // To be used for UI list
+    private List<Client> _sortedClientsListByDistance = new ArrayList<>();
+
+    // To be used for calculating visitation order and adding to _pointsList
+    private Map<Double, SKCoordinate> _sortedDistanceToCoordinatesTree;
 
     // Audio advisor
     private TextToSpeech textToSpeechEngine;
+
+    //UI References
+    private ListView mClientListView;
+
+    //List of Clients
+    private ClientListAdapter clientAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -219,37 +246,69 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
             {
                 return false;
             }
-            _coordinatesList.add(new SKCoordinate(longitude, latitude));
+            SKCoordinate coord = new SKCoordinate(longitude, latitude);
+            _coordinatesList.add(coord);
         }
+
         return true;
     }
 
-    private void launchRouteCalculation()
+    private Boolean InitiateGreedySort()
     {
+        _sortedDistanceToCoordinatesTree = new TreeMap<>();
+        _sortedDistanceToClientsTree = new TreeMap<>();
+
+        //  Populate trees
+        for (Client client : _clientsToDisplay)
+        {
+            Double latitude = client.getLatitude();
+            Double longitude = client.getLongitude();
+            SKCoordinate coord = new SKCoordinate(longitude, latitude);
+
+            // Greedy sort clients based on air distance (TreeMap automatically sorts by key)
+            SKCoordinate currentPositionCoord = new SKCoordinate(currentPosition.getCoordinate().getLongitude(), currentPosition.getCoordinate().getLatitude());
+
+            Double airDistance = SKGeoUtils.calculateAirDistanceBetweenCoordinates(currentPositionCoord, coord);
+
+            _sortedDistanceToCoordinatesTree.put(airDistance, coord);
+
+            _sortedDistanceToClientsTree.put(airDistance, client);
+        }
+
+        _sortedClientsListByDistance = new ArrayList<>();
+        _sortedClientsListByDistance.addAll(_sortedDistanceToClientsTree.values());
+
+        // using SKViaPoint to add waypoints for calculation in launchRouteCalculation()
+        _pointsList = new ArrayList<>();
+
+        for (SKCoordinate coord : _sortedDistanceToCoordinatesTree.values())
+        {
+            if (coord == null)
+            {
+                return false;
+            }
+
+            SKViaPoint temp = new SKViaPoint(UniqueID.getID(), coord);
+            _pointsList.add(temp);
+        }
+
+        return true;
+    }
+
+    private void LaunchRouteCalculation()
+    {
+        if (!InitiateGreedySort())
+        {
+            Toast.makeText(this, "Error retrieving addresses. Verify client addresses or contact an administrator.", Toast.LENGTH_SHORT).show();
+            abort();
+        }
         // get a route object and populate it with the desired properties
         SKRouteSettings route = new SKRouteSettings();
 
         SKCoordinate currentPositionCoord = new SKCoordinate(currentPosition.getCoordinate().getLongitude(), currentPosition.getCoordinate().getLatitude());
-        // set start point
+        // set start point, set start annotation
         route.setStartCoordinate(currentPositionCoord);
-
         mapView.addAnnotation(createAnnotationFromCoordinate(UniqueID.getID(), currentPositionCoord, SKAnnotation.SK_ANNOTATION_TYPE_GREEN), SKAnimationSettings.ANIMATION_PIN_DROP);
-
-        // Greedy sort clients based on air distance (TreeMap automatically sorts by key)
-        Map<Double, SKCoordinate> distanceToClientCoordinate = new TreeMap<>();
-
-        for (SKCoordinate coord : _coordinatesList)
-        {
-            if (coord == null)
-            {
-                Toast.makeText(this, "Error retrieving addresses. Verify client addresses or contact an administrator.", Toast.LENGTH_SHORT).show();
-                abort(); //get out
-            }
-
-            Double airDistance = SKGeoUtils.calculateAirDistanceBetweenCoordinates(currentPositionCoord, coord);
-
-            distanceToClientCoordinate.put(airDistance, coord);
-        }
 
         // set the number of routes to be calculated
         route.setNoOfRoutes(1);
@@ -263,26 +322,13 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         // set the route listener to be notified of route calculation events
         SKRouteManager.getInstance().setRouteListener(this);
 
-        // using SKViaPoint to add waypoints
-        _pointsList = new ArrayList<>();
-
-        for (SKCoordinate coord : distanceToClientCoordinate.values())
-        {
-            if (coord == null)
-            {
-                Toast.makeText(this, "Error retrieving addresses. Verify client addresses or contact an administrator.", Toast.LENGTH_SHORT).show();
-                abort(); //get out
-            }
-
-            SKViaPoint temp = new SKViaPoint(UniqueID.getID(), coord);
-            _pointsList.add(temp);
-        }
-
-        SKCoordinate destCoord = MHApp.getCentralMOWHub();
+        SKCoordinate destCoord = _pointsList.get(_pointsList.size() - 1).getPosition();
+        // add destination to route, set end annotation
         route.setDestinationCoordinate(destCoord);
 
-
+        // setup route UI
         setupAnnotations(currentPositionCoord, _pointsList, destCoord);
+        setupClientUIOverlay();
 
         route.setViaPoints(_pointsList);
         route.setDestinationIsPoint(false);
@@ -300,6 +346,65 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         }
 
         mapView.addAnnotation(createAnnotationFromCoordinate(UniqueID.getID(), destCoord, SKAnnotation.SK_ANNOTATION_TYPE_DESTINATION_FLAG), SKAnimationSettings.ANIMATION_PIN_DROP);
+    }
+
+    private void setupClientUIOverlay()
+    {
+        mClientListView = (ListView) findViewById(R.id._clientNavList);
+        //Set up array adapter
+        clientAdapter = new ClientListAdapter(this, (ArrayList<Client>) _sortedClientsListByDistance);
+        mClientListView.setAdapter(clientAdapter);
+
+        //Notify adapter of data change
+        clientAdapter.notifyDataSetChanged();
+
+        mClientListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent intent = new Intent(getApplicationContext(), ClientDetailActivity.class);
+                intent.putExtra("ClientID", _sortedClientsListByDistance.get((int) id).getObjectId());
+                startActivity(intent);
+            }
+        });
+
+        if (clientAdapter.getCount() > 1)
+        {
+            View item = clientAdapter.getView(0, null, mClientListView);
+            item.measure(0, 0);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (1.5 * item.getMeasuredHeight()));
+            mClientListView.setLayoutParams(params);
+        }
+
+        // Aesthetics 0xFF444444
+        //region Hex Opacity Values
+        /*  100% — FF
+            95% — F2
+            90% — E6
+            85% — D9
+            80% — CC
+            75% — BF
+            70% — B3
+            65% — A6
+            60% — 99
+            55% — 8C
+            50% — 80
+            45% — 73
+            40% — 66
+            35% — 59
+            30% — 4D
+            25% — 40
+            20% — 33
+            15% — 26
+            10% — 1A
+            5% — 0D
+            0% — 00 */
+        //endregion
+        mClientListView.setBackgroundColor(Color.DKGRAY);
+        mClientListView.getBackground().setAlpha(60);
+
+
     }
 
     private SKAnnotation createAnnotationFromCoordinate(int id, SKCoordinate coordinate, int skAnnotationType)
@@ -433,6 +538,10 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onAnnotationSelected(SKAnnotation skAnnotation)
     {
+        if (skAnnotation.getAnnotationType() == SKAnnotation.SK_ANNOTATION_TYPE_RED)
+        {
+
+        }
 
     }
 
@@ -553,7 +662,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         if (mapView != null && !_locationInitialized)
         {
             _locationInitialized = true;
-            launchRouteCalculation();
+            LaunchRouteCalculation();
         }
 
     }
@@ -567,6 +676,25 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         onSignalNewAdviceWithInstruction(clientAlert);
         SKNavigationManager.getInstance().increaseSimulationSpeed(100);
 
+        // Start modification of annotation
+        SKAnnotation annotationToModify = null;
+        for (SKAnnotation skA : mapView.getAllAnnotations())
+        {
+            if (skA.getLocation().getLatitude() == c.getLatitude())
+            {
+                if (skA.getLocation().getLongitude() == c.getLongitude())
+                {
+                    annotationToModify = skA;
+                    break;
+                }
+            }
+        }
+
+        if (annotationToModify == null) return;
+
+        mapView.deleteAnnotation(annotationToModify.getUniqueID());
+        annotationToModify.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
+        mapView.addAnnotation(annotationToModify, SKAnimationSettings.ANIMATION_PIN_DROP);
     }
 
 
