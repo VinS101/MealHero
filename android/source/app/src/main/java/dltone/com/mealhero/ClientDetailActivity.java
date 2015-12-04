@@ -1,12 +1,17 @@
 package dltone.com.mealhero;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +34,9 @@ public class ClientDetailActivity extends AppCompatActivity {
     TextView ageTextView;
     TextView dietTextView;
     TextView logsListView;
-
+    TextView noteView;
+    Button logButton;
+    final StringBuilder note = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,8 @@ public class ClientDetailActivity extends AppCompatActivity {
         ageTextView = (TextView) findViewById(R.id.client_detail_age_box);
         dietTextView = (TextView) findViewById(R.id.client_detail_diet_box);
         logsListView =(TextView) findViewById(R.id.logView);
+        logButton = (Button) findViewById(R.id.add_log_button);
+        noteView = (TextView) findViewById(R.id.note_box);
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
 
@@ -54,6 +63,18 @@ public class ClientDetailActivity extends AppCompatActivity {
                 break;
             }
         }
+
+        //Populate NotesBox
+        noteView.setText(client.getNotes());
+
+        logButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                getUserNote();
+            }
+        });
 
 
         //This is how logs are added for a client
@@ -73,6 +94,46 @@ public class ClientDetailActivity extends AppCompatActivity {
         else {
             Toast.makeText(this, "Client not found. Info unavailable.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void addUserNote()
+    {
+        SimpleDateFormat sm = new SimpleDateFormat("MM-dd-yyyy");
+        Date d = new Date();
+        String timestamp = "["+ sm.format(d) + "] ";
+        noteView.append(timestamp + note.toString() + "\n");
+        client.appendNote(noteView.getText().toString());
+    }
+
+    private void getUserNote()
+    {
+        note.setLength(0); //reset the buffer
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Add note");
+        alert.setMessage("Message");
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                note.append(input.getText());
+                addUserNote();
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
 
     @Override

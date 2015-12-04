@@ -8,4 +8,5 @@
     <string name="client_diet_hint">Diet</string>
     <string name="button_done_text">DONE</string>
     <string name="client_log_label">Log History</string>
+    <string name="client_note_label">Volunteer notes</string>
 </resources>

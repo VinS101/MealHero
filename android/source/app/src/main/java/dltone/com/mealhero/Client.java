@@ -25,6 +25,7 @@ public class Client extends IBMDataObject implements Serializable
     private static final String LATITUDE = "Latitude";
     private static final String LONGITUDE = "Longitude";
     private static final String LOGS = "logs";
+    private static final String NOTES = "Notes";
 
     public Client() { }
 
@@ -84,6 +85,10 @@ public class Client extends IBMDataObject implements Serializable
         return (Double) getObject(LONGITUDE);
     }
     private JSONArray getLogsJson() { return (JSONArray) getObject(LOGS); }
+    public String getNotes()
+    {
+        return (String) getObject(NOTES);
+    }
     public ArrayList<String> getLogs()
     {
         JSONArray json = getLogsJson();
@@ -116,6 +121,11 @@ public class Client extends IBMDataObject implements Serializable
         logs.add(log);
         JSONArray array = new JSONArray(logs);
         setObject(LOGS, array);
+    }
+
+    public void appendNote(String notes)
+    {
+        setObject(NOTES, notes);
     }
 
 

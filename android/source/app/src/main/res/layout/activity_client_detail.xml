@@ -129,6 +129,26 @@
                     android:layout_marginTop="@dimen/padding_top"
                     android:layout_marginBottom="@dimen/padding_bottom"
                     android:textSize="@dimen/client_edit_label_font_size"
+                    android:text="@string/client_note_label"
+                    android:id="@+id/client_detail_Note_Label"
+                    />
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/note_box"
+                    android:layout_gravity="center_horizontal"
+                    android:choiceMode="singleChoice"
+                    android:drawSelectorOnTop="false"
+                    android:background="@drawable/rounded_edit_text"
+                    android:paddingLeft="5dp"
+                    />
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_top"
+                    android:layout_marginBottom="@dimen/padding_bottom"
+                    android:textSize="@dimen/client_edit_label_font_size"
                     android:text="@string/client_log_label"
                     android:id="@+id/client_detail_log_Label"
                     />
@@ -142,6 +162,11 @@
                     android:background="@drawable/rounded_edit_text"
                     android:paddingLeft="5dp"
                     />
+            <Button android:id="@+id/add_log_button" style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent" android:layout_height="56dp"
+                    android:layout_marginTop="16dp" android:text="@string/action_save_note"
+                    android:textStyle="bold"
+                    android:background="#c70b08" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
