@@ -20,4 +20,8 @@
     <string name="title_activity_client_detail">Client Details</string>
     <string name="skobbler_key">8d466e2012c0aa4f24c69fb4a7ca8a07b347de249e141f16e04391d70426fd0f</string>
     <string name="title_activity_address_list">Verify Client Address</string>
+    <string name="title_dialog_add_note">Do you want to add a note about the client?</string>
+    <string name="dialog_add_note_hint">Note</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 </resources>
