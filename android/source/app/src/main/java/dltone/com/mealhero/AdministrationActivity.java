@@ -17,6 +17,11 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
     private VolunteerListTask mAuthTask = null;
     private View adminList;
     private View progressView;
+    private static final int MENU_SETTINGS = Menu.FIRST;
+    private static final int MENU_ADMIN = Menu.FIRST+1;
+    private static final int MENU_LOGOUT = Menu.FIRST+2;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -35,6 +40,25 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         getMenuInflater().inflate(R.menu.menu_administration, menu);
         return true;
     }
+    /**
+     * Gets called every time the user presses the menu button.
+     * Use if your menu is dynamic.
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        menu.clear();
+        //if (mVolunteerToDisplay.getPermission().equalsIgnoreCase("Admin"))
+
+        menu.add(0, MENU_ADMIN, Menu.NONE, R.string.action_admin);
+        menu.add(0, MENU_SETTINGS, Menu.NONE, R.string.action_settings);
+        menu.add(0, MENU_LOGOUT, Menu.NONE, R.string.action_logout);
+
+        getMenuInflater().inflate(R.menu.menu_administration, menu);
+
+        return super.onPrepareOptionsMenu(menu);
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -44,13 +68,20 @@ public class AdministrationActivity extends AppCompatActivity implements Adapter
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        switch(id)
         {
-            return true;
+            case MENU_LOGOUT:
+                logout();
+                break;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout()
+    {
+        Intent intent = new Intent(AdministrationActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override

@@ -2,6 +2,7 @@ package dltone.com.mealhero;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
@@ -16,6 +17,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKDeveloperKeyException;
 import com.skobbler.ngx.SKMaps;
@@ -48,6 +52,11 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
     private String mapResourceDirPath;
 
     private Button _btnNavigate;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @Override
@@ -69,7 +78,8 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         lvArrayAdapter.notifyDataSetChanged();
 
         _btnNavigate = (Button) findViewById(R.id._btnNavigate);
-        _btnNavigate.setOnClickListener(new View.OnClickListener() {
+        _btnNavigate.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view)
             {
@@ -77,8 +87,7 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
                 {
                     Toast.makeText(getApplicationContext(), "No clients assigned to you. Please contact an administrator.", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else
+                } else
                 {
                     openNavigation();
                 }
@@ -86,9 +95,11 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         });
 
         //Add Click Listener
-        volunteerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        volunteerListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
                 Intent intent = new Intent(getApplicationContext(), ClientDetailActivity.class);
                 intent.putExtra("ClientID", mClientsToDisplay.get((int) id).getObjectId());
                 startActivity(intent);
@@ -106,13 +117,20 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
             MHApp.setMapResourcesDirPath(mapResourceDirPath);
             final SKPrepareMapTextureThread prepThread = new SKPrepareMapTextureThread(this, mapResourceDirPath, "SKMaps.zip", this);
             prepThread.start();
-        }
-        else
+        } else
         {
             // show a dialog and finish
         }
+        if(MHApp.currentLoggedInVolunteer.getPermission().equalsIgnoreCase("Volunteer"))
+        {
+            getSupportActionBar().setIcon(R.drawable.common_signin_btn_icon_dark);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
 
-
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -128,17 +146,15 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         // get object holding map initialization settings
         SKMapsInitSettings initMapSettings = new SKMapsInitSettings();
 
-        final String  mapResourcesPath = mapResourceDirPath;
+        final String mapResourcesPath = mapResourceDirPath;
         // set path to map resources and initial map style
-        initMapSettings.setMapResourcesPaths(mapResourcesPath,
-                new SKMapViewStyle(mapResourcesPath + "daystyle/", "daystyle.json"));
+        initMapSettings.setMapResourcesPaths(mapResourcesPath, new SKMapViewStyle(mapResourcesPath + "daystyle/", "daystyle.json"));
 
         try
         {
             SKMaps.getInstance().initializeSKMaps(this, initMapSettings);
             _btnNavigate.setEnabled(true);
-        }
-        catch (SKDeveloperKeyException exception)
+        } catch (SKDeveloperKeyException exception)
         {
             exception.printStackTrace();
             //showApiKeyErrorDialog(context);
@@ -166,7 +182,6 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
     public boolean onPrepareOptionsMenu(Menu menu)
     {
         menu.clear();
-        //if (mVolunteerToDisplay.getPermission().equalsIgnoreCase("Admin"))
         menu.add(0, MENU_ADMIN, Menu.NONE, R.string.action_admin);
 
         menu.add(0, MENU_SETTINGS, Menu.NONE, R.string.action_settings);
@@ -186,7 +201,8 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch(id)
+
+        switch (id)
         {
             case MENU_ADMIN:
                 openAdministration();
@@ -215,18 +231,19 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
 
     /**
      * Find the best storage path based on device properties
+     *
      * @param context
      * @return
      */
-    public static String chooseStoragePath(Context context) {
+    public static String chooseStoragePath(Context context)
+    {
         if (getAvailableMemorySize(Environment.getDataDirectory().getPath()) >= 50 * MEGA)
         {
             if (context != null && context.getFilesDir() != null)
             {
                 return context.getFilesDir().getPath();
             }
-        }
-        else
+        } else
         {
             if ((context != null) && (context.getExternalFilesDir(null) != null))
             {
@@ -237,19 +254,17 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
             }
         }
 
-        SKLogging.writeLog(TAG, "There is not enough memory on any storage, but return internal memory",
-                SKLogging.LOG_DEBUG);
+        SKLogging.writeLog(TAG, "There is not enough memory on any storage, but return internal memory", SKLogging.LOG_DEBUG);
 
-        if (context != null && context.getFilesDir() != null) {
+        if (context != null && context.getFilesDir() != null)
+        {
             return context.getFilesDir().getPath();
-        }
-        else
+        } else
         {
             if ((context != null) && (context.getExternalFilesDir(null) != null))
             {
                 return context.getExternalFilesDir(null).toString();
-            }
-            else
+            } else
             {
                 return null;
             }
@@ -261,36 +276,46 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
      *
      * @return available memory size in bytes
      */
-    public static long getAvailableMemorySize(String path) {
+    public static long getAvailableMemorySize(String path)
+    {
         StatFs statFs = null;
-        try {
+        try
+        {
             statFs = new StatFs(path);
-        } catch (IllegalArgumentException ex) {
-            SKLogging.writeLog("SplashActivity", "Exception when creating StatF ; message = " + ex,
-                    SKLogging.LOG_DEBUG);
+        } catch (IllegalArgumentException ex)
+        {
+            SKLogging.writeLog("SplashActivity", "Exception when creating StatF ; message = " + ex, SKLogging.LOG_DEBUG);
         }
-        if (statFs != null) {
+        if (statFs != null)
+        {
             Method getAvailableBytesMethod = null;
-            try {
+            try
+            {
                 getAvailableBytesMethod = statFs.getClass().getMethod("getAvailableBytes");
-            } catch (NoSuchMethodException e) {
-                SKLogging.writeLog(TAG, "Exception at getAvailableMemorySize method = " + e.getMessage(),
-                        SKLogging.LOG_DEBUG);
+            } catch (NoSuchMethodException e)
+            {
+                SKLogging.writeLog(TAG, "Exception at getAvailableMemorySize method = " + e.getMessage(), SKLogging.LOG_DEBUG);
             }
 
-            if (getAvailableBytesMethod != null) {
-                try {
+            if (getAvailableBytesMethod != null)
+            {
+                try
+                {
                     SKLogging.writeLog(TAG, "Using new API for getAvailableMemorySize method !!!", SKLogging.LOG_DEBUG);
                     return (Long) getAvailableBytesMethod.invoke(statFs);
-                } catch (IllegalAccessException e) {
+                } catch (IllegalAccessException e)
+                {
                     return (long) statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
-                } catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e)
+                {
                     return (long) statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
                 }
-            } else {
+            } else
+            {
                 return (long) statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
             }
-        } else {
+        } else
+        {
             return 0;
         }
     }
@@ -320,5 +345,5 @@ public class MapPreviewActivity extends AppCompatActivity implements SKPrepareMa
         Intent intent = new Intent(MapPreviewActivity.this, MapPreviewActivity.class);
         startActivity(intent);
     }
-
+    
 }

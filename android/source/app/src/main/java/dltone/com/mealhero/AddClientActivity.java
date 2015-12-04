@@ -34,7 +34,8 @@ public class AddClientActivity extends AppCompatActivity
     private EditText cDiet;
     private EditText cAge;
     private EditText cAddress;
-
+    private static final int MENU_ADMIN = Menu.FIRST;
+    private static final int MENU_LOGOUT = Menu.FIRST + 1;
     public void OnVerifyAddress(View view)
     {
         EditText cAddress = (EditText)findViewById(R.id._txtAddress);
@@ -152,6 +153,24 @@ public class AddClientActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Gets called every time the user presses the menu button.
+     * Use if your menu is dynamic.
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        menu.clear();
+        //if (mVolunteerToDisplay.getPermission().equalsIgnoreCase("Admin"))
+        menu.add(0, MENU_ADMIN, Menu.NONE, R.string.action_admin);
+        menu.add(0, MENU_LOGOUT, Menu.NONE, R.string.action_logout);
+
+        getMenuInflater().inflate(R.menu.menu_add_client, menu);
+
+        return super.onPrepareOptionsMenu(menu);
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -159,14 +178,20 @@ public class AddClientActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        switch(id)
         {
-            return true;
+            case MENU_LOGOUT:
+                logout();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private void logout()
+    {
+        Intent intent = new Intent(AddClientActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
