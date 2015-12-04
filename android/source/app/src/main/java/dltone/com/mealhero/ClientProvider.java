@@ -6,6 +6,7 @@ import android.util.Log;
 import com.ibm.mobile.services.data.IBMDataException;
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMQuery;
+import com.skobbler.ngx.SKCoordinate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,5 +196,35 @@ public class ClientProvider
         }
 
         return ids;
+    }
+
+    public static Client GetClientFromCoordinate(ArrayList<Client> clientList, SKCoordinate coordinate)
+    {
+        for (Client c : clientList)
+        {
+            if (c.getLatitude().equals(coordinate.getLatitude()))
+            {
+                if (c.getLongitude().equals(coordinate.getLongitude()))
+                {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Client GetClientFromCoordinate(ArrayList<Client> clientList, Double longitude, Double latitude)
+    {
+        for (Client c : clientList)
+        {
+            if (c.getLatitude().equals(latitude))
+            {
+                if (c.getLongitude().equals(longitude))
+                {
+                    return c;
+                }
+            }
+        }
+        return null;
     }
 }
