@@ -110,6 +110,7 @@ public class ClientDetailActivity extends AppCompatActivity {
 
         noteView.append(timestamp + vName + ": " + note.toString() + "\n");
         client.appendNote(noteView.getText().toString());
+        ClientProvider.SaveClient(client);
     }
 
     private void getUserNote()

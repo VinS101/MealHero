@@ -699,6 +699,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
                 currentNotes += timestamp + vName + ": " +  ((AddClientNoteDialog) dialog).getNote() + "\n";
                 c.appendNote(currentNotes);
+                ClientProvider.SaveClient(c);
             }
 
             @Override
