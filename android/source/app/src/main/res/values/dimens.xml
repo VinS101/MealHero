@@ -19,4 +19,5 @@
     <dimen name="client_edit_button_margin_top">20dp</dimen>
     <dimen name="client_edit_button_margin">20dp</dimen>
     <dimen name="client_edit_assigned_to_font_size">14dp</dimen>
+    <dimen name="title_dialog_add_note_font_size">17dp</dimen>
 </resources>

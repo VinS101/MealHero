@@ -11,6 +11,7 @@
 package dltone.com.mealhero;
 
 import android.annotation.TargetApi;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -667,7 +668,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
 
     }
 
-    private void performLoggingOnVisitedClientList(Client c)
+    private void performLoggingOnVisitedClientList(final Client c)
     {
         SKNavigationManager.getInstance().decreaseSimulationSpeed(100);
         Toast.makeText(this, "Reached client " + c.getName(), Toast.LENGTH_SHORT).show();
@@ -689,6 +690,20 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
                 }
             }
         }
+
+        //Create dialog + set listener
+        AddClientNoteDialog dialog = new AddClientNoteDialog();
+        dialog.setNoticeDialogListener(new NoticeDialogListener() {
+            @Override
+            public void onDialogPositiveClick(DialogFragment dialog) {
+                c.appendLog(((AddClientNoteDialog) dialog).getNote());
+            }
+
+            @Override
+            public void onDialogNegativeClick(DialogFragment dialog) {
+                Log.e(getClass().getName(), "Note add cancelled.");
+            }
+        });
 
         if (annotationToModify == null) return;
 

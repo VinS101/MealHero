@@ -1,5 +1,7 @@
 package dltone.com.mealhero;
 
+import android.util.Log;
+
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
 import org.json.JSONArray;
@@ -23,8 +25,6 @@ public class Client extends IBMDataObject implements Serializable
     private static final String LATITUDE = "Latitude";
     private static final String LONGITUDE = "Longitude";
     private static final String LOGS = "logs";
-
-    private ArrayList<String> logs = new ArrayList<>();
 
     public Client() { }
 
@@ -83,8 +83,18 @@ public class Client extends IBMDataObject implements Serializable
     {
         return (Double) getObject(LONGITUDE);
     }
+    private JSONArray getLogsJson() { return (JSONArray) getObject(LOGS); }
     public ArrayList<String> getLogs()
     {
+        JSONArray json = getLogsJson();
+        ArrayList<String> logs = new ArrayList<>();
+        for(int i = 0; i < json.length(); i++) {
+            try {
+                logs.add(json.get(i).toString());
+            } catch (Exception e) {
+                Log.e(getClassName(), e.getMessage());
+            }
+        }
         return logs;
     }
 
@@ -98,6 +108,11 @@ public class Client extends IBMDataObject implements Serializable
     public void setLatitude(Double latitude) { setObject(LATITUDE, (latitude != null) ? latitude : -1.00); }
     public void appendLog(String log)
     {
+        ArrayList<String> logs = getLogs();
+        if(logs.size() >= 1000) {
+            //Remove oldest log entry
+            logs.remove(0);
+        }
         logs.add(log);
         JSONArray array = new JSONArray(logs);
         setObject(LOGS, array);
