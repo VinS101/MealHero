@@ -120,18 +120,6 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
      */
     private SKMapViewHolder mapHolder;
 
-    /**
-     * POIs to be detected on route
-     */
-    private Map<Integer, SKTrackablePOI> trackablePOIs;
-
-    /**
-     * Trackable POIs that are currently rendered on the map
-     */
-    private Map<Integer, SKTrackablePOI> drawnTrackablePOIs;
-
-    private SKPOITrackerManager poiTrackingManager;
-
     // Points list for calculating the route
     private ArrayList<SKViaPoint> _pointsList = new ArrayList<>();
 
@@ -278,7 +266,7 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         _sortedClientsListByDistance = new ArrayList<>();
         _sortedClientsListByDistance.addAll(_sortedDistanceToClientsTree.values());
 
-        // using SKViaPoint to add waypoints for calculation in launchRouteCalculation()
+        // using SKViaPoint to add waypoints for calculation in LaunchRouteCalculation()
         _pointsList = new ArrayList<>();
 
         for (SKCoordinate coord : _sortedDistanceToCoordinatesTree.values())
@@ -401,10 +389,8 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
             5% — 0D
             0% — 00 */
         //endregion
-        mClientListView.setBackgroundColor(Color.DKGRAY);
-        mClientListView.getBackground().setAlpha(60);
 
-
+        mClientListView.setItemsCanFocus(true);
     }
 
     private SKAnnotation createAnnotationFromCoordinate(int id, SKCoordinate coordinate, int skAnnotationType)
@@ -538,11 +524,11 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
     @Override
     public void onAnnotationSelected(SKAnnotation skAnnotation)
     {
-        if (skAnnotation.getAnnotationType() == SKAnnotation.SK_ANNOTATION_TYPE_RED)
-        {
+        Client c = ClientProvider.GetClientFromCoordinate((ArrayList<Client>) _sortedClientsListByDistance, skAnnotation.getLocation());
+        if (c == null) return;
 
-        }
-
+        mClientListView.requestFocus();
+        mClientListView.setSelection(_sortedClientsListByDistance.indexOf(c));
     }
 
     @Override
@@ -695,6 +681,10 @@ public class NavigationActivity extends FragmentActivity implements SKCurrentPos
         mapView.deleteAnnotation(annotationToModify.getUniqueID());
         annotationToModify.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
         mapView.addAnnotation(annotationToModify, SKAnimationSettings.ANIMATION_PIN_DROP);
+
+        // Update the clientList
+        mClientListView.requestFocus();
+        mClientListView.setSelection(_sortedClientsListByDistance.indexOf(c));
     }
 
 
