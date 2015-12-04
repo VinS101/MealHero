@@ -10,7 +10,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by costin on 12/2/2015.
@@ -29,9 +31,8 @@ public class ClientDetailActivity extends AppCompatActivity {
     TextView addressTextView;
     TextView ageTextView;
     TextView dietTextView;
-    ListView logsListView;
+    TextView logsListView;
 
-    private ClientDetailLogsAdapter logsAdapter; //holds the list of notes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class ClientDetailActivity extends AppCompatActivity {
         addressTextView = (TextView) findViewById(R.id.client_detail_address_box);
         ageTextView = (TextView) findViewById(R.id.client_detail_age_box);
         dietTextView = (TextView) findViewById(R.id.client_detail_diet_box);
-        logsListView =(ListView) findViewById(R.id.logView);
+        logsListView =(TextView) findViewById(R.id.logView);
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
 
@@ -58,14 +59,13 @@ public class ClientDetailActivity extends AppCompatActivity {
         }
 
 
-        //Test
-        client.appendLog("Test1");
-        client.appendLog("Test2");
-        client.appendLog("Test3");
-        //Set up array adapter
-        logsAdapter = new ClientDetailLogsAdapter(this, (client.getLogs()));
-        logsListView.setAdapter(logsAdapter);
+        //This is how logs are added for a client
+        //client.appendLog("Test1");
+        //client.appendLog("Test2");
+        //client.appendLog("Test3");
 
+        //For demonseration purposes. Will be opolete after logging in navigation
+        displayLogPrototype();
         //Set UI Values
         if(client != null) {
             nameTextView.setText(client.getName());
@@ -83,5 +83,40 @@ public class ClientDetailActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_client_detail, menu);
         return true;
+    }
+
+    /**
+     * For debugging purposes
+     */
+    private void displayLogPrototype()
+    {
+        SimpleDateFormat sm = new SimpleDateFormat("MM-dd-yyyy");
+        Date d = new Date();
+        String timestamp = "["+ sm.format(d) + "] ";
+
+        StringBuilder s = new StringBuilder();
+        s.append(timestamp + "log1");
+        s.append("\n");
+        s.append(timestamp +"log2");
+        s.append("\n");
+        s.append(timestamp +"log3");
+        s.append("\n");
+        s.append(timestamp +"log4");
+        s.append("\n");
+        s.append(timestamp +"log5");
+        s.append("\n");
+        s.append(timestamp +"log6");
+        s.append("\n");
+        s.append(timestamp +"log7");
+        s.append("\n");
+        s.append(timestamp +"log8");
+        s.append("\n");
+        s.append(timestamp +"log9");
+        s.append("\n");
+        s.append(timestamp +"log10");
+        s.append("\n");
+        s.append(timestamp +"log11");
+
+        logsListView.setText(s.toString());
     }
 }

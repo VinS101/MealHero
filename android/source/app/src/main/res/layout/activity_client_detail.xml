@@ -123,14 +123,25 @@
                 android:id="@+id/client_detail_diet_box"
                 />
 
-            <ListView
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_top"
+                    android:layout_marginBottom="@dimen/padding_bottom"
+                    android:textSize="@dimen/client_edit_label_font_size"
+                    android:text="@string/client_log_label"
+                    android:id="@+id/client_detail_log_Label"
+                    />
+            <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/logView"
                     android:layout_gravity="center_horizontal"
                     android:choiceMode="singleChoice"
                     android:drawSelectorOnTop="false"
-                    tools:listitem="@android:layout/simple_list_item_1"/>
+                    android:background="@drawable/rounded_edit_text"
+                    android:paddingLeft="5dp"
+                    />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
