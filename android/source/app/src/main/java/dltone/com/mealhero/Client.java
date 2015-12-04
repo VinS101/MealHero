@@ -2,8 +2,10 @@ package dltone.com.mealhero;
 
 import com.ibm.mobile.services.data.IBMDataObject;
 import com.ibm.mobile.services.data.IBMDataObjectSpecialization;
+import org.json.JSONArray;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -20,6 +22,9 @@ public class Client extends IBMDataObject implements Serializable
     private static final String ASSIGNEDTO = "AssignedTo";
     private static final String LATITUDE = "Latitude";
     private static final String LONGITUDE = "Longitude";
+    private static final String LOGS = "logs";
+
+    private ArrayList<String> logs = new ArrayList<>();
 
     public Client() { }
 
@@ -78,6 +83,10 @@ public class Client extends IBMDataObject implements Serializable
     {
         return (Double) getObject(LONGITUDE);
     }
+    public ArrayList<String> getLogs()
+    {
+        return logs;
+    }
 
     public void setName(String name) { setObject(NAME, (name != null) ? name : ""); }
     public void setDietPreference(String diet) { setObject(DIET, (diet != null) ? diet : ""); }
@@ -87,4 +96,12 @@ public class Client extends IBMDataObject implements Serializable
     public void setAssignedTo(String volunteerName) { setObject(ASSIGNEDTO, (volunteerName != null) ? volunteerName : "Not Assigned"); }
     public void setLongitude(Double longitude) { setObject(LONGITUDE, (longitude != null) ? longitude : -1.00); }
     public void setLatitude(Double latitude) { setObject(LATITUDE, (latitude != null) ? latitude : -1.00); }
+    public void appendLog(String log)
+    {
+        logs.add(log);
+        JSONArray array = new JSONArray(logs);
+        setObject(LOGS, array);
+    }
+
+
 }

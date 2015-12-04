@@ -4,9 +4,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /**
  * Created by costin on 12/2/2015.
@@ -25,6 +29,9 @@ public class ClientDetailActivity extends AppCompatActivity {
     TextView addressTextView;
     TextView ageTextView;
     TextView dietTextView;
+    ListView logsListView;
+
+    private ClientDetailLogsAdapter logsAdapter; //holds the list of notes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +44,7 @@ public class ClientDetailActivity extends AppCompatActivity {
         addressTextView = (TextView) findViewById(R.id.client_detail_address_box);
         ageTextView = (TextView) findViewById(R.id.client_detail_age_box);
         dietTextView = (TextView) findViewById(R.id.client_detail_diet_box);
-
+        logsListView =(ListView) findViewById(R.id.logView);
         //Get App Reference
         MHApp = (MealHeroApplication) getApplication();
 
@@ -49,6 +56,15 @@ public class ClientDetailActivity extends AppCompatActivity {
                 break;
             }
         }
+
+
+        //Test
+        client.appendLog("Test1");
+        client.appendLog("Test2");
+        client.appendLog("Test3");
+        //Set up array adapter
+        logsAdapter = new ClientDetailLogsAdapter(this, (client.getLogs()));
+        logsListView.setAdapter(logsAdapter);
 
         //Set UI Values
         if(client != null) {

@@ -122,6 +122,15 @@
                 android:textSize="@dimen/client_edit_text_font_size"
                 android:id="@+id/client_detail_diet_box"
                 />
+
+            <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/logView"
+                    android:layout_gravity="center_horizontal"
+                    android:choiceMode="singleChoice"
+                    android:drawSelectorOnTop="false"
+                    tools:listitem="@android:layout/simple_list_item_1"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
