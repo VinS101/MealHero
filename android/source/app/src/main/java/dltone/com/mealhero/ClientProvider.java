@@ -64,7 +64,13 @@ public class ClientProvider
                         {
                             clientList.add((Client)item);
                         }
-
+                        //Sort the list after query
+                        Collections.sort(clientList, new Comparator<Client>() {
+                            @Override
+                            public int compare(Client c1, Client c2) {
+                                return c1.getName().toUpperCase().compareTo(c2.getName().toUpperCase());
+                            }
+                        });
                         Log.e(CLASS_NAME, "Finished query for clients with " + clientList.size() + " items.");
                         // sortItems(volunteerList);
                         // List view thing -> lvArrayAdapter.notifyDataSetChanged();
@@ -84,12 +90,7 @@ public class ClientProvider
         {
             e.printStackTrace();
         }
-        Collections.sort(clientList, new Comparator<Client>() {
-            @Override
-            public int compare(Client c1, Client c2) {
-                return c1.getName().toUpperCase().compareTo(c2.getName().toUpperCase());
-            }
-        });
+
         return clientList;
     }
 

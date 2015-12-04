@@ -67,6 +67,13 @@ public class VolunteerProvider
                             volunteerList.add((Volunteer) item);
                         }
 
+                        //sort the list after query
+                        Collections.sort(volunteerList, new Comparator<Volunteer>() {
+                            @Override
+                            public int compare(Volunteer v1, Volunteer v2) {
+                                return v1.getEmail().toUpperCase().compareTo(v2.getEmail().toUpperCase());
+                            }
+                        });
                         Log.e(CLASS_NAME, "Finished query for volunteers with " + volunteerList.size() + " items.");
 
                         // sortItems(volunteerList);
@@ -88,12 +95,7 @@ public class VolunteerProvider
             e.printStackTrace();
         }
 
-        Collections.sort(volunteerList, new Comparator<Volunteer>() {
-            @Override
-            public int compare(Volunteer v1, Volunteer v2) {
-                return v1.getEmail().toUpperCase().compareTo(v2.getEmail().toUpperCase());
-            }
-        });
+
         return volunteerList;
     }
 
