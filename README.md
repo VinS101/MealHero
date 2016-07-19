@@ -1,5 +1,5 @@
 Meal Hero puts the control in the volunteers’ hands. 
-
+=====================================================
 Each volunteer can choose the route they want. The application tracks previous routes for each volunteer and makes smart suggestions for future routes based on this information. 
 
 Meal Hero outshines its competitors by not only offering GPS directions to each route, but optimizing the routes so each delivery can be more efficient and cost effective, saving both time and money. 
